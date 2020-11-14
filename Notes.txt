@@ -1,0 +1,9 @@
+Tables
+	809105 (001105)
+	80979A (00179A)
+	8CC1C2 (0641C2)		// DMA Transfer Record
+	8CC1CB (0641CB)		// DMA Transfer Record
+	8CC1D4 (0641D4)		// DMA Transfer Record
+	18E000 (0C6000)
+	BA8010 (1D0010)
+	BA80C0 (1D00C0)
