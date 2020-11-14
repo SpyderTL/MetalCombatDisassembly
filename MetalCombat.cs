@@ -1498,7 +1498,7 @@ public class SnesRom
 
 
 
-	public byte[] FunctionTable809105 = new byte[]
+	public byte[] FunctionPointerTable809105 = new byte[]
 	{
 		0x0C, 0x9F, 0x80,
 		0xDE, 0x9C, 0x90,
@@ -3230,7 +3230,7 @@ public class SnesRom
 
 
 
-	public void L809F0C()
+	public void R809F0C()
 	{
 		P &= ~0x30;
 		this.R80823D_Set0100Flag80();
@@ -3241,7 +3241,15 @@ public class SnesRom
 	}
 
 
-
+	public void R809F1C()
+	{
+		this.R839443();
+		A = 0x0000;
+		[0x1B0F] = A;
+		[0x035D] = 0;
+		[0x026D]++;
+		return;
+	}
 
 	public void R809FDF()
 	{
@@ -3489,6 +3497,21 @@ public class SnesRom
 
 
 
+
+
+	public void R839443()
+	{
+		A = 0x4110;
+		temp = A & [0x150C];[0x150C] &= ~A;
+		return;
+	}
+
+
+
+
+
+
+
 	public void R8CC0E8_ResetRegistersAndRam()
 	{
 		P &= ~0x30;
@@ -3596,6 +3619,283 @@ public class SnesRom
 
 
 
+	public void R908000_ResetRam()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0xFFFF;
+		[0x03AD] = A;
+		[0x03AF] = A;
+		[0x036F] = 0;
+		[0x03FA] = 0;
+		[0x03FC] = 0;
+		A = 0x0000;
+		[0x7F0512] = A;
+		[0x7F0527] = A;
+		A = 0xFFFF;
+		[0x7F051B] = A;
+		[0x7F051D] = A;
+		[0x7F051F] = A;
+		[0x7F0521] = A;
+		[0x7F0523] = A;
+		[0x7F0525] = A;
+		P |= 0x20;
+		A = 0x01;
+		[0x03B2] = A;
+		A = 0x02;
+		[0x03CF] = A;
+		A = 0xFF;
+		[0x03B1] = A;
+		P &= ~0x20;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void R9081B1_ResetRam()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.R80823D_Set0100Flag80();
+		this.R80827B_Clear013CAnd4200Flag10();
+		this.R8082A3_Clear013CAnd4200Flag20();
+		P |= 0x20;
+		A = 0x80;
+		[0x4340] = A;
+		A = 0x32;
+		[0x4341] = A;
+		A = 0x5C;
+		[0x4342] = A;
+		A = 0x82;
+		[0x4343] = A;
+		A = 0x90;
+		[0x4344] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x80;
+		[0x4350] = A;
+		A = 0x32;
+		[0x4351] = A;
+		A = 0x5C;
+		[0x4352] = A;
+		A = 0x82;
+		[0x4353] = A;
+		A = 0x90;
+		[0x4354] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x80;
+		[0x4360] = A;
+		A = 0x32;
+		[0x4361] = A;
+		A = 0x5C;
+		[0x4362] = A;
+		A = 0x82;
+		[0x4363] = A;
+		A = 0x90;
+		[0x4364] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x80;
+		[0x4370] = A;
+		A = 0x32;
+		[0x4371] = A;
+		A = 0x5C;
+		[0x4372] = A;
+		A = 0x82;
+		[0x4373] = A;
+		A = 0x90;
+		[0x4374] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = [0x013C];
+		A &= 0x81;
+		[0x013C] = A;
+		[0x420C] = 0;
+		[0x0141] = 0;
+		[0x4A] = 0;
+		[0x434A] = 0;
+		[0x435A] = 0;
+		[0x436A] = 0;
+		[0x437A] = 0;
+		P &= ~0x20;
+		this.R808202_WaitFor014BFlag1();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L909CDE()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.R80823D_Set0100Flag80();
+		this.R9081B1_ResetRam();
+		this.R94E94E();
+		this.R908000_ResetRam();
+		[0x026D]++;
+		P = Stack.Pop();
+		I = 0;
+		B = Stack.Pop();
+		return;
+	}
+
+	public void R94E94E()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P |= 0x20;
+		Y = 0x0017;
+		X = 0x0000;
+	}
+
+	public void L94E95A()
+	{
+		A = [0x706002 + X];
+		temp = A - [0xE90F + X];
+		
+		if (Z == 0)
+			return this.L94E974();
+
+		X++;
+		Y--;
+		
+		if (N == 0)
+			return this.L94E95A();
+
+		P &= ~0x20;
+		this.R94E9F3();
+		A = [0x12];
+		temp = A - [0x706000];
+		
+		if (Z == 1)
+			return this.L94E977();
+
+	}
+
+	public void L94E974()
+	{
+		this.R94E97A();
+	}
+
+	public void L94E977()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void R94E97A()
+	{
+		P |= 0x20;
+		Y = 0x0387;
+		X = 0x0000;
+	}
+
+	public void L94E982()
+	{
+		A = 0xFF;
+		[0x706002 + X] = A;
+		X++;
+		Y--;
+		
+		if (N == 0)
+			return this.L94E982();
+
+		Y = 0x0017;
+		X = 0x0000;
+	}
+
+	public void L94E992()
+	{
+		A = [0xE90F + X];
+		[0x706002 + X] = A;
+		X++;
+		Y--;
+		
+		if (N == 0)
+			return this.L94E992();
+
+		A = 0x00;
+		[0x706058] = A;
+		[0x706059] = A;
+		[0x706057] = A;
+		A = 0x07;
+		[0x706056] = A;
+		Y = 0x001F;
+		X = 0x0000;
+		A = 0x00;
+	}
+
+	public void L94E9B9()
+	{
+		[0x706028 + X] = A;
+		[0x706090 + X] = A;
+		X++;
+		Y--;
+		
+		if (N == 0)
+			return this.L94E9B9();
+
+		P &= ~0x20;
+		A = 0x001F;
+		[0x70601A] = A;
+		A = 0x0000;
+		[0x70601E] = A;
+		[0x70601C] = A;
+		[0x706020] = A;
+		[0x706022] = A;
+		[0x706024] = A;
+		[0x706026] = A;
+		this.R94E9F3();
+		A = [0x12];
+		[0x706000] = A;
+		return;
+	}
+
+	public void R94E9F3()
+	{
+		Stack.Push(P);
+		P &= ~0x20;
+		[0x12] = 0;
+		P |= 0x20;
+		Y = 0x0387;
+		X = 0x0000;
+	}
+
+	public void L94EA00()
+	{
+		A = [0x706002 + X];
+		C = 0;
+		A += [0x12] + C;
+		[0x12] = A;
+		A = [0x13];
+		A += 0x00 + C;
+		[0x13] = A;
+		X++;
+		Y--;
+		
+		if (N == 0)
+			return this.L94EA00();
+
+		P = Stack.Pop();
+		return;
+	}
+
+
+
+
+
+
+
 	public void R909993_ResetRam()
 	{
 		Stack.Push(B);
@@ -3648,6 +3948,24 @@ public class SnesRom
 		return;
 	}
 
+
+
+
+
+
+
+
+	public void R909D97()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x026D]++;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
 
 
 
