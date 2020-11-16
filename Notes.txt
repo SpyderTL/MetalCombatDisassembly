@@ -1,9 +1,78 @@
 Tables
-	809105 (001105)
-	80979A (00179A)
+	80833B (00033B)		// 16-bit Function Pointer Table
+	809105 (001105)		// 24-bit Function Pointer Table
+	80979A (00179A)		// 8-bit Value Table (Copied to 0x02F3)
+	809BC4				// 16-bit Function Table (Fill table)
+	80B668 (003668)		// 16-bit Function Pointer Table
+	80B670 (003670)		// 16-bit Function Pointer Table
+	80CE86 (004E86)		// 24-bit Function Pointer Table
+	80D28F (00528F)		// 16-bit Function Pointer Table
+	80EE5B (006E5B)		// 16-bit Function Pointer Table
+	80EE85 (006E85)		// 16-bit Function Pointer Table (9 entries)
+	81EF48				// 32-bit Record Table
+	828A2A (010A2A)		// 16-bit Pointer Table (24-bit Function Pointers)
+	8381D6 (0181D6)		// 16-bit Function Pointer Table
+	83B159 (01B159)		// 16-bit Function Pointer Table
 	8CC1C2 (0641C2)		// DMA Transfer Record
 	8CC1CB (0641CB)		// DMA Transfer Record
 	8CC1D4 (0641D4)		// DMA Transfer Record
+	8CC258				// 16-bit Function Pointer Table
+	8CC28A				// 16-bit Function Pointer Table
+	8CC95B				// 16-bit Function Pointer Table
+	8CCA6F				// 16-bit Function Pointer Table
+	8CD29C				// 16-bit Function Pointer Table
+	8E98D4				// 16-bit Function Pointer Table
+	8EAE75				// 16-bit Function Pointer Table
+	8ECB84				// 16-bit Function Pointer Table
+	9089CB				// 16-bit Function Pointer Table
+	908AC3				// 16-bit Function Pointer Table
+	908E21				// 16-bit Function Pointer Table
+	908EB4				// 16-bit Function Pointer Table
+	909037				// 16-bit Function Pointer Table
+	909313				// 16-bit Function Pointer Table
+	9093F0				// 16-bit Function Pointer Table
+	909480				// 16-bit Function Pointer Table
+	90980D				// 16-bit Function Pointer Table
+	90A0FB				// 16-bit Function Pointer Table
+	90D1B6				// 16-bit Function Pointer Table
+	91B2A5 (08B2A5)		// 24-bit Function Pointer Table
+	91E3F6 (08E3F6)		// 24-bit Function Pointer Table
+	94825B				// 16-bit Function Pointer Table
+	94825F				// 16-bit Function Pointer Table
+	948282				// 16-bit Function Pointer Table
+	948B44				// 16-bit Function Pointer Table
+	948BA0				// 16-bit Function Pointer Table
+	948BA0				// 16-bit Function Pointer Table
+	948C5A				// 16-bit Function Pointer Table
+	948CAC				// 16-bit Function Pointer Table
+	948D50				// 16-bit Function Pointer Table
+	948D73				// 16-bit Function Pointer Table
+	9494BB				// 16-bit Function Pointer Table
+	949763				// 16-bit Function Pointer Table
+	949BC2				// 16-bit Function Pointer Table
+	94B3A7				// 16-bit Function Pointer Table
+	94B8C8				// 16-bit Function Pointer Table
+	94BC7E				// 16-bit Function Pointer Table
+	94C722				// 16-bit Function Pointer Table
+	968309				// 16-bit Function Pointer Table
+	968532				// 16-bit Function Pointer Table
+	968613				// 16-bit Function Pointer Table
+	968701				// 16-bit Function Pointer Table
+	96E70D				// 16-bit Function Pointer Table
+	96FAEB				// 16-bit Function Pointer Table
+	978E2B				// 16-bit Function Pointer Table
+	979405				// 16-bit Function Pointer Table
+	9797D9				// 16-bit Function Pointer Table
+	979C91				// 16-bit Function Pointer Table
+	979FD3				// 16-bit Function Pointer Table
+	97D84C				// 16-bit Function Pointer Table
+	97DAEB				// 16-bit Function Pointer Table
+	97E599				// 16-bit Function Pointer Table
+	97E599				// 16-bit Function Pointer Table
+	97E799				// 16-bit Function Pointer Table
+	9AAD41				// 16-bit Function Pointer Table
+	9AB36B				// 16-bit Function Pointer Table
+	9AB36B				// 16-bit Function Pointer Table
 	18E000 (0C6000)
 	BA8010 (1D0010)
 	BA80C0 (1D00C0)
