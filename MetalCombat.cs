@@ -1,5 +1,10 @@
 public class SnesRom
 {
+	public void L000000()
+	{
+		Cpu.Break();
+	}
+
 	public void L008C3B_Reset()
 	{
 		I = 1;
@@ -8,14 +13,12 @@ public class SnesRom
 		return this.L808C42_Start();
 	}
 
+	public void L7D00BC()
+	{
+		Cpu.Break();
+	}
 
-
-
-
-
-
-	// Bank 0x80
-	public void R808202_WaitFor014BFlag1()
+	public void L808202()
 	{
 		Stack.Push(P);
 		Stack.Push(B);
@@ -26,26 +29,19 @@ public class SnesRom
 		[0x014B] = A;
 	}
 
-	public void L80820D_Loop()
+	public void L80820D()
 	{
 		A = [0x014B];
 
 		if (Z == 0)
-			return this.L80820D_Loop();
+			return this.L80820D();
 
 		B = Stack.Pop();
 		P = Stack.Pop();
 		return;
 	}
 
-
-
-
-
-
-
-
-	public void R808215_EnableVBlankIRQ()
+	public void L808215()
 	{
 		Stack.Push(P);
 		Stack.Push(B);
@@ -61,14 +57,7 @@ public class SnesRom
 		return;
 	}
 
-
-
-
-
-
-
-
-	public void R808229_DisableVBlankIRQ()
+	public void L808229()
 	{
 		Stack.Push(P);
 		Stack.Push(B);
@@ -84,14 +73,7 @@ public class SnesRom
 		return;
 	}
 
-
-
-
-
-
-
-
-	public void R80823D_Set0100Flag80()
+	public void L80823D()
 	{
 		Stack.Push(P);
 		Stack.Push(B);
@@ -101,20 +83,13 @@ public class SnesRom
 		A = [0x0100];
 		A |= 0x80;
 		[0x0100] = A;
-		this.R808202_WaitFor014BFlag1();
+		this.L808202();
 		B = Stack.Pop();
 		P = Stack.Pop();
 		return;
 	}
 
-
-
-
-
-
-
-
-	public void R808252_Clear0100Flag80()
+	public void L808252()
 	{
 		Stack.Push(P);
 		Stack.Push(B);
@@ -124,20 +99,13 @@ public class SnesRom
 		A = [0x0100];
 		A &= 0x7F;
 		[0x0100] = A;
-		this.R808202_WaitFor014BFlag1();
+		this.L808202();
 		B = Stack.Pop();
 		P = Stack.Pop();
 		return;
 	}
 
-
-
-
-
-
-
-
-	public void R80827B_Clear013CAnd4200Flag10()
+	public void L80827B()
 	{
 		Stack.Push(P);
 		Stack.Push(B);
@@ -153,14 +121,7 @@ public class SnesRom
 		return;
 	}
 
-
-
-
-
-
-
-
-	public void R8082A3_Clear013CAnd4200Flag20()
+	public void L8082A3()
 	{
 		Stack.Push(P);
 		Stack.Push(B);
@@ -176,19305 +137,6 @@ public class SnesRom
 		return;
 	}
 
-
-
-
-
-
-
-
-	public void R808306_HandleEvents()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P |= 0x20;
-		A = [0x0154];
-
-		if (Z == 1)
-			return this.L808345_EventType0_Done();
-
-		[0x0154] = 0;
-		[0x420B] = 0;
-		[0x420C] = 0;
-		P &= ~0x30;
-
-		// Word0152_NextEvent = 0;
-		[0x0152] = 0;
-		Y = 0x0000;
-	}
-
-	public void L808322_Loop()
-	{
-		// if (Y > 0x0100) Stop;
-		temp = Y - 0x0100;
-
-		if (C == 0)
-			return this.L808329();
-	}
-
-	public void L808327_Stop()
-	{
-		return this.L808327_Stop();
-	}
-
-	public void L808329()
-	{
-		// if (EventType > 5) Stop;
-		A = [0x0155 + Y];
-		A &= 0x00FF;
-		temp = A - 0x0005;
-
-		if (C == 0)
-			return this.L808336();
-	}
-
-	public void L808334_Stop()
-	{
-		return this.L808334_Stop();
-	}
-
-	public void L808336()
-	{
-		// FunctionTable[A * 2]();
-		A <<= 1;
-		X = A;
-		return [(0x833B + X)]();
-	}
-
-	public byte[] FunctionTable80833B = new byte[]
-	{
-		0x45, 0x83,
-		0x4D, 0x83,
-		0x8B, 0x83,
-		0xD7, 0x83,
-		0x29, 0x84
-	}
-
-	public void L808345_EventType0_Done()
-	{
-		P |= 0x20;
-		[0x0155] = 0;
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L80834D_EventType1()
-	{
-		P |= 0x20;
-
-		A = [0x0156 + Y];
-		[0x4312] = A;
-		A = [0x0157 + Y];
-		[0x4313] = A;
-		A = [0x0158 + Y];
-		[0x4314] = A;
-		A = [0x0159 + Y];
-		[0x4315] = A;
-		A = [0x015A + Y];
-		[0x4316] = A;
-		A = [0x015B + Y];
-		[0x2121] = A;
-		[0x4310] = 0;
-		A = 0x22;
-		[0x4311] = A;
-		A = 0x02;
-		[0x420B] = A;
-
-		// Y += 7
-		P &= ~0x20;
-		A = Y;
-		C = 0;
-		A += 0x0007 + C;
-		Y = A;
-		return this.L808322_Loop();
-	}
-
-	public void L80838B_EventType2()
-	{
-		P |= 0x20;
-
-		A = [0x0156 + Y];
-		[0x4312] = A;
-		A = [0x0157 + Y];
-		[0x4313] = A;
-		A = [0x0158 + Y];
-		[0x4314] = A;
-		A = [0x0159 + Y];
-		[0x4315] = A;
-		A = [0x015A + Y];
-		[0x4316] = A;
-		A = [0x015B + Y];
-		[0x2115] = A;
-		A = [0x015C + Y];
-		[0x2116] = A;
-		A = [0x015D + Y];
-		[0x2117] = A;
-		A = 0x01;
-		[0x4310] = A;
-		A = 0x18;
-		[0x4311] = A;
-		A = 0x02;
-		[0x420B] = A;
-
-		// Y += 9;
-		P &= ~0x20;
-		A = Y;
-		C = 0;
-		A += 0x0009 + C;
-		Y = A;
-		return this.L808322_Loop();
-	}
-
-	public void L8083D7_EventType3()
-	{
-		P |= 0x20;
-
-		A = [0x0156 + Y];
-		[0x4312] = A;
-		A = [0x0157 + Y];
-		[0x4313] = A;
-		A = [0x0158 + Y];
-		[0x4314] = A;
-		A = [0x0159 + Y];
-		[0x4315] = A;
-		A = [0x015A + Y];
-		[0x4316] = A;
-		A = [0x015B + Y];
-		[0x2115] = A;
-		A = [0x015C + Y];
-		[0x2116] = A;
-		A = [0x015D + Y];
-		[0x2117] = A;
-		A = 0x81;
-		[0x4310] = A;
-		A = 0x39;
-		[0x4311] = A;
-		A = [0x2139];
-		A = [0x213A];
-		A = 0x02;
-		[0x420B] = A;
-
-		// Y += 9
-		P &= ~0x20;
-		A = Y;
-		C = 0;
-		A += 0x0009 + C;
-		Y = A;
-
-		return this.L808322_Loop();
-	}
-
-	public void L808429_EventType4()
-	{
-		P |= 0x20;
-
-		A = [0x0156 + Y];
-		[0x4312] = A;
-		A = [0x0157 + Y];
-		[0x4313] = A;
-		A = [0x0158 + Y];
-		[0x4314] = A;
-		A = [0x0159 + Y];
-		[0x4315] = A;
-		A = [0x015A + Y];
-		[0x4316] = A;
-		A = [0x015B + Y];
-		[0x4310] = A;
-		A = [0x015C + Y];
-		[0x4311] = A;
-		A = [0x015D + Y];
-		[0x2115] = A;
-		A = [0x015E + Y];
-		[0x2116] = A;
-		A = [0x015F + Y];
-		[0x2117] = A;
-		A = 0x02;
-		[0x420B] = A;
-
-		// Y += 11;
-		P &= ~0x20;
-		A = Y;
-		C = 0;
-		A += 0x000B + C;
-		Y = A;
-
-		return this.L808322_Loop();
-	}
-
-
-
-
-
-
-
-
-	public void R80850F_SetRam()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-	}
-
-	public void L808515_Loop()
-	{
-		[0x7E0000 + X] = A;
-		X++;
-		X++;
-		Y--;
-		Y--;
-
-		if (Z == 0)
-			return this.L808515_Loop();
-
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R808744()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		A = 0x8000;
-		[0x01] = A;
-		A = 0x875B;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public byte[] DmaTransferRecord80875B = new byte[]
-	{
-		// Type 0x02, RAM Address 0x7E2000, Length 0x0800, VRAM Control 0x80, VRAM Address 0x0000
-		0x02, 0x00, 0x20, 0x7E, 0x00, 0x08, 0x80, 0x00, 0x00
-	}
-
-
-
-
-
-
-
-	public void R808764()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		A = 0x8000;
-		[0x01] = A;
-		A = 0x877B;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public byte[] DmaTransferRecord80877B = new byte[]
-	{
-		// Type 0x02, RAM Address 0x7E2800, Length 0x0800, VRAM Control 0x80, VRAM Address 0x0800
-		0x02, 0x00, 0x28, 0x7E, 0x00, 0x08, 0x80, 0x00, 0x08
-	}
-
-
-
-
-
-	public void R808784()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		A = 0x8000;
-		[0x01] = A;
-		A = 0x879B;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public byte[] DmaTransferRecord80879B = new byte[]
-	{
-		// Type 0x02, RAM Address 0x7E3000, Length 0x0800, VRAM Control 0x80, VRAM Address 0x1C00
-		0x02, 0x00, 0x30, 0x7E, 0x00, 0x08, 0x80, 0x00, 0x1C
-	}
-
-
-
-
-
-
-
-
-	public void R8087A4_LoadDmaTransferRecord()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-
-		// X = Word0152_NextEvent
-		X = [0x0152];
-
-		Y = 0x0000;
-		P |= 0x20;
-
-		// A = EventType
-		A = [[0x00] + Y];
-		Y++;
-
-		// Write EventType To Event List
-		[0x0155 + X] = A;
-
-		// Event Type 0x01
-		A--;
-
-		if (Z == 0)
-			return this.L8087BB();
-
-		return this.L808822_EventType1();
-	}
-
-	public void L8087BB()
-	{
-		// Event Type 0x02
-		A--;
-
-		if (Z == 0)
-			return this.L8087C1();
-
-		return this.L8087CD_EventTypeOther();
-	}
-
-	public void L8087C1()
-	{
-		// Event Type 0x03
-		A--;
-
-		if (Z == 0)
-			return this.L8087C7();
-
-		return this.L8087CD_EventTypeOther();
-	}
-
-	public void L8087C7()
-	{
-		// Event Type 0x04
-		A--;
-
-		if (Z == 0)
-			return this.L8087CD_EventTypeOther();
-
-		return this.L8087F3_EventType4();
-	}
-
-	public void L8087CD_EventTypeOther()
-	{
-		[0x015E + X] = 0;
-		P &= ~0x20;
-		A = [[0x00] + Y];
-		[0x0156 + X] = A;
-		Y++;
-		Y++;
-		A = [[0x00] + Y];
-		[0x0158 + X] = A;
-		Y++;
-		Y++;
-		A = [[0x00] + Y];
-		[0x015A + X] = A;
-		Y++;
-		Y++;
-		A = [[0x00] + Y];
-		[0x015C + X] = A;
-		A = X;
-		C = 0;
-		A += 0x0009 + C;
-		return this.L80883F_SetNextEvent();
-	}
-
-	public void L8087F3_EventType4()
-	{
-		[0x0160 + X] = 0;
-		P &= ~0x20;
-		A = [[0x00] + Y];
-		[0x0156 + X] = A;
-		Y++;
-		Y++;
-		A = [[0x00] + Y];
-		[0x0158 + X] = A;
-		Y++;
-		Y++;
-		A = [[0x00] + Y];
-		[0x015A + X] = A;
-		Y++;
-		Y++;
-		A = [[0x00] + Y];
-		[0x015C + X] = A;
-		Y++;
-		Y++;
-		A = [[0x00] + Y];
-		[0x015E + X] = A;
-		Y++;
-		Y++;
-		A = X;
-		C = 0;
-		A += 0x000B + C;
-		return this.L80883F_SetNextEvent();
-	}
-
-	public void L808822_EventType1()
-	{
-		[0x015C + X] = 0;
-		P &= ~0x20;
-		A = [[0x00] + Y];
-		[0x0156 + X] = A;
-		Y++;
-		Y++;
-		A = [[0x00] + Y];
-		[0x0158 + X] = A;
-		Y++;
-		Y++;
-		A = [[0x00] + Y];
-		[0x015A + X] = A;
-		A = X;
-		C = 0;
-		A += 0x0007 + C;
-	}
-
-	public void L80883F_SetNextEvent()
-	{
-		// Word0152_NextEvent = A;
-		[0x0152] = A;
-
-		// Flag0154 = 1;
-		P |= 0x30;
-		A = 0x01;
-		[0x0154] = A;
-
-		A = [0x02D6];
-
-		if (N == 0)
-			return this.L808852_Done();
-
-		this.R808306_HandleEvents();
-	}
-
-	public void L808852_Done()
-	{
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void L808C42_Start()
-	{
-		P |= 0x20;
-
-		// Screen Display (Blank)
-		A = 0x80;
-		[0x0100] = A;
-		[0x2100] = A;
-
-		A = 0x00;
-		[0x7FF7] = A;
-
-		P |= 0x30;
-
-		// DMA
-		[0x420B] = 0;
-		[0x420C] = 0;
-
-		// APU
-		[0x2140] = 0;
-		[0x2141] = 0;
-		[0x2142] = 0;
-		[0x2143] = 0;
-
-		// Stack
-		P &= ~0x30;
-		X = 0x1FFF;
-		S = X;
-
-		// Direct Bank (0x0000)
-		Y = 0x0000;
-		Stack.Push(Y);
-		D = Stack.Pop();
-
-		// Data Bank (Program Bank)
-		Stack.Push(K);
-		B = Stack.Pop();
-
-		return this.L808EE3_Start2();
-	}
-
-
-
-
-
-
-
-
-	public void R808C76_ResetRegisters()
-	{
-		Stack.Push(P);
-		P |= 0x30;
-
-		// Set Flag013C
-		A = 0x01;
-		[0x4200] = A;
-		[0x013C] = A;
-
-		// Enable PPU H/V Scanline Latch
-		A = 0x80;
-		[0x4201] = A;
-
-		[0x4202] = 0;
-		[0x4203] = 0;
-		[0x4204] = 0;
-		[0x4205] = 0;
-		[0x4206] = 0;
-		[0x4207] = 0;
-		[0x013F] = 0;
-		[0x4208] = 0;
-		[0x0140] = 0;
-		[0x4209] = 0;
-		[0x013D] = 0;
-		[0x420A] = 0;
-		[0x013E] = 0;
-		[0x420B] = 0;
-		[0x420C] = 0;
-		[0x0141] = 0;
-
-		// ROM Speed (Fast)
-		A = 0x01;
-		[0x420D] = A;
-		[0x0142] = A;
-
-		P = Stack.Pop();
-
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R808CC0_ResetPPU()
-	{
-		Stack.Push(P);
-		P |= 0x30;
-
-		// Screen Brightness (Blank)
-		A = 0x8F;
-		[0x2100] = A;
-		[0x0100] = A;
-
-		// Sprite Size (8x8 / 16x16 / Name: 0 / Address : 1 << 14)
-		A = 0x01;
-		[0x2101] = A;
-		[0x0101] = A;
-
-		// Sprite Address (0x0000 / Priority : 1)
-		[0x2102] = 0;
-		[0x0102] = 0;
-
-		A = 0x80;
-		[0x2103] = A;
-		[0x0103] = A;
-
-		// Sprite Data
-		[0x2104] = 0;
-		[0x2104] = 0;
-
-		// Background Mode (Mode 9)
-		A = 0x09;
-		[0x2105] = A;
-		[0x0104] = A;
-
-		// Mosaic Enable (Off)
-		[0x2106] = 0;
-		[0x0105] = 0;
-
-		// Background 1 Tilemap Address (0x00 << 10)
-		A = 0x00;
-		[0x2107] = A;
-		[0x0106] = A;
-
-		// Background 2 Tilemap Address (0x08 << 10)
-		A = 0x08;
-		[0x2108] = A;
-		[0x0107] = A;
-
-		// Background 3 Tilemap Address (0x1C << 10)
-		A = 0x1C;
-		[0x2109] = A;
-		[0x0108] = A;
-
-		// Background 4 Tilemap Address (0x00 << 10)
-		A = 0x00;
-		[0x210A] = 0;
-		[0x0109] = 0;
-
-		// Background 1/2 Character Address (0x06 << 12 / 0x00 << 12)
-		A = 0x06;
-		[0x210B] = A;
-		[0x010A] = A;
-
-		// Background 3/4 Character Address (0x01 << 12 / 0x00 << 12)
-		A = 0x01;
-		[0x210C] = A;
-		[0x010B] = A;
-
-		// Background 1-4 H/V Scroll (0x00)
-		[0x210D] = 0;
-		[0x210D] = 0;
-		[0x210E] = 0;
-		[0x210E] = 0;
-		[0x210F] = 0;
-		[0x210F] = 0;
-		[0x2110] = 0;
-		[0x2110] = 0;
-		[0x2111] = 0;
-		[0x2111] = 0;
-		[0x2112] = 0;
-		[0x2112] = 0;
-		[0x2113] = 0;
-		[0x2113] = 0;
-		[0x2114] = 0;
-		[0x2114] = 0;
-
-		// Video Port Control
-		[0x2115] = 0;
-
-		// Mode 7 Settings
-		[0x211A] = 0;
-		[0x010C] = 0;
-
-		// Mode 7 Matrix
-		[0x211B] = 0;
-		[0x211C] = 0;
-		[0x211D] = 0;
-		[0x211E] = 0;
-
-		// Mode 7 Center X/Y
-		[0x211F] = 0;
-		[0x2120] = 0;
-
-		// Background 1/2 Window
-		A = 0x00;
-		[0x2123] = A;
-		[0x010D] = A;
-
-		// Background 3/4 Window
-		A = 0x00;
-		[0x2124] = A;
-		[0x010E] = A;
-
-		// Sprite/Color Window
-		[0x2125] = 0;
-		[0x011F] = 0;
-
-		// Window 1 Left
-		A = 0x00;
-		[0x2126] = A;
-		[0x0120] = A;
-
-		// Window 1 Right
-		A = 0xF8;
-		[0x2127] = A;
-		[0x0121] = A;
-
-		// Window 2 Left
-		[0x2128] = 0;
-		[0x0122] = 0;
-
-		// Window 2 Right
-		[0x2129] = 0;
-		[0x0123] = 0;
-
-		// Background Window Mask
-		[0x212A] = 0;
-		[0x0124] = 0;
-
-		// Sprite / Color Window Mask
-		[0x212B] = 0;
-		[0x0125] = 0;
-
-		// Main Screen Background Enable
-		A = 0x11;
-		[0x212C] = A;
-		[0x0126] = A;
-
-		// Main Screen Background Mask Enable
-		[0x212E] = A;
-		[0x0128] = A;
-
-		// Sub Screen Background Enable
-		A = 0x02;
-		[0x212D] = A;
-		[0x0127] = A;
-
-		// Sub Screen Background Mask Enable
-		[0x212F] = A;
-		[0x0129] = A;
-
-		// Color Addition Select
-		A = 0x02;
-		[0x2130] = A;
-		[0x012A] = A;
-
-		// Color Math Designation
-		A = 0xA1;
-		[0x2131] = A;
-		[0x012B] = A;
-
-		// Fixed Color Data (R: 0)
-		A = 0x20;
-		[0x2132] = A;
-		[0x012E] = A;
-
-		// Fixed Color Data (G: 0)
-		A = 0x40;
-		[0x2132] = A;
-		[0x012D] = A;
-
-		// Fixed Color Data (B: 0)
-		A = 0x80;
-		[0x2132] = A;
-		[0x012C] = A;
-
-		// Screen Mode (None)
-		A = 0x00;
-		[0x2133] = A;
-		[0x012F] = A;
-
-		P = Stack.Pop();
-
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R808E19_Insanity()
-	{
-		P &= ~0x30;
-		A = 0x1C2F;
-		this.R808E3F_SetRam2000();
-		A = 0x1C2F;
-		this.R808E52_SetRam2800();
-		A = 0x1C2F;
-		this.R808E65_SetRam3000();
-		P |= 0x30;
-		this.R808744();
-		this.R808764();
-		this.R808784();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R808E3F_SetRam2000()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		X = 0x2000;
-		Y = 0x0800;
-		this.R80850F_SetRam();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R808E52_SetRam2800()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		X = 0x2800;
-		Y = 0x0800;
-		this.R80850F_SetRam();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R808E65_SetRam3000()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		X = 0x3000;
-		Y = 0x0800;
-		this.R80850F_SetRam();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R808E78_MainLoop_2()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-		this.R808EA7();
-
-		// Value0257 = (Value0255 >= 5);
-		A = [0x0255];
-		temp = A - 0x0005;
-
-		if (C == 0)
-			return this.L808E8E();
-
-		A = 0x0001;
-		[0x0257] = A;
-		return this.L808E91();
-	}
-
-	public void L808E8E()
-	{
-		[0x0257] = 0;
-	}
-
-	public void L808E91()
-	{
-		// Value0261 = Value0259 + Value025D
-		A = [0x0259];
-		C = 0;
-		A += [0x025D] + C;
-		[0x0261] = A;
-
-		// Value0263 = Value025B + Value025F
-		A = [0x025B];
-		C = 0;
-		A += [0x025F] + C;
-		[0x0263] = A;
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R808EA7()
-	{
-		Stack.Push(P);
-		P |= 0x20;
-
-		// if (Ppu.LatchFlag == false) Skip;
-		A = [0x213F];
-		temp = A & 0x40;
-
-		if (Z == 1)
-			return this.L808ED9();
-
-		A = [0x00213C];
-		[0x0259] = A;
-		A = [0x00213C];
-		A &= 0x01;
-		[0x025A] = A;
-		A = [0x00213D];
-		[0x025B] = A;
-		A = [0x00213D];
-		A &= 0x01;
-		[0x025C] = A;
-		[0x0255] = 0;
-	}
-
-	public void L808ED4()
-	{
-		[0x0256] = 0;
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L808ED9()
-	{
-		// Value0255_PPULatchTimer = Min(255, Value0255_PPULatchTimer + 1);
-		[0x0255]++;
-
-		if (Z == 0)
-			return this.L808ED4();
-
-		[0x0255]--;
-		return this.L808ED4();
-	}
-
-	public void L808EE3_Start2()
-	{
-		P |= 0x30;
-		A = 0xA1;
-		[0x7FF5] = A;
-		A = 0x0A;
-		[0x7FF7] = A;
-		P &= ~0x30;
-		X = 0x01FE;
-	}
-
-	public void L808EF4_Loop()
-	{
-		[0x00 + X] = 0;
-		[0x0200 + X] = 0;
-		[0x0400 + X] = 0;
-		[0x0600 + X] = 0;
-		[0x0800 + X] = 0;
-		[0x0A00 + X] = 0;
-		[0x0C00 + X] = 0;
-		[0x0E00 + X] = 0;
-		[0x1000 + X] = 0;
-		[0x1200 + X] = 0;
-		[0x1400 + X] = 0;
-		[0x1600 + X] = 0;
-		[0x1800 + X] = 0;
-		[0x1A00 + X] = 0;
-		[0x1C00 + X] = 0;
-		[0x1E00 + X] = 0;
-		X--;
-		X--;
-
-		if (N == 0)
-			return this.L808EF4_Loop();
-
-		return this.L808F49_Start3();
-	}
-
-	public void L808F49_Start3()
-	{
-		P |= 0x30;
-		[0x4200] = 0;
-		[0x013C] = 0;
-		A = 0x8F;
-		[0x2100] = A;
-		[0x0100] = A;
-		this.R808C76_ResetRegisters();
-		this.R808CC0_ResetPPU();
-		this.R808E19_Insanity();
-		this.R809D46_InitializeObd1Ram();
-		this.R809BAB_FillTable7800();
-		this.R808215_EnableVBlankIRQ();
-		P |= 0x20;
-		A = 0x54;
-		[0x36] = A;
-		[0x37] = 0;
-		[0x38] = 0;
-		A = 0x6B;
-		[0x39] = A;
-		A = 0x44;
-		[0x3A] = A;
-		[0x3B] = 0;
-		[0x3C] = 0;
-		A = 0x6B;
-		[0x3D] = A;
-		A = 0x01;
-		[0x4B] = A;
-		P &= ~0x30;
-		this.R8CC0E8_ResetRegistersAndRam();
-		this.R808252_Clear0100Flag80();
-		P &= ~0x30;
-		this.R80942D();
-		P &= ~0x30;
-		Y = 0x003C;
-	}
-
-	public void L808FA1_Loop()
-	{
-		this.R808202_WaitFor014BFlag1();
-		Y--;
-
-		if (Z == 0)
-			return this.L808FA1_Loop();
-
-		// Clear RAM
-		P |= 0x30;
-		A = 0x7E;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x30;
-		X = 0x0FFE;
-		A = 0x0000;
-	}
-
-	public void L808FB6_Loop()
-	{
-		[0x2000 + X] = A;
-		[0x3000 + X] = A;
-		[0x4000 + X] = A;
-		[0x5000 + X] = A;
-		[0x6000 + X] = A;
-		[0x7000 + X] = A;
-		[0x8000 + X] = A;
-		[0x9000 + X] = A;
-		[0xA000 + X] = A;
-		[0xB000 + X] = A;
-		[0xC000 + X] = A;
-		[0xD000 + X] = A;
-		[0xE000 + X] = A;
-		[0xF000 + X] = A;
-		X--;
-		X--;
-
-		if (N == 0)
-			return this.L808FB6_Loop();
-
-		P |= 0x30;
-		A = 0x7F;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x30;
-		X = 0x0FFE;
-		A = 0x0000;
-	}
-
-	public void L808FF2_Loop()
-	{
-		[0x0000 + X] = A;
-		[0x1000 + X] = A;
-		[0x2000 + X] = A;
-		[0x3000 + X] = A;
-		[0x4000 + X] = A;
-		[0x5000 + X] = A;
-		[0x6000 + X] = A;
-		[0x7000 + X] = A;
-		[0x8000 + X] = A;
-		[0x9000 + X] = A;
-		[0xA000 + X] = A;
-		[0xB000 + X] = A;
-		[0xC000 + X] = A;
-		[0xD000 + X] = A;
-		[0xE000 + X] = A;
-		[0xF000 + X] = A;
-		X--;
-		X--;
-
-		if (N == 0)
-			return this.L808FF2_Loop();
-
-		Stack.Push(K);
-		B = Stack.Pop();
-		P |= 0x20;
-		A = 0x0F;
-		[0x0100] = A;
-	}
-
-	public void L80902F_Loop()
-	{
-		this.R808202_WaitFor014BFlag1();
-		[0x0100]--;
-
-		if (Z == 0)
-			return this.L80902F_Loop();
-
-		P &= ~0x20;
-		this.R80823D_Set0100Flag80();
-		A = 0x8000;
-		[0x01] = A;
-		A = 0x904E;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		return this.L809059_LoadEvents9069();
-	}
-
-	public byte[] DmaTransferRecord80904E = new byte[]
-	{
-		// Type 0x04, RAM Address 0x809077, Length 0x8000, DMA Control 0x08, DMA Address 0x2119, VRAM Control 0x80, VRAM Address 0x0000
-		0x04, 0x77, 0x90, 0x80, 0x00, 0x80, 0x08, 0x19, 0x80, 0x00, 0x00
-	}
-
-	public void L809059_LoadEvents9069()
-	{
-		A = 0x8000;
-		[0x01] = A;
-		A = 0x9069;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		return this.L809074();
-	}
-
-	public byte[] DmaTransferRecord809069 = new byte[]
-	{
-		// Type 0x04, RAM Address 0x809076, Length 0x8000, DMA Control 0x08, DMA Address 0x2118, VRAM Control 0x00, VRAM Address 0x0000
-		0x04, 0x76, 0x90, 0x80, 0x00, 0x80, 0x08, 0x18, 0x00, 0x00, 0x00
-	}
-
-	public void L809074()
-	{
-		return this.L809078();
-	}
-
-	public void L809078()
-	{
-		P &= ~0x30;
-		[0x026D] = 0;
-		[0x0265] = 0;
-		[0x0267] = 0;
-		this.R809559_InitializeRam();
-		this.R808202_WaitFor014BFlag1();
-	}
-
-	public void L80908B_MainLoop()
-	{
-		P &= ~0x30;
-		this.R8090A1_MainLoop_1();
-		this.R808E78_MainLoop_2();
-		this.R8090CD_MainLoop_3();
-		this.R8090B8_MainLoop_4();
-		this.R808202_WaitFor014BFlag1();
-		return this.L80908B_MainLoop();
-	}
-
-
-
-
-
-
-
-
-	public void R8090A1_MainLoop_1()
-	{
-		this.R809570_Execute();
-		this.R809A94();
-		this.R809B30();
-		this.R809FDF();
-		P &= ~0x30;
-		this.R809D46_InitializeObd1Ram();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8090B8_MainLoop_4()
-	{
-		this.R809BAB_FillTable7800();
-		this.R80A005();
-		P &= ~0x30;
-		A = [0x5A];
-		[0x0265] = A;
-		A = [0x52];
-		[0x0267] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8090CD_MainLoop_3()
-	{
-		P &= ~0x30;
-		Stack.Push(B);
-
-		// X = Value026D * 3
-		A = [0x026D];
-		A <<= 1;
-		A += [0x026D] + C;
-		X = A;
-
-		// if (Table809105[X + 2] == 0x7D) Done;
-		P |= 0x20;
-		A = [0x809107 + X];
-		temp = A - 0x7D;
-
-		if (Z == 1)
-			return this.L8090F6_Done();
-
-		[0x02] = A;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		A = [0x809105 + X];
-		[0x00] = A;
-		this.R809102_ExecutePointer24();
-	}
-
-	public void L8090F2_Done()
-	{
-		P &= ~0x30;
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L8090F6_Done()
-	{
-		P &= ~0x20;
-		A = [0x809105 + X];
-		[0x026D] = A;
-		return this.L8090F2_Done();
-	}
-
-
-
-
-
-
-
-
-	public void R809102_ExecutePointer24()
-	{
-		return [[0x0000]]();    //24-Bit Address
-	}
-
-
-
-
-
-
-
-
-	public byte[] FunctionPointerTable809105 = new byte[]
-	{
-		0x0C, 0x9F, 0x80,
-		0xDE, 0x9C, 0x90,
-		0x97, 0x9D, 0x90,
-		0x1C, 0x9F, 0x80,
-		0xF9, 0x9C, 0x90,
-		0x4F, 0xAE, 0x8E,
-		0x6E, 0xCB, 0x8E,
-		0xBE, 0x98, 0x8E,
-		0x67, 0xA2, 0x90,
-		0x5F, 0xD1, 0x90,
-		0xD4, 0xAC, 0x90,
-		0x2D, 0x9F, 0x80,
-		0x44, 0x81, 0x96,
-		0xA1, 0x9D, 0x90,
-		0x82, 0x9D, 0x90,
-		0x10, 0x80, 0x8B,
-		0x00, 0xC7, 0x94,
-		0xE5, 0x9E, 0x90,
-		0xE6, 0xA0, 0x80,
-		0xED, 0xA0, 0x80,
-		0x64, 0x8C, 0x91,
-		0x82, 0xA7, 0x90,
-		0x2F, 0xC2, 0x8C,
-		0x3E, 0xC2, 0x8C,
-		0x64, 0xC2, 0x8C,
-		0x46, 0x9E, 0x90,
-		0x40, 0x9F, 0x80,
-		0xD6, 0xC9, 0x8C,
-		0x56, 0xCA, 0x8C,
-		0x08, 0x9F, 0x90,
-		0x53, 0xD2, 0x8C,
-		0x7E, 0xD2, 0x8C,
-		0xC2, 0x8E, 0x91,
-		0xDD, 0xA0, 0x90,
-		0xAE, 0xD2, 0x8C,
-		0x4F, 0xA1, 0x90,
-		0x1F, 0xC9, 0x8C,
-		0x45, 0xC9, 0x8C,
-		0x24, 0xA3, 0x90,
-		0x53, 0xD2, 0x8C,
-		0x7E, 0xD2, 0x8C,
-		0xAE, 0xD2, 0x8C,
-		0xBC, 0x00, 0x7D,
-		0x53, 0xD2, 0x8C,
-		0x7E, 0xD2, 0x8C,
-		0xAE, 0xD2, 0x8C
-	}
-
-
-
-
-
-
-
-
-	public void R80942D()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-
-		// Flag0322 = 1;
-		A = 0x0001;
-		[0x0322] = A;
-
-		Stack.Push(X);
-		Stack.Push(Y);
-		A = [0x00];
-		Stack.Push(A);
-		A = [0x01];
-		Stack.Push(A);
-		A = 0xB900;
-		[0x01] = A;
-		Y = 0x8000;
-		[0x00] = 0;
-		this.R8098E6();
-		P |= 0x30;
-		A = 0xFE;
-	}
-
-	public void L809452_Loop()
-	{
-		// Wait For APU Idle
-		[0x2142] = A;
-		temp = A - [0x2142];
-
-		if (Z == 0)
-			return this.L809452_Loop();
-
-		P &= ~0x30;
-		X = 0x005E;
-	}
-
-	public void L80945F_Loop()
-	{
-		[0x02D7 + X] = 0;
-		X--;
-		X--;
-
-		if (N == 1)
-			return this.L809468();
-
-		return this.L80945F_Loop();
-	}
-
-	public void L809468()
-	{
-		P &= ~0x30;
-		A = Stack.Pop();
-		[0x01] = A;
-		A = Stack.Pop();
-		[0x00] = A;
-		Y = Stack.Pop();
-		X = Stack.Pop();
-
-		// Flag0322 = 0;
-		A = 0x0000;
-		[0x0322] = A;
-
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R809492()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		Stack.Push(X);
-		X = A;
-		A = [0x02F7];
-		A &= 0x0001;
-
-		if (Z == 0)
-			return this.L8094B6_Done();
-
-		Stack.Push(X);
-		X = 0x0000;
-	}
-
-	public void L8094A6()
-	{
-		A = [0x02D7 + X];
-
-		if (Z == 1)
-			return this.L8094B2();
-
-		X++;
-		X++;
-		temp = X - 0x0006;
-
-		if (Z == 0)
-			return this.L8094A6();
-	}
-
-	public void L8094B2()
-	{
-		A = Stack.Pop();
-		[0x02D7 + X] = A;
-	}
-
-	public void L8094B6_Done()
-	{
-		X = Stack.Pop();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8094BA()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		Stack.Push(X);
-		X = A;
-		A = [0x02F7];
-		A &= 0x0001;
-
-		if (Z == 0)
-			return this.L8094DE_Done();
-
-		Stack.Push(X);
-		X = 0x0000;
-	}
-
-	public void L8094CE()
-	{
-		A = [0x02DF + X];
-
-		if (Z == 1)
-			return this.L8094DA();
-
-		X++;
-		X++;
-		temp = X - 0x0006;
-
-		if (Z == 0)
-			return this.L8094CE();
-	}
-
-	public void L8094DA()
-	{
-		A = Stack.Pop();
-		[0x02DF + X] = A;
-	}
-
-	public void L8094DE_Done()
-	{
-		X = Stack.Pop();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8094E2()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		Stack.Push(X);
-		X = A;
-		temp = A - 0x00F0;
-
-		if (C == 1)
-			return this.L809541();
-
-		temp = A - 0x0000;
-
-		if (Z == 1)
-			return this.L809555_Done();
-
-		Stack.Push(Y);
-		X = [0x00];
-		Stack.Push(X);
-		X = [0x01];
-		Stack.Push(X);
-		X = A;
-		A = [0x030B];
-
-		if (Z == 0)
-			return this.L80950E();
-
-		this.R808229_DisableVBlankIRQ();
-		this.R8097B2_APU();
-		this.R808215_EnableVBlankIRQ();
-		P &= ~0x30;
-	}
-
-	public void L80950E()
-	{
-		X = Stack.Pop();
-		[0x01] = X;
-		X = Stack.Pop();
-		[0x00] = X;
-		Y = Stack.Pop();
-		return this.L809555_Done();
-	}
-
-
-
-
-
-
-
-
-	public void R809517()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		Stack.Push(X);
-		X = A;
-		A &= 0x00FF;
-		temp = A - 0x00F0;
-
-		if (C == 1)
-			return this.L809555_Done();
-
-		temp = A - 0x00E0;
-
-		if (C == 0)
-			return this.L809555_Done();
-
-		temp = A - 0x00E5;
-
-		if (C == 0)
-			return this.L809534();
-
-		[0x02F9] = X;
-	}
-
-	public void L809534()
-	{
-		A = [0x030B];
-
-		if (Z == 0)
-			return this.L809555_Done();
-
-		A = [0x02F7];
-		A &= 0x0002;
-
-		if (Z == 0)
-			return this.L809555_Done();
-	}
-
-	public void L809541()
-	{
-		Stack.Push(X);
-		X = 0x0000;
-	}
-
-	public void L809545()
-	{
-		A = [0x02D7 + X];
-
-		if (Z == 1)
-			return this.L809551();
-
-		X++;
-		X++;
-		temp = X - 0x0006;
-
-		if (Z == 0)
-			return this.L809545();
-	}
-
-	public void L809551()
-	{
-		A = Stack.Pop();
-		[0x02D7 + X] = A;
-	}
-
-	public void L809555_Done()
-	{
-		X = Stack.Pop();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R809559_InitializeRam()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x20;
-		Stack.Push(A);
-
-		// Table02EB[0-2] = 0xFFFF
-		A = 0xFFFF;
-		[0x02EB] = A;
-		[0x02EF] = A;
-		[0x02F3] = A;
-
-		A = Stack.Pop();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R809570_Execute()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		Stack.Push(A);
-		Stack.Push(X);
-		Stack.Push(Y);
-		A = 0xBA00;
-		[0x01] = A;
-		A = 0x80C0;
-		[0x00] = A;
-		X = 0x0000;
-	}
-
-	public void L809586_Loop()
-	{
-		// A = Table02EB[X];
-		A = [0x02EB + X];
-
-		// if (A >= 0) HandleEvent();
-		if (N == 0)
-			return this.L8095A2_HandleEvent();
-
-		// else if (A == 0xFFFF) Skip();
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L8095AA_Skip();
-
-		// else
-		//	 A = (Abs(A) & 0xff) * 2;
-		Stack.Push(A);
-		A = Stack.Pop();
-		A &= 0x00FF;
-		A <<= 1;
-		Y = X;
-		X = A;
-
-		//	Table02EB[X] = TableBA80C0[A];
-		A = [0xBA80C0 + X];
-		[0x02EB + Y] = A;
-		X = Y;
-
-		return this.L8095A7_Execute();
-	}
-
-	public void L8095A2_HandleEvent()
-	{
-		// Table02EB[X + 2] -= 1;
-		[0x02ED + X]--;
-
-		if (Z == 0)
-			return this.L8095AA_Skip();
-	}
-
-	public void L8095A7_Execute()
-	{
-		this.R8095BB_Execute();
-	}
-
-	public void L8095AA_Skip()
-	{
-		// if (X == 8) Return;
-		temp = X - 0x0005;
-
-		if (C == 1)
-			return this.L8095B5_Done();
-
-		// X += 4;
-		X++;
-		X++;
-		X++;
-		X++;
-
-		// Continue
-		return this.L809586_Loop();
-	}
-
-	public void L8095B5_Done()
-	{
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = Stack.Pop();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8095BB_Execute()
-	{
-		Stack.Push(X);
-
-		// Y = Table02EB[X];
-		A = [0x02EB + X];
-		Y = A;
-	}
-
-	public void L8095C0_Loop()
-	{
-		// A = ReadShort();
-		this.R80968B_ReadShort();
-
-		X = A;
-
-		if (Z == 0)
-			return this.L8095CB();
-
-		A--;
-		Y = A;
-		return this.L809682_Done();
-	}
-
-	public void L8095CB()
-	{
-		// A = ReadShort();
-		this.R80968B_ReadShort();
-
-		temp = X - 0x2000;
-
-		if (C == 0)
-			return this.L80962F();
-
-		temp = X - 0x3000;
-
-		if (C == 0)
-			return this.L809635();
-
-		temp = X - 0x4000;
-
-		if (C == 0)
-			return this.L80963B();
-
-		temp = X - 0x5000;
-
-		if (C == 0)
-			return this.L809641();
-
-		temp = X - 0x6000;
-
-		if (C == 0)
-			return this.L809647();
-
-		temp = X - 0x7000;
-
-		if (C == 0)
-			return this.L809625();
-
-		temp = X - 0x8000;
-
-		if (C == 0)
-			return this.L809666();
-
-		temp = X - 0x9000;
-
-		if (C == 0)
-			return this.L80961A();
-
-		temp = X - 0xA000;
-
-		if (C == 0)
-			return this.L80960F();
-
-		temp = X - 0xB000;
-
-		if (C == 0)
-			return this.L80964A();
-
-		temp = X - 0xC000;
-
-		if (C == 0)
-			return this.L80964F();
-
-		temp = X - 0xD000;
-
-		if (C == 0)
-			return this.L80965A();
-
-		temp = X - 0xE000;
-
-		if (C == 0)
-			return this.L809660();
-	}
-
-	public void L80960F()
-	{
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L809620();
-
-		A = 0x8000;
-		temp = A & [0x031A];[0x031A] |= A;
-	}
-
-	public void L80961A()
-	{
-		A = [0x0318];
-		this.R8096FB_Set031C();
-	}
-
-	public void L809620()
-	{
-		A |= [0x031A];
-		return this.L809635();
-	}
-
-	public void L809625()
-	{
-		A = [0x02F9];
-		this.R809517();
-		return this.L809679();
-	}
-
-	public void L80962F()
-	{
-		this.R809492();
-		return this.L809679();
-	}
-
-	public void L809635()
-	{
-		this.R8094BA();
-		return this.L809679();
-	}
-
-	public void L80963B()
-	{
-		this.R809517();
-		return this.L809679();
-	}
-
-	public void L809641()
-	{
-		this.R8094E2();
-		return this.L809679();
-	}
-
-	public void L809647()
-	{
-		Y = A;
-		return this.L809679();
-	}
-
-	public void L80964A()
-	{
-		this.R809690_APU();
-		return this.L809679();
-	}
-
-	public void L80964F()
-	{
-		this.R809690_APU();
-		A = [0x030B];
-
-		if (Z == 0)
-			return this.L809672();
-
-		return this.L8095C0_Loop();
-	}
-
-	public void L80965A()
-	{
-		this.R809711_Set0402();
-		return this.L8095C0_Loop();
-	}
-
-	public void L809660()
-	{
-		this.R809715();
-		return this.L8095C0_Loop();
-	}
-
-	public void L809666()
-	{
-		A = X;
-		A &= 0x00FF;
-		A &= [0x02FB];
-
-		if (Z == 0)
-			return this.L809672();
-
-		return this.L8095C0_Loop();
-	}
-
-	public void L809672()
-	{
-		Y--;
-		Y--;
-		Y--;
-		Y--;
-		X = 0x0001;
-	}
-
-	public void L809679()
-	{
-		A = X;
-		A &= 0x0FFF;
-
-		if (Z == 0)
-			return this.L809682_Done();
-
-		return this.L8095C0_Loop();
-	}
-
-	public void L809682_Done()
-	{
-		// Table02EB[X + 2] = A;
-		X = Stack.Pop();
-		[0x02ED + X] = A;
-
-		// Table02EB[X] = Y;
-		A = Y;
-		[0x02EB + X] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R80968B_ReadShort()
-	{
-		A = [[0x00] + Y];
-		Y++;
-		Y++;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R809690_APU()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		Stack.Push(X);
-		X = A;
-		Stack.Push(Y);
-		X = [0x00];
-		Stack.Push(X);
-		X = [0x01];
-		Stack.Push(X);
-		X = A;
-		A = [0x030B];
-
-		if (Z == 0)
-			return this.L8096AB();
-
-		A = 0x0001;
-		[0x030B] = A;
-	}
-
-	public void L8096AB()
-	{
-		this.R8097B2_APU();
-		A = [0x02E7];
-		[0x2140] = A;
-		A = [0x02D7];
-		[0x02E7] = A;
-		A = [0x02D9];
-		[0x02D7] = A;
-		A = [0x02DB];
-		[0x02D9] = A;
-		A = [0x02DD];
-		[0x02DB] = A;
-		[0x02DD] = 0;
-		A = [0x02E9];
-		[0x2142] = A;
-		A = [0x02DF];
-		[0x02E9] = A;
-		A = [0x02E1];
-		[0x02DF] = A;
-		A = [0x02E3];
-		[0x02E1] = A;
-		A = [0x02E5];
-		[0x02E3] = A;
-		[0x02E5] = 0;
-		X = Stack.Pop();
-		[0x01] = X;
-		X = Stack.Pop();
-		[0x00] = X;
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8096FB_Set031C()
-	{
-		A &= 0x00FF;
-		[0x031C] = A;
-		A = (A >> 4) | (A << 4);
-		A >>= 1;
-		A >>= 1;
-		A >>= 1;
-		C = 1;
-		A -= [0x031C] - !C;
-		C = 0;
-		A += 0x0100 + C;
-		A &= 0x1F00;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R809711_Set0402()
-	{
-		[0x0402] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R809715()
-	{
-		temp = A - 0xFFF1;
-
-		if (Z == 0)
-			return this.L80971F();
-
-		this.R80973C();
-		return this.L80973B_Done();
-	}
-
-	public void L80971F()
-	{
-		Stack.Push(A);
-		A &= 0xFF00;
-
-		if (Z == 0)
-			return this.L809731();
-
-		A = Stack.Pop();
-		A &= 0x00FF;
-		A ^= 0xFFFF;
-		A &= [0x02F7];
-		return this.L809738();
-	}
-
-	public void L809731()
-	{
-		A = Stack.Pop();
-		A &= 0x00FF;
-		A |= [0x02F7];
-	}
-
-	public void L809738()
-	{
-		[0x02F7] = A;
-	}
-
-	public void L80973B_Done()
-	{
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R80973C()
-	{
-		Stack.Push(X);
-		A = [0x036D];
-		A &= 0x0003;
-		[0x031C] = A;
-		A = [0x0381];
-		A &= 0x0001;
-
-		if (Z == 1)
-			return this.L80975A();
-
-		A = 0x0010;
-	}
-
-	public void L809751()
-	{
-		C = 0;
-		A += [0x031C] + C;
-		[0x031C] = A;
-		return this.L80976D();
-	}
-
-	public void L80975A()
-	{
-		A = 0x000E;
-		[0x0367] = A;
-		this.R94EB88_ReadCartridgeRam();
-		A = [0x2C];
-
-		if (Z == 1)
-			return this.L80976D();
-
-		A = 0x0008;
-		return this.L809751();
-	}
-
-	public void L80976D()
-	{
-		A = [0x150C];
-		A &= 0x0010;
-
-		if (Z == 1)
-			return this.L80977F();
-
-		A = 0x0004;
-		C = 0;
-		A += [0x031C] + C;
-		[0x031C] = A;
-	}
-
-	public void L80977F()
-	{
-		A = [0x031C];
-		temp = A - 0x0018;
-
-		if (C == 0)
-			return this.L80978A();
-
-		A = 0x0000;
-	}
-
-	public void L80978A()
-	{
-		X = A;
-		A = [0x80979A + X];
-		A &= 0x00FF;
-		A |= 0x8000;
-		[0x02F3] = A;
-		X = Stack.Pop();
-		return;
-	}
-
-	public byte[] Table80979A = new byte[]
-	{
-		0x71, 0x77, 0x7D, 0x7E,
-		0x72, 0x78, 0x82, 0x86,
-		0x73, 0x79, 0x80, 0x87,
-		0x74, 0x7A, 0x81, 0x88,
-		0x75, 0x7B, 0x84, 0x7F,
-		0x76, 0x7C, 0x83, 0x85
-	}
-
-
-
-
-
-	public void R8097B2_APU()
-	{
-		P &= ~0x30;
-		[0x0303] = 0;
-		A = [0x030B];
-
-		if (Z == 1)
-			return this.L809801();
-
-		[0x0322] = A;
-		Y = 0x0040;
-		[0x0303] = Y;
-		temp = A - 0x0001;
-
-		if (Z == 0)
-			return this.L8097D2();
-
-		[0x030B]++;
-		A = 0x00FC;
-		return this.L809804();
-	}
-
-	public void L8097D2()
-	{
-		A = [0x030D];
-		Y = 0x1234;
-	}
-
-	public void L8097D8_Loop()
-	{
-		temp = Y - [0x2140];
-
-		if (Z == 0)
-			return this.L8097D8_Loop();
-
-		[0x2140] = A;
-		Y = 0x007F;
-		[0x2142] = Y;
-	}
-
-	public void L8097E6()
-	{
-		temp = A - [0x2140];
-
-		if (Z == 0)
-			return this.L8097E6();
-
-		A = [0x030F];
-		[0x00] = A;
-		A = [0x0310];
-		[0x01] = A;
-		A = 0x007F;
-		X = [0x0307];
-		Y = [0x0309];
-		return this.L80988B();
-	}
-
-	public void L809801()
-	{
-		A = 0x00FE;
-	}
-
-	public void L809804()
-	{
-		[0x2140] = A;
-		[0x2142] = 0;
-		A = X;
-		A--;
-		A <<= 1;
-		X = A;
-		A = [0xBA8010 + X];
-		[0x02FD] = A;
-		X = 0x0000;
-		return this.L809898();
-	}
-
-	public void L80981B()
-	{
-		[0x2142] = X;
-		X = A;
-		A = [0xBA8201 + X];
-		C = 0;
-		A += 0xB900 + C;
-		[0x01] = A;
-		[0x00] = 0;
-		A = [0xBA8203 + X];
-		A++;
-		A >>= 1;
-		[0x02FF] = A;
-		A = [0xBA8205 + x];
-		Y = 0x1234;
-	}
-
-	public void L80983B()
-	{
-		temp = Y - [0x2140];
-
-		if (Z == 0)
-			return this.L80983B();
-
-		[0x2140] = A;
-		[0x030D] = A;
-		Y = 0x007F;
-		[0x2142] = Y;
-	}
-
-	public void L80984C()
-	{
-		temp = A - [0x2140];
-
-		if (Z == 0)
-			return this.L80984C();
-
-		A = [0xBA8200 + X];
-		Y = A;
-		[0x0301] = 0;
-		A = [[0x00] + Y];
-		X = A;
-		A = 0x007F;
-	}
-
-	public void L80985F()
-	{
-		temp = A - [0x2142];
-
-		if (Z == 0)
-			return this.L80985F();
-
-		[0x2140] = X;
-		A = [0x0301];
-		[0x2142] = A;
-		Y++;
-		Y++;
-		Stack.Push(A);
-		A = [[0x00] + Y];
-		X = A;
-		[0x0301]++;
-		A = 0xFF80;
-		temp = A & [0x0301];[0x0301] &= ~A;
-		A = Stack.Pop();
-		[0x030D]++;
-		[0x030D]++;
-		[0x0303]--;
-
-		if (Z == 0)
-			return this.L80988B();
-
-		return this.L8098D1();
-	}
-
-	public void L80988B()
-	{
-		[0x02FF]--;
-
-		if (Z == 0)
-			return this.L80985F();
-
-		X = 0x7FFF;
-	}
-
-	public void L809893()
-	{
-		temp = A - [0x2142];
-
-		if (Z == 0)
-			return this.L809893();
-	}
-
-	public void L809898()
-	{
-		Y = [0x02FD];
-		A = 0xBA00;
-		[0x01] = A;
-		[0x00] = 0;
-		A = [[0x00] + Y];
-
-		if (Z == 1)
-			return this.L8098AE();
-
-		Y++;
-		Y++;
-		[0x02FD] = Y;
-		return this.L80981B();
-	}
-
-	public void L8098AE()
-	{
-		[0x030B] = 0;
-		[0x0305] = 0;
-		A = 0x00FF;
-	}
-
-	public void L8098B7_Loop()
-	{
-		[0x2142] = A;
-	}
-
-	public void L8098BA()
-	{
-		A = [0x2140];
-
-		if (Z == 0)
-			return this.L8098BA();
-
-		A = [0x2142];
-
-		if (Z == 0)
-			return this.L8098BA();
-
-		[0x2142] = A;
-		[0x2140] = A;
-		A = 0x0000;
-		[0x0322] = A;
-		return;
-	}
-
-	public void L8098D1()
-	{
-		[0x0307] = X;
-		[0x0309] = Y;
-		A = [0x00];
-		[0x030F] = A;
-		A = [0x01];
-		[0x0310] = A;
-		A = 0xFFFF;
-		return this.L8098B7_Loop();
-	}
-
-
-
-
-
-
-
-
-	public void R8098E6()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-		A = 0xBBAA;
-		return this.L8098F4();
-	}
-
-	public void L8098EE()
-	{
-		X = 0x00FD;
-		[0x2140] = X;
-	}
-
-	public void L8098F4()
-	{
-		temp = A - [0x2140];
-
-		if (Z == 0)
-			return this.L8098EE();
-
-		P |= 0x20;
-		A = 0xCC;
-		return this.L809925();
-	}
-
-	public void L8098FF()
-	{
-		A = [[0x00] + Y];
-		Y++;
-		A = (A >> 4) | (A << 4);
-		A = 0x00;
-		return this.L809912();
-	}
-
-	public void L809907()
-	{
-		A = (A >> 4) | (A << 4);
-		A = [[0x00] + Y];
-		Y++;
-		A = (A >> 4) | (A << 4);
-	}
-
-	public void L80990C()
-	{
-		temp = A - [0x2140];
-
-		if (Z == 0)
-			return this.L80990C();
-
-		A++;
-	}
-
-	public void L809912()
-	{
-		P &= ~0x20;
-		[0x2140] = A;
-		P |= 0x20;
-		X--;
-
-		if (Z == 0)
-			return this.L809907();
-	}
-
-	public void L80991C()
-	{
-		temp = A - [0x2140];
-
-		if (Z == 0)
-			return this.L80991C();
-	}
-
-	public void L809921()
-	{
-		A += 0x03 + C;
-
-		if (Z == 1)
-			return this.L809921();
-	}
-
-	public void L809925()
-	{
-		Stack.Push(A);
-		P &= ~0x20;
-		A = [[0x00] + Y];
-		Y++;
-		Y++;
-		X = A;
-		A = [[0x00] + Y];
-		Y++;
-		Y++;
-		[0x2142] = A;
-		P |= 0x20;
-		temp = X - 0x0001;
-		A = 0x00;
-		Cpu.ROL();
-		[0x2141] = A;
-		A += 0x7F + C;
-		A = Stack.Pop();
-		[0x2140] = A;
-	}
-
-	public void L809945()
-	{
-		temp = A - [0x2140];
-
-		if (Z == 0)
-			return this.L809945();
-
-
-		if (F.BVS)
-			return this.L8098FF();
-
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R809A94()
-	{
-		Stack.Push(P);
-		P |= 0x20;
-		A = [0x030B];
-
-		if (Z == 0)
-			return this.L809ADF_Done();
-
-		A = [0x0100];
-		temp = A & 0x80;
-
-		if (Z == 0)
-			return this.L809ADF_Done();
-
-		A ^= 0xFF;
-		temp = A & 0x0F;
-
-		if (Z == 0)
-			return this.L809ADF_Done();
-
-		A = [0x026B];
-
-		if (Z == 1)
-			return this.L809ADF_Done();
-
-		A = [0x0269];
-		A++;
-
-		if (Z == 1)
-			return this.L809ADF_Done();
-
-		A--;
-
-		if (Z == 0)
-			return this.L809AE1();
-
-		A = [0x53];
-		temp = A & 0x40;
-
-		if (Z == 1)
-			return this.L809ADF_Done();
-
-		A = [0x0266];
-		temp = A & 0x80;
-
-		if (Z == 1)
-			return this.L809ADF_Done();
-
-		A = 0x3C;
-		[0x0269] = A;
-		A = [0x0268];
-		A &= 0x7F;
-		[0x0268] = A;
-		A = [0x0266];
-		A &= 0x7F;
-		[0x0266] = A;
-		A = [0x63];
-		A &= 0x7F;
-		[0x63] = A;
-	}
-
-	public void L809ADF_Done()
-	{
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L809AE1()
-	{
-		[0x0269]--;
-		A = [0x53];
-		temp = A & 0x40;
-
-		if (Z == 1)
-			return this.L809AF5();
-
-		A = [0x0266];
-		temp = A & 0x80;
-
-		if (Z == 1)
-			return this.L809ADF_Done();
-
-		this.R809B58();
-	}
-
-	public void L809AF5()
-	{
-		A = [0x0266];
-		temp = A & 0x90;
-
-		if (Z == 1)
-			return this.L809ADF_Done();
-
-		[0x0269] = 0;
-		return this.L809ADF_Done();
-	}
-
-
-
-
-
-
-
-
-	public void R809B30()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-		A = [0x030B];
-
-		if (Z == 0)
-			return this.L809B56_Done();
-
-		A = [0x50];
-		temp = A - 0x4080;
-
-		if (Z == 0)
-			return this.L809B56_Done();
-
-		A = [0x58];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L809B56_Done();
-
-		[0x0255] = 0;
-		[0x0257] = 0;
-		A = 0x00FF;
-		temp = A & [0x52];[0x52] |= A;
-		A = 0x8000;
-		temp = A & [0x5A];[0x5A] |= A;
-	}
-
-	public void L809B56_Done()
-	{
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R809B58()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-		this.R80823D_Set0100Flag80();
-		P |= 0x20;
-		A = 0x81;
-		[0x4200] = A;
-		[0x013C] = A;
-		P &= ~0x20;
-		this.R80827B_Clear013CAnd4200Flag10();
-		this.R8082A3_Clear013CAnd4200Flag20();
-		P |= 0x20;
-		[0x49] = 0;
-		[0x4A] = 0;
-		[0x0141] = 0;
-		[0x0154] = 0;
-		P &= ~0x20;
-		[0x0152] = 0;
-		this.R808202_WaitFor014BFlag1();
-		[0x026B] = 0;
-		[0x14CE] = 0;
-		[0x14CC] = 0;
-		A = 0x0002;
-		[0x026D] = A;
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R809BAB_FillTable7800()
-	{
-		Stack.Push(P);
-		P &= ~0x20;
-
-		// Pointer = ((WordA6 / 4) * 3) + FunctionTable809BC4;
-		A = [0xA6];
-		A >>= 1;
-		[0x00] = A;
-		A >>= 1;
-		C = 0;
-		A += [0x00] + C;
-		C = 0;
-		A += 0x9BC4 + C;
-		[0x00] = A;
-
-		// return Pointer(0xEF);
-		P |= 0x20;
-		A = 0xEF;
-		return [(0x0000)]();
-	}
-
-	public byte[] FunctionTable809BC4 = new byte[]
-	{
-		0x8D, 0x01, 0x78,
-		0x8D, 0x05, 0x78,
-		0x8D, 0x09, 0x78,
-		0x8D, 0x0D, 0x78,
-		0x8D, 0x11, 0x78,
-		0x8D, 0x15, 0x78,
-		0x8D, 0x19, 0x78,
-		0x8D, 0x1D, 0x78,
-		0x8D, 0x21, 0x78,
-		0x8D, 0x25, 0x78,
-		0x8D, 0x29, 0x78,
-		0x8D, 0x2D, 0x78,
-		0x8D, 0x31, 0x78,
-		0x8D, 0x35, 0x78,
-		0x8D, 0x39, 0x78,
-		0x8D, 0x3D, 0x78,
-		0x8D, 0x41, 0x78,
-		0x8D, 0x45, 0x78,
-		0x8D, 0x49, 0x78,
-		0x8D, 0x4D, 0x78,
-		0x8D, 0x51, 0x78,
-		0x8D, 0x55, 0x78,
-		0x8D, 0x59, 0x78,
-		0x8D, 0x5D, 0x78,
-		0x8D, 0x61, 0x78,
-		0x8D, 0x65, 0x78,
-		0x8D, 0x69, 0x78,
-		0x8D, 0x6D, 0x78,
-		0x8D, 0x71, 0x78,
-		0x8D, 0x75, 0x78,
-		0x8D, 0x79, 0x78,
-		0x8D, 0x7D, 0x78,
-		0x8D, 0x81, 0x78,
-		0x8D, 0x85, 0x78,
-		0x8D, 0x89, 0x78,
-		0x8D, 0x8D, 0x78,
-		0x8D, 0x91, 0x78,
-		0x8D, 0x95, 0x78,
-		0x8D, 0x99, 0x78,
-		0x8D, 0x9D, 0x78,
-		0x8D, 0xA1, 0x78,
-		0x8D, 0xA5, 0x78,
-		0x8D, 0xA9, 0x78,
-		0x8D, 0xAD, 0x78,
-		0x8D, 0xB1, 0x78,
-		0x8D, 0xB5, 0x78,
-		0x8D, 0xB9, 0x78,
-		0x8D, 0xBD, 0x78,
-		0x8D, 0xC1, 0x78,
-		0x8D, 0xC5, 0x78,
-		0x8D, 0xC9, 0x78,
-		0x8D, 0xCD, 0x78,
-		0x8D, 0xD1, 0x78,
-		0x8D, 0xD5, 0x78,
-		0x8D, 0xD9, 0x78,
-		0x8D, 0xDD, 0x78,
-		0x8D, 0xE1, 0x78,
-		0x8D, 0xE5, 0x78,
-		0x8D, 0xE9, 0x78,
-		0x8D, 0xED, 0x78,
-		0x8D, 0xF1, 0x78,
-		0x8D, 0xF5, 0x78,
-		0x8D, 0xF9, 0x78,
-		0x8D, 0xFD, 0x78,
-		0x8D, 0x01, 0x78,
-		0x8D, 0x05, 0x79,
-		0x8D, 0x09, 0x79,
-		0x8D, 0x0D, 0x79,
-		0x8D, 0x11, 0x79,
-		0x8D, 0x15, 0x79,
-		0x8D, 0x19, 0x79,
-		0x8D, 0x1D, 0x79,
-		0x8D, 0x21, 0x79,
-		0x8D, 0x25, 0x79,
-		0x8D, 0x29, 0x79,
-		0x8D, 0x2D, 0x79,
-		0x8D, 0x31, 0x79,
-		0x8D, 0x35, 0x79,
-		0x8D, 0x39, 0x79,
-		0x8D, 0x3D, 0x79,
-		0x8D, 0x41, 0x79,
-		0x8D, 0x45, 0x79,
-		0x8D, 0x49, 0x79,
-		0x8D, 0x4D, 0x79,
-		0x8D, 0x51, 0x79,
-		0x8D, 0x55, 0x79,
-		0x8D, 0x59, 0x79,
-		0x8D, 0x5D, 0x79,
-		0x8D, 0x61, 0x79,
-		0x8D, 0x65, 0x79,
-		0x8D, 0x69, 0x79,
-		0x8D, 0x6D, 0x79,
-		0x8D, 0x71, 0x79,
-		0x8D, 0x75, 0x79,
-		0x8D, 0x79, 0x79,
-		0x8D, 0x7D, 0x79,
-		0x8D, 0x81, 0x79,
-		0x8D, 0x85, 0x79,
-		0x8D, 0x89, 0x79,
-		0x8D, 0x8D, 0x79,
-		0x8D, 0x91, 0x79,
-		0x8D, 0x95, 0x79,
-		0x8D, 0x99, 0x79,
-		0x8D, 0x9D, 0x79,
-		0x8D, 0xA1, 0x79,
-		0x8D, 0xA5, 0x79,
-		0x8D, 0xA9, 0x79,
-		0x8D, 0xAD, 0x79,
-		0x8D, 0xB1, 0x79,
-		0x8D, 0xB5, 0x79,
-		0x8D, 0xB9, 0x79,
-		0x8D, 0xBD, 0x79,
-		0x8D, 0xC1, 0x79,
-		0x8D, 0xC5, 0x79,
-		0x8D, 0xC9, 0x79,
-		0x8D, 0xCD, 0x79,
-		0x8D, 0xD1, 0x79,
-		0x8D, 0xD5, 0x79,
-		0x8D, 0xD9, 0x79,
-		0x8D, 0xDD, 0x79,
-		0x8D, 0xE1, 0x79,
-		0x8D, 0xE5, 0x79,
-		0x8D, 0xE9, 0x79,
-		0x8D, 0xED, 0x79,
-		0x8D, 0xF1, 0x79,
-		0x8D, 0xF5, 0x79,
-		0x8D, 0xF9, 0x79,
-		0x8D, 0xFD, 0x79,
-		0x28, 0x6B
-	};
-
-
-
-
-
-
-	public void R809D46_InitializeObd1Ram()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-		[0x7A00] = 0;
-		[0x7A02] = 0;
-		[0x7A04] = 0;
-		[0x7A06] = 0;
-		[0x7A08] = 0;
-		[0x7A0A] = 0;
-		[0x7A0C] = 0;
-		[0x7A0E] = 0;
-		[0x7A10] = 0;
-		[0x7A12] = 0;
-		[0x7A14] = 0;
-		[0x7A16] = 0;
-		[0x7A18] = 0;
-		[0x7A1A] = 0;
-		[0x7A1C] = 0;
-		[0x7A1E] = 0;
-		[0xA6] = 0;
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R809D7D()
-	{
-		A = [0x28];
-		A ^= [0x2C];
-		Stack.Push(P);
-		A = [0x28];
-		
-		if (N == 0)
-			return this.L809D9B();
-
-		C = 0;
-		A = [0x26];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x26] = A;
-		A = [0x28];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x28] = A;
-	}
-
-	public void L809D9B()
-	{
-		A = [0x2C];
-		
-		if (N == 0)
-			return this.L809DB4();
-
-		C = 0;
-		A = [0x2A];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x2A] = A;
-		A = [0x2C];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x2C] = A;
-	}
-
-	public void L809DB4()
-	{
-		this.L80860D();
-		P = Stack.Pop();
-		
-		if (N == 0)
-			return this.L809DE4();
-
-		C = 0;
-		A = [0x2E];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x2E] = A;
-		A = [0x30];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x30] = A;
-		A = [0x32];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x32] = A;
-		A = [0x34];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x34] = A;
-	}
-
-	public void L809DE4()
-	{
-		return;
-	}
-
-
-
-
-
-
-
-
-
-	public void R809F0C()
-	{
-		P &= ~0x30;
-		this.R80823D_Set0100Flag80();
-		this.R80A1E2();
-		P &= ~0x30;
-		[0x026D]++;
-		return;
-	}
-
-
-	public void R809F1C()
-	{
-		this.R839443();
-		A = 0x0000;
-		[0x1B0F] = A;
-		[0x035D] = 0;
-		[0x026D]++;
-		return;
-	}
-
-
-
-
-
-
-
-	public void L809F2D()
-	{
-		P &= ~0x30;
-		this.R80823D_Set0100Flag80();
-		[0x026F] = 0;
-		this.R80A237();
-		P &= ~0x30;
-		[0x026D]++;
-		return;
-	}
-
-	public void R80A237()
-	{
-		P &= ~0x30;
-		this.R80A2B5();
-		this.R80A256();
-		this.R839416();
-		this.R8391CD();
-		this.R819E82();
-		this.R81EAB4();
-		this.R80A27F();
-		return;
-	}
-
-	public void R80A256()
-	{
-		X = 0x005C;
-		A = 0xFFFF;
-	}
-
-	public void L80A25C()
-	{
-		[0x117C + X] = A;
-		X--;
-		X--;
-		
-		if (N == 0)
-			return this.L80A25C();
-
-		X = 0x001E;
-	}
-
-	public void L80A266()
-	{
-		A = 0x0000;
-		[0x1A81 + X] = A;
-		X--;
-		X--;
-		
-		if (N == 0)
-			return this.L80A266();
-
-		X = 0x001E;
-	}
-
-	public void L80A273()
-	{
-		A = 0x0000;
-		[0x7E3963 + X] = A;
-		X--;
-		X--;
-		
-		if (N == 0)
-			return this.L80A273();
-
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R80A27F()
-	{
-		P |= 0x20;
-		P &= ~0x10;
-		X = 0x8000;
-		[0x3E] = X;
-		A = 0x9D;
-		[0x40] = A;
-		X = 0x6B38;
-		[0x43] = X;
-		A = 0x7E;
-		[0x45] = A;
-		this.L808888();
-		P &= ~0x30;
-		A = 0x8000;
-		[0x01] = A;
-		A = 0xA2AB;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		return this.L80A2B4_Done();
-	}
-
-	public void L80A2B4_Done()
-	{
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R80A2B5()
-	{
-		Stack.Push(P);
-		P |= 0x20;
-		A = 0x8F;
-		[0x0100] = A;
-		A = 0x01;
-		[0x0101] = A;
-		A = 0x09;
-		[0x0104] = A;
-		A = 0x00;
-		[0x0105] = A;
-		A = 0x01;
-		[0x0106] = A;
-		A = 0x09;
-		[0x0107] = A;
-		A = 0x10;
-		[0x0108] = A;
-		A = 0x00;
-		[0x0109] = A;
-		A = 0x44;
-		[0x010A] = A;
-		A = 0x01;
-		[0x010B] = A;
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R80E680()
-	{
-		A = 0x000F;
-		[0x7E5BCF] = A;
-		A = 0x0000;
-		[0x7E5BD1] = A;
-		A = 0x000F;
-		[0x7E5BD3] = A;
-		A = 0x0000;
-		[0x7E5BD5] = A;
-		A = 0x0008;
-		[0x7E5BD7] = A;
-		A = 0x0000;
-		[0x7E5BD9] = A;
-		A = 0x0000;
-		[0x7E5BC7] = A;
-		A = 0x0000;
-		[0x7E5BC9] = A;
-		A = [0x14D6];
-		A <<= 1;
-		A <<= 1;
-		A <<= 1;
-		X = A;
-		A = [0x80F233 + X];
-		[0x7E5BE3] = A;
-		A = [0x80F235 + X];
-		[0x7E5BE5] = A;
-		A = [0x80F237 + X];
-		[0x7E5BE7] = A;
-		A = [0x80F239 + X];
-		[0x7E5BE9] = A;
-		A = 0x0000;
-		[0x7E5BCB] = A;
-		[0x7E5BCD] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-
-	public void R80F159()
-	{
-		Stack.Push(P);
-		Stack.Push(X);
-		P &= ~0x30;
-		[0x12] = 0;
-		[0x14] = 0;
-		[0x22] = 0;
-		A = 0x0080;
-		[0x24] = A;
-	}
-
-	public void L80F168()
-	{
-		A = [0x12];
-		[0x16] = A;
-		A = [0x14];
-		[0x18] = A;
-		A = [0x16];
-		[0x26] = A;
-		A = [0x18];
-		[0x28] = A;
-		A = [0x12];
-		[0x2A] = A;
-		A = [0x14];
-		[0x2C] = A;
-		this.R809D7D();
-		A = [0x30];
-		[0x16] = A;
-		A = [0x32];
-		[0x18] = A;
-		A = [0x16];
-		[0x2A] = A;
-		A = [0x18];
-		[0x2C] = A;
-		A = [0x7E39A3];
-		[0x2E] = A;
-		A = [0x7E39A5];
-		[0x30] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L8086DC();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2A];
-		[0x16] = A;
-		A = [0x2C];
-		[0x18] = A;
-		A = [0x16];
-		A >>= 1;
-		A ^= 0xFFFF;
-		A++;
-		X = [0x22];
-		[0x7F0412 + X] = A;
-		A = [0x12];
-		[0x16] = A;
-		A = [0x14];
-		[0x18] = A;
-		A = [0x16];
-		[0x26] = A;
-		A = [0x18];
-		[0x28] = A;
-		A = [0x12];
-		[0x2A] = A;
-		A = [0x14];
-		[0x2C] = A;
-		this.R809D7D();
-		A = [0x30];
-		[0x16] = A;
-		A = [0x32];
-		[0x18] = A;
-		A = [0x16];
-		[0x2A] = A;
-		A = [0x18];
-		[0x2C] = A;
-		A = [0x7E39CB];
-		[0x2E] = A;
-		A = [0x7E39CD];
-		[0x30] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L8086DC();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2A];
-		[0x16] = A;
-		A = [0x2C];
-		[0x18] = A;
-		A = [0x16];
-		A >>= 1;
-		A ^= 0xFFFF;
-		A++;
-		X = [0x22];
-		[0x7F0412 + X] = A;
-		C = 0;
-		A = [0x12];
-		A += 0x4000 + C;
-		[0x12] = A;
-		A = [0x14];
-		A += 0x0000 + C;
-		[0x14] = A;
-		A = [0x22];
-		C = 0;
-		A += 0x0002 + C;
-		[0x22] = A;
-		[0x24]--;
-		
-		if (Z == 1)
-			return this.L80F230();
-
-		return this.L80F168();
-	}
-
-	public void L80F230()
-	{
-		X = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	// Bank 0x81
-	public void R819E82()
-	{
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		this.L819EA5();
-		this.L819EA6();
-		this.L819F28();
-		this.L819F97();
-		this.L81A0A5();
-		this.L81A14A();
-		this.L81A306();
-		this.L81A544();
-		this.L81A7D6();
-		this.L81A886();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L819EA5()
-	{
-		return;
-	}
-
-	public void L819EA6()
-	{
-		X = 0x003E;
-	}
-
-	public void L819EA9()
-	{
-		A = 0xFFFF;
-		[0x001826 + X] = A;
-		A = 0xFFFF;
-		[0x001866 + X] = A;
-		A = 0xFFFF;
-		[0x7E39F3 + X] = A;
-		A = 0xFFFF;
-		[0x7E3A33 + X] = A;
-		A = 0x0000;
-		[0x001926 + X] = A;
-		A = 0x0000;
-		[0x7E3A73 + X] = A;
-		A = 0x0000;
-		[0x7E3AB3 + X] = A;
-		A = 0x0000;
-		[0x7E3AF3 + X] = A;
-		A = 0x8000;
-		[0x7E3B33 + X] = A;
-		A = 0x0000;
-		[0x7E3B73 + X] = A;
-		A = 0x8000;
-		[0x7E3BB3 + X] = A;
-		A = 0x0000;
-		[0x7E3BF3 + X] = A;
-		A = 0x8000;
-		[0x7E3C33 + X] = A;
-		A = 0x0000;
-		[0x7E3C73 + X] = A;
-		A = 0x0000;
-		[0x7E3CB3 + X] = A;
-		A = 0x0000;
-		[0x7E3CF3 + X] = A;
-		A = 0xFFFF;
-		[0x7E3D33 + X] = A;
-		X--;
-		X--;
-		
-		if (N == 1)
-			return this.L819F27();
-
-		return this.L819EA9();
-	}
-
-	public void L819F27()
-	{
-		return;
-	}
-
-	public void L819F28()
-	{
-		this.L81AB0D();
-		A = [0x0B3A];
-		A <<= 1;
-		C = 0;
-		A += [0x00] + C;
-		[0x00] = A;
-		A = 0x0000;
-		[0x1966] = A;
-		A = [[0x00]];
-		[0x1968] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0010 + C;
-		[0x00] = A;
-		A = [0x0B3A];
-		A <<= 1;
-		[0x1AA3] = A;
-		A = [0x00];
-		C = 1;
-		A -= [0x1AA3] - !C;
-		[0x00] = A;
-		A = 0x0000;
-		[0x196A] = A;
-		A = 0x0000;
-		[0x196C] = A;
-		A = [[0x00]];
-		[0x196E] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x1970] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x1972] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x1974] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		return;
-	}
-
-	public void L819F97()
-	{
-		this.L81AB40();
-		A = [[0x00]];
-		[0x1AA1] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		Y = [0x1AA1];
-		X = 0x0000;
-		A = [0x0B38];
-		A <<= 1;
-		C = 0;
-		A += [0x00] + C;
-		[0x00] = A;
-	}
-
-	public void L819FB6()
-	{
-		A = [[0x00]];
-		[0x7E3A33 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0010 + C;
-		[0x00] = A;
-		A = 0x0000;
-		[0x7E39F3 + X] = A;
-		X++;
-		X++;
-		Y--;
-		
-		if (Z == 1)
-			return this.L819FD3();
-
-		return this.L819FB6();
-	}
-
-	public void L819FD3()
-	{
-		A = [0x0B38];
-		A <<= 1;
-		[0x1AA3] = A;
-		A = [0x00];
-		C = 1;
-		A -= [0x1AA3] - !C;
-		[0x00] = A;
-		Y = [0x1AA1];
-		X = 0x0000;
-	}
-
-	public void L819FE8()
-	{
-		A = [[0x00]];
-		[0x7E3AB3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3B33 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3BB3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3C33 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3CB3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = 0x0000;
-		[0x7E3A73 + X] = A;
-		[0x7E3AF3 + X] = A;
-		[0x7E3B73 + X] = A;
-		[0x7E3BF3 + X] = A;
-		[0x7E3C73 + X] = A;
-		X++;
-		X++;
-		Y--;
-		
-		if (Z == 1)
-			return this.L81A04D();
-
-		return this.L819FE8();
-	}
-
-	public void L81A04D()
-	{
-		Y = [0x1AA1];
-		X = 0x0000;
-	}
-
-	public void L81A053()
-	{
-		A = [[0x00]];
-		A <<= 1;
-		[0x001766 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		A <<= 1;
-		[0x0017A6 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3CF3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		A <<= 1;
-		[0x7E3D33 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x001726 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		X++;
-		X++;
-		Y--;
-		
-		if (Z == 1)
-			return this.L81A0A4();
-
-		return this.L81A053();
-	}
-
-	public void L81A0A4()
-	{
-		return;
-	}
-
-	public void L81A0A5()
-	{
-		this.L81AB23();
-		Y = 0x0040;
-		X = 0x0000;
-	}
-
-	public void L81A0AE()
-	{
-		A = 0x0000;
-		[0x7E49C3 + X] = A;
-		A = [[0x00]];
-		[0x7E4CC3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = 0x0000;
-		[0x7E4FC3 + X] = A;
-		A = [[0x00]];
-		[0x7E52C3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = 0x0000;
-		[0x7E55C3 + X] = A;
-		A = [[0x00]];
-		[0x7E58C3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E46C3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [0x7E46C3 + X];
-		C = 0;
-		A += 0x0001 + C;
-		[0x7E46C3 + X] = A;
-		A = [[0x00]];
-		[0x7E43C3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		X++;
-		X++;
-		Y--;
-		
-		if (Z == 1)
-			return this.L81A11D();
-
-		return this.L81A0AE();
-	}
-
-	public void L81A11D()
-	{
-		A = [0x14D6];
-		A <<= 1;
-		C = 0;
-		A += [0x00] + C;
-		[0x00] = A;
-		Y = 0x0040;
-		X = 0x0000;
-	}
-
-	public void L81A12C()
-	{
-		A = 0x0000;
-		[0x7E3DC3 + X] = A;
-		A = [[0x00]];
-		[0x7E40C3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0022 + C;
-		[0x00] = A;
-		X++;
-		X++;
-		Y--;
-		
-		if (Z == 1)
-			return this.L81A149();
-
-		return this.L81A12C();
-	}
-
-	public void L81A149()
-	{
-		return;
-	}
-
-	public void L81A14A()
-	{
-		Y = 0x00F8;
-		X = 0x0000;
-		this.L81A1B4();
-		X = 0x0002;
-		this.L81A1B4();
-		X = 0x0004;
-		this.L81A1B4();
-		X = 0x0006;
-		this.L81A1B4();
-		X = 0x0008;
-		this.L81A1B4();
-		X = 0x000A;
-		this.L81A1B4();
-		X = 0x000C;
-		this.L81A1B4();
-		X = 0x000E;
-		this.L81A1B4();
-		X = 0x0010;
-		this.L81A1B4();
-		X = 0x0012;
-		this.L81A1B4();
-		X = 0x0014;
-		this.L81A1B4();
-		X = 0x0016;
-		this.L81A1B4();
-		X = 0x0018;
-		this.L81A1B4();
-		X = 0x001A;
-		this.L81A1B4();
-		X = 0x001C;
-		this.L81A1B4();
-		X = 0x001E;
-		this.L81A1B4();
-		X = 0x0020;
-		this.L81A1B4();
-		return;
-	}
-
-	public void L81A1B4()
-	{
-		Stack.Push(Y);
-		A = [0x81A2E4 + X];
-		[0x01] = A;
-		A = [0x81A2C2 + X];
-		[0x00] = A;
-		A = [[0x00]];
-		[0x1AA1] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [0x1AA1];
-		[0x1AA3] = A;
-	}
-
-	public void L81A1D4()
-	{
-		A = [0x0381];
-		
-		if (Z == 1)
-			return this.L81A1DF();
-
-		A--;
-		
-		if (Z == 1)
-			return this.L81A202();
-
-		A--;
-		
-		if (Z == 1)
-			return this.L81A225();
-
-	}
-
-	public void L81A1DF()
-	{
-		A = [0x00];
-		C = 0;
-		A += 0x0000 + C;
-		[0x00] = A;
-		Stack.Push(X);
-		X = Y;
-		A = 0x0000;
-		[0x7E3DC3 + X] = A;
-		A = [[0x00]];
-		[0x7E40C3 + X] = A;
-		X = Stack.Pop();
-		A = [0x00];
-		C = 0;
-		A += 0x0006 + C;
-		[0x00] = A;
-		return this.L81A248();
-	}
-
-	public void L81A202()
-	{
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		Stack.Push(X);
-		X = Y;
-		A = 0x0000;
-		[0x7E3DC3 + X] = A;
-		A = [[0x00]];
-		[0x7E40C3 + X] = A;
-		X = Stack.Pop();
-		A = [0x00];
-		C = 0;
-		A += 0x0004 + C;
-		[0x00] = A;
-		return this.L81A248();
-	}
-
-	public void L81A225()
-	{
-		A = [0x00];
-		C = 0;
-		A += 0x0004 + C;
-		[0x00] = A;
-		Stack.Push(X);
-		X = Y;
-		A = 0x0000;
-		[0x7E3DC3 + X] = A;
-		A = [[0x00]];
-		[0x7E40C3 + X] = A;
-		X = Stack.Pop();
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		return this.L81A248();
-	}
-
-	public void L81A248()
-	{
-		Y++;
-		Y++;
-		[0x1AA1]--;
-		
-		if (Z == 1)
-			return this.L81A252();
-
-		return this.L81A1D4();
-	}
-
-	public void L81A252()
-	{
-		Y = Stack.Pop();
-		A = [0x1AA3];
-		[0x1AA1] = A;
-	}
-
-	public void L81A259()
-	{
-		Stack.Push(X);
-		X = Y;
-		A = 0x0000;
-		[0x7E49C3 + X] = A;
-		A = [[0x00]];
-		[0x7E4CC3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = 0x0000;
-		[0x7E4FC3 + X] = A;
-		A = [[0x00]];
-		[0x7E52C3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = 0x0000;
-		[0x7E55C3 + X] = A;
-		A = [[0x00]];
-		[0x7E58C3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E46C3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E43C3 + X] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		X = Stack.Pop();
-		Y++;
-		Y++;
-		[0x1AA1]--;
-		
-		if (Z == 1)
-			return this.L81A2C1();
-
-		return this.L81A259();
-	}
-
-	public void L81A2C1()
-	{
-		return;
-	}
-
-	public void L81A306()
-	{
-		this.L81AAF7();
-		A = [[0x00]];
-		[0x7E3997] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3999] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E399B] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E399D] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E399F] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39A1] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39A3] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39A5] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39A7] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39A9] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		C = 0;
-		A = [0x7E3997];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E39AB] = A;
-		A = [0x7E3999];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E39AD] = A;
-		C = 0;
-		A = [0x7E399B];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E39AF] = A;
-		A = [0x7E399D];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E39B1] = A;
-		C = 0;
-		A = [0x7E399F];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E39B3] = A;
-		A = [0x7E39A1];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E39B5] = A;
-		C = 0;
-		A = [0x7E39A3];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E39B7] = A;
-		A = [0x7E39A5];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E39B9] = A;
-		C = 0;
-		A = [0x7E39A7];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E39BB] = A;
-		A = [0x7E39A9];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E39BD] = A;
-		A = [[0x00]];
-		[0x7E39BF] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39C1] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39C3] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39C5] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39C7] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39C9] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39CB] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39CD] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39CF] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39D1] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		C = 0;
-		A = [0x7E39BF];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E39D3] = A;
-		A = [0x7E39C1];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E39D5] = A;
-		C = 0;
-		A = [0x7E39C3];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E39D7] = A;
-		A = [0x7E39C5];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E39D9] = A;
-		C = 0;
-		A = [0x7E39C7];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E39DB] = A;
-		A = [0x7E39C9];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E39DD] = A;
-		C = 0;
-		A = [0x7E39CB];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E39DF] = A;
-		A = [0x7E39CD];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E39E1] = A;
-		C = 0;
-		A = [0x7E39CF];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E39E3] = A;
-		A = [0x7E39D1];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E39E5] = A;
-		return;
-	}
-
-	public void L81A544()
-	{
-		this.L81AB70();
-		A = [[0x00]];
-		[0x7E3D73] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D75] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D77] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D79] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D7B] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D7D] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D7F] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D81] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D83] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D85] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D9B] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D9D] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3D9F] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3DA1] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3DA3] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3DA5] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3DA7] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3DA9] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3DAB] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E3DAD] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x001500] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x001506] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39EB] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39ED] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39EF] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		A = [[0x00]];
-		[0x7E39F1] = A;
-		A = [0x00];
-		C = 0;
-		A += 0x0002 + C;
-		[0x00] = A;
-		C = 0;
-		A = [0x7E3D73];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E3D87] = A;
-		A = [0x7E3D75];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E3D89] = A;
-		C = 0;
-		A = [0x7E3D77];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E3D8B] = A;
-		A = [0x7E3D79];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E3D8D] = A;
-		C = 0;
-		A = [0x7E3D7B];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E3D8F] = A;
-		A = [0x7E3D7D];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E3D91] = A;
-		C = 0;
-		A = [0x7E3D7F];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E3D93] = A;
-		A = [0x7E3D81];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E3D95] = A;
-		C = 0;
-		A = [0x7E3D83];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E3D97] = A;
-		A = [0x7E3D85];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E3D99] = A;
-		C = 0;
-		A = [0x7E3D9B];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E3DAF] = A;
-		A = [0x7E3D9D];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E3DB1] = A;
-		C = 0;
-		A = [0x7E3D9F];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E3DB3] = A;
-		A = [0x7E3DA1];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E3DB5] = A;
-		C = 0;
-		A = [0x7E3DA3];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E3DB7] = A;
-		A = [0x7E3DA5];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E3DB9] = A;
-		C = 0;
-		A = [0x7E3DA7];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E3DBB] = A;
-		A = [0x7E3DA9];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E3DBD] = A;
-		C = 0;
-		A = [0x7E3DAB];
-		A ^= 0xFFFF;
-		A += 0x0001 + C;
-		[0x7E3DBF] = A;
-		A = [0x7E3DAD];
-		A ^= 0xFFFF;
-		A += 0x0000 + C;
-		[0x7E3DC1] = A;
-		return;
-	}
-
-	public void L81A7D6()
-	{
-		A = 0x0000;
-		[0x1AA1] = A;
-		A = 0x0080;
-		[0x1AA3] = A;
-		A = [0x1AA1];
-		[0x2A] = A;
-		A = [0x1AA3];
-		[0x2C] = A;
-		A = [0x1968];
-		[0x2E] = A;
-		A = 0x0000;
-		[0x30] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L8086DC();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2A];
-		[0x1AA1] = A;
-		A = [0x2C];
-		[0x1AA3] = A;
-		A = [0x1966];
-		Stack.Push(A);
-		A = [0x1968];
-		[0x1966] = A;
-		A = Stack.Pop();
-		[0x1968] = A;
-		A = [0x1966];
-		[0x26] = A;
-		A = [0x1968];
-		[0x28] = A;
-		A = [0x1AA1];
-		[0x2A] = A;
-		A = [0x1AA3];
-		[0x2C] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L80860D();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2E];
-		[0x1966] = A;
-		A = [0x30];
-		[0x1968] = A;
-		X = 0x00F8;
-	}
-
-	public void L81A83F()
-	{
-		A = [0x7E3DC3 + X];
-		Stack.Push(A);
-		A = [0x7E40C3 + X];
-		[0x7E3DC3 + X] = A;
-		A = Stack.Pop();
-		[0x7E40C3 + X] = A;
-		A = [0x7E3DC3 + X];
-		[0x26] = A;
-		A = [0x7E40C3 + X];
-		[0x28] = A;
-		A = [0x1AA1];
-		[0x2A] = A;
-		A = [0x1AA3];
-		[0x2C] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L80860D();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2E];
-		[0x7E3DC3 + X] = A;
-		A = [0x30];
-		[0x7E40C3 + X] = A;
-		X++;
-		X++;
-		temp = X - 0x02A2;
-		
-		if (Z == 1)
-			return this.L81A885();
-
-		return this.L81A83F();
-	}
-
-	public void L81A885()
-	{
-		return;
-	}
-
-	public void L81A886()
-	{
-		A = 0x0000;
-		[0x1AA1] = A;
-		A = 0x0080;
-		[0x1AA3] = A;
-		A = [0x1AA1];
-		[0x2A] = A;
-		A = [0x1AA3];
-		[0x2C] = A;
-		A = [0x7E3A33];
-		[0x2E] = A;
-		A = 0x0000;
-		[0x30] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L8086DC();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2A];
-		[0x1AA1] = A;
-		A = [0x2C];
-		[0x1AA3] = A;
-		Y = 0x0020;
-		X = 0x0000;
-	}
-
-	public void L81A8BF()
-	{
-		A = [0x7E3A33 + X];
-		
-		if (N == 1)
-			return this.L81A901();
-
-		A = [0x7E39F3 + X];
-		Stack.Push(A);
-		A = [0x7E3A33 + X];
-		[0x7E39F3 + X] = A;
-		A = Stack.Pop();
-		[0x7E3A33 + X] = A;
-		A = [0x7E39F3 + X];
-		[0x26] = A;
-		A = [0x7E3A33 + X];
-		[0x28] = A;
-		A = [0x1AA1];
-		[0x2A] = A;
-		A = [0x1AA3];
-		[0x2C] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L80860D();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2E];
-		[0x7E39F3 + X] = A;
-		A = [0x30];
-		[0x7E3A33 + X] = A;
-	}
-
-	public void L81A901()
-	{
-		A = [0x7E39F3 + X];
-		[0x001826 + X] = A;
-		A = [0x7E3A33 + X];
-		[0x001866 + X] = A;
-		A = [0x7E39F3 + X];
-		[0x0018A6 + X] = A;
-		A = [0x7E3A33 + X];
-		[0x0018E6 + X] = A;
-		A = [0x7E3A73 + X];
-		Stack.Push(A);
-		A = [0x7E3AB3 + X];
-		[0x7E3A73 + X] = A;
-		A = Stack.Pop();
-		[0x7E3AB3 + X] = A;
-		A = [0x7E3A73 + X];
-		[0x26] = A;
-		A = [0x7E3AB3 + X];
-		[0x28] = A;
-		A = [0x1AA1];
-		[0x2A] = A;
-		A = [0x1AA3];
-		[0x2C] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L80860D();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2E];
-		[0x7E3A73 + X] = A;
-		A = [0x30];
-		[0x7E3AB3 + X] = A;
-		A = [0x7E3B33 + X];
-		
-		if (N == 1)
-			return this.L81A9A2();
-
-		A = [0x7E3AF3 + X];
-		Stack.Push(A);
-		A = [0x7E3B33 + X];
-		[0x7E3AF3 + X] = A;
-		A = Stack.Pop();
-		[0x7E3B33 + X] = A;
-		A = [0x7E3AF3 + X];
-		[0x26] = A;
-		A = [0x7E3B33 + X];
-		[0x28] = A;
-		A = [0x1AA1];
-		[0x2A] = A;
-		A = [0x1AA3];
-		[0x2C] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L80860D();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2E];
-		[0x7E3AF3 + X] = A;
-		A = [0x30];
-		[0x7E3B33 + X] = A;
-		return this.L81A9AF();
-	}
-
-	public void L81A9A2()
-	{
-		temp = A - 0x8000;
-		
-		if (Z == 1)
-			return this.L81A9AF();
-
-		A = [0x7E3B33 + X];
-		[0x7E3AF3 + X] = A;
-	}
-
-	public void L81A9AF()
-	{
-		A = [0x7E3BB3 + X];
-		
-		if (N == 1)
-			return this.L81A9F4();
-
-		A = [0x7E3B73 + X];
-		Stack.Push(A);
-		A = [0x7E3BB3 + X];
-		[0x7E3B73 + X] = A;
-		A = Stack.Pop();
-		[0x7E3BB3 + X] = A;
-		A = [0x7E3B73 + X];
-		[0x26] = A;
-		A = [0x7E3BB3 + X];
-		[0x28] = A;
-		A = [0x1AA1];
-		[0x2A] = A;
-		A = [0x1AA3];
-		[0x2C] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L80860D();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2E];
-		[0x7E3B73 + X] = A;
-		A = [0x30];
-		[0x7E3BB3 + X] = A;
-		return this.L81AA01();
-	}
-
-	public void L81A9F4()
-	{
-		temp = A - 0x8000;
-		
-		if (Z == 1)
-			return this.L81AA01();
-
-		A = [0x7E3BB3 + X];
-		[0x7E3B73 + X] = A;
-	}
-
-	public void L81AA01()
-	{
-		A = [0x7E3C33 + X];
-		
-		if (N == 1)
-			return this.L81AA46();
-
-		A = [0x7E3BF3 + X];
-		Stack.Push(A);
-		A = [0x7E3C33 + X];
-		[0x7E3BF3 + X] = A;
-		A = Stack.Pop();
-		[0x7E3C33 + X] = A;
-		A = [0x7E3BF3 + X];
-		[0x26] = A;
-		A = [0x7E3C33 + X];
-		[0x28] = A;
-		A = [0x1AA1];
-		[0x2A] = A;
-		A = [0x1AA3];
-		[0x2C] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L80860D();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2E];
-		[0x7E3BF3 + X] = A;
-		A = [0x30];
-		[0x7E3C33 + X] = A;
-		return this.L81AA53();
-	}
-
-	public void L81AA46()
-	{
-		temp = A - 0x8000;
-		
-		if (Z == 1)
-			return this.L81AA53();
-
-		A = [0x7E3C33 + X];
-		[0x7E3BF3 + X] = A;
-	}
-
-	public void L81AA53()
-	{
-		A = [0x7E3CB3 + X];
-		
-		if (N == 1)
-			return this.L81AA98();
-
-		A = [0x7E3C73 + X];
-		Stack.Push(A);
-		A = [0x7E3CB3 + X];
-		[0x7E3C73 + X] = A;
-		A = Stack.Pop();
-		[0x7E3CB3 + X] = A;
-		A = [0x7E3C73 + X];
-		[0x26] = A;
-		A = [0x7E3CB3 + X];
-		[0x28] = A;
-		A = [0x1AA1];
-		[0x2A] = A;
-		A = [0x1AA3];
-		[0x2C] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L80860D();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2E];
-		[0x7E3C73 + X] = A;
-		A = [0x30];
-		[0x7E3CB3 + X] = A;
-		return this.L81AAA5();
-	}
-
-	public void L81AA98()
-	{
-		temp = A - 0x8000;
-		
-		if (Z == 1)
-			return this.L81AAA5();
-
-		A = [0x7E3CB3 + X];
-		[0x7E3C73 + X] = A;
-	}
-
-	public void L81AAA5()
-	{
-		X++;
-		X++;
-		Y--;
-		
-		if (Z == 1)
-			return this.L81AAAD();
-
-		return this.L81A8BF();
-	}
-
-	public void L81AAAD()
-	{
-		X = 0x0000;
-	}
-
-	public void L81AAB0()
-	{
-		A = [0x7E3DC3 + X];
-		Stack.Push(A);
-		A = [0x7E40C3 + X];
-		[0x7E3DC3 + X] = A;
-		A = Stack.Pop();
-		[0x7E40C3 + X] = A;
-		A = [0x7E3DC3 + X];
-		[0x26] = A;
-		A = [0x7E40C3 + X];
-		[0x28] = A;
-		A = [0x1AA1];
-		[0x2A] = A;
-		A = [0x1AA3];
-		[0x2C] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L80860D();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		A = [0x2E];
-		[0x7E3DC3 + X] = A;
-		A = [0x30];
-		[0x7E40C3 + X] = A;
-		X++;
-		X++;
-		temp = X - 0x0080;
-		
-		if (Z == 1)
-			return this.L81AAF6();
-
-		return this.L81AAB0();
-	}
-
-	public void L81AAF6()
-	{
-		return;
-	}
-
-	public void L81AAF7()
-	{
-		Stack.Push(X);
-		A = [0x0381];
-		A <<= 1;
-		C = 0;
-		A += [0x0381] + C;
-		X = A;
-		A = [0xAB2F + X];
-		[0x01] = A;
-		A = [0xAB2E + X];
-		[0x00] = A;
-		X = Stack.Pop();
-		return;
-	}
-
-	public void L81AB0D()
-	{
-		Stack.Push(X);
-		A = [0x0381];
-		A <<= 1;
-		C = 0;
-		A += [0x0381] + C;
-		X = A;
-		A = [0xAB38 + X];
-		[0x01] = A;
-		A = [0xAB37 + X];
-		[0x00] = A;
-		X = Stack.Pop();
-		return;
-	}
-
-	public void L81AB23()
-	{
-		A = 0x8100;
-		[0x01] = A;
-		A = 0xACE1;
-		[0x00] = A;
-		return;
-	}
-
-	public void L81AB40()
-	{
-		Stack.Push(X);
-		A = [0x14D6];
-		A <<= 1;
-		C = 0;
-		A += [0x14D6] + C;
-		X = A;
-		A = [0x81AB89 + X];
-		[0x01] = A;
-		A = [0x81AB88 + X];
-		[0x00] = A;
-		X = Stack.Pop();
-		return;
-	}
-
-	public void L81AB70()
-	{
-		Stack.Push(X);
-		A = [0x14D6];
-		A <<= 1;
-		C = 0;
-		A += [0x14D6] + C;
-		X = A;
-		A = [0x81ABEF + X];
-		[0x01] = A;
-		A = [0x81ABEE + X];
-		[0x00] = A;
-		X = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void L81E739()
-	{
-		Stack.Push(B);
-		this.L81E741();
-		B = Stack.Pop();
-		return this.L81E765();
-	}
-
-	public void L81E741()
-	{
-		A = [0x14D6];
-		temp = A - 0x0011;
-
-		if (N == 1)
-			return this.L81E74B();
-	}
-
-	public void L81E749()
-	{
-		return this.L81E749();
-	}
-
-	public void L81E74B()
-	{
-		A <<= 1;
-		A += [0x14D6] + C;
-		X = A;
-		A = [0x81E76D + X];
-		[0x0F] = A;
-		P |= 0x20;
-		A = [0x81E76F + X];
-		[0x11] = A;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		return [[0x000F]]();    //24-Bit Address
-	}
-
-
-
-
-
-
-
-
-	public void L81E765()
-	{
-		this.R838000();
-		return this.L80A0ED();
-	}
-
-
-
-
-
-
-
-
-
-	public void R81EAB4()
-	{
-		Stack.Push(B);
-		this.L81EABC();
-		B = Stack.Pop();
-		return this.L81EAE0();
-	}
-
-	public void L81EABC()
-	{
-		A = [0x14D6];
-		temp = A - 0x0011;
-		
-		if (N == 1)
-			return this.L81EAC6();
-
-	}
-
-	public void L81EAC4()
-	{
-		return this.L81EAC4();
-	}
-
-	public void L81EAC6()
-	{
-		A <<= 1;
-		A += [0x14D6] + C;
-		X = A;
-		A = [0x81EAE5 + X];
-		[0x0F] = A;
-		P |= 0x20;
-		A = [0x81EAE7 + X];
-		[0x11] = A;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		return [[0x000F]]();	//24-Bit Address
-	}
-
-	public void L81EAE0()
-	{
-		this.R80F159();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void L8286B6()
-	{
-		Stack.Push(P);
-		Stack.Push(B);
-		P |= 0x30;
-		A = [0xA5];
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x30;
-		A = [0xB4];
-		A <<= 1;
-		Y = A;
-		A = [(0xA3) + Y];
-		C = 0;
-		A += [0xA3] + C;
-		Y = A;
-		A = [0x0000 + Y];
-
-		if (N == 0)
-			return this.L8286E8();
-
-		temp = A - 0xFFFE;
-
-		if (Z == 1)
-			return this.L8286DC();
-
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L8286E2();
-
-		return this.L8286E8();
-	}
-
-	public void L8286DC()
-	{
-		this.L828875();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L8286E2()
-	{
-		this.L828927();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L8286E8()
-	{
-		[0xA1] = A;
-		A = [0xA6];
-		A >>= 1;
-		A >>= 1;
-		[0x9E] = A;
-		temp = A - 0x0080;
-
-		if (C == 1)
-			return this.L828712();
-
-		C = 0;
-		A += [0xA1] + C;
-		temp = A - 0x0080;
-
-		if (C == 1)
-			return this.L828703();
-
-		A <<= 1;
-		A <<= 1;
-		[0xA6] = A;
-		return this.L828715();
-	}
-
-	public void L828703()
-	{
-		A = 0x0080;
-		C = 1;
-		A -= [0x9E] - !C;
-		[0xA1] = A;
-		A = 0x0200;
-		[0xA6] = A;
-		return this.L828715();
-	}
-
-	public void L828712()
-	{
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L828715()
-	{
-		A = [0x007FF6];
-		A &= 0xFF00;
-		A |= [0x9E];
-		X = A;
-		Y++;
-		Y++;
-	}
-
-	public void L828721()
-	{
-		A = X;
-		[0x007FF6] = A;
-		A = [0x0000 + Y];
-
-		if (N == 0)
-			return this.L82873B();
-
-		C = 0;
-		A += [0xB0] + C;
-		[0x007FF0] = A;
-		A |= 0x0200;
-		[0x007FF3] = A;
-		return this.L828749();
-	}
-
-	public void L82873B()
-	{
-		C = 0;
-		A += [0xB0] + C;
-		[0x007FF0] = A;
-		A &= 0xFDFF;
-		[0x007FF3] = A;
-	}
-
-	public void L828749()
-	{
-		C = 0;
-		A = [0x0002 + Y];
-		A += [0xB2] + C;
-		[0x007FF1] = A;
-		A = [0x0003 + Y];
-		A &= [0xA8];
-		A |= [0xAA];
-		[0x007FF2] = A;
-		C = 0;
-		A = Y;
-		A += 0x0005 + C;
-		Y = A;
-		X++;
-		[0xA1]--;
-
-		if (Z == 0)
-			return this.L828721();
-
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L828875()
-	{
-		this.L828982();
-		A = [0xB4];
-		temp = A - [0xB6];
-
-		if (Z == 0)
-			return this.L828881();
-
-		return this.L82891F();
-	}
-
-	public void L828881()
-	{
-		[0xB6] = A;
-		A = [0xB8];
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L82888D();
-
-		return this.L82891E();
-	}
-
-	public void L82888D()
-	{
-		A = [0xBA];
-		temp = A & [0xB8];[0xB8] |= A;
-		Y++;
-		Y++;
-	}
-
-	public void L828893()
-	{
-		A = [0x0000 + Y];
-		temp = A - 0xFFFF;
-
-		if (Z == 0)
-			return this.L82889E();
-
-		return this.L82891E();
-	}
-
-	public void L82889E()
-	{
-		X = A;
-		A = [0x0002 + Y];
-		[0xA1] = A;
-		Y++;
-		Y++;
-		Y++;
-		Y++;
-		temp = A & 0x0003;
-
-		if (Z == 1)
-			return this.L8288E9();
-
-		temp = A & 0x0001;
-
-		if (Z == 1)
-			return this.L8288C4();
-
-	}
-
-	public void L8288B2()
-	{
-		A = [0x0000 + Y];
-		[0x7E0000 + X] = A;
-		X++;
-		X++;
-		Y++;
-		Y++;
-		[0xA1]--;
-
-		if (Z == 0)
-			return this.L8288B2();
-
-		return this.L828893();
-	}
-
-	public void L8288C4()
-	{
-		A = [0x0000 + Y];
-		[0x7E0000 + X] = A;
-		A = [0x0002 + Y];
-		[0x7E0002 + X] = A;
-		A = X;
-		C = 0;
-		A += 0x0004 + C;
-		X = A;
-		A = Y;
-		C = 0;
-		A += 0x0004 + C;
-		Y = A;
-		A = [0xA1];
-		A--;
-		A--;
-		[0xA1] = A;
-
-		if (Z == 0)
-			return this.L8288C4();
-
-		return this.L828893();
-	}
-
-	public void L8288E9()
-	{
-		A = [0x0000 + Y];
-		[0x7E0000 + X] = A;
-		A = [0x0002 + Y];
-		[0x7E0002 + X] = A;
-		A = [0x0004 + Y];
-		[0x7E0004 + X] = A;
-		A = [0x0006 + Y];
-		[0x7E0006 + X] = A;
-		A = X;
-		C = 0;
-		A += 0x0008 + C;
-		X = A;
-		A = Y;
-		C = 0;
-		A += 0x0008 + C;
-		Y = A;
-		A = [0xA1];
-		C = 1;
-		A -= 0x0004 - !C;
-		[0xA1] = A;
-
-		if (Z == 0)
-			return this.L8288E9();
-
-		return this.L828893();
-	}
-
-	public void L82891E()
-	{
-		return;
-	}
-
-	public void L82891F()
-	{
-		A = [0xBA];
-		A &= 0x0C00;
-		temp = A & [0xB8];[0xB8] |= A;
-		return;
-	}
-
-	public void L828927()
-	{
-		this.L828982();
-		A = [0xB4];
-		temp = A - [0xB6];
-
-		if (Z == 0)
-			return this.L828933();
-
-		return this.L82897A();
-	}
-
-	public void L828933()
-	{
-		[0xB6] = A;
-		A = [0xB8];
-		temp = A & 0x3200;
-
-		if (Z == 0)
-			return this.L828979();
-
-		A = [0xBC];
-		temp = A & [0xB8];[0xB8] |= A;
-		A = [0x0152];
-		X = A;
-		C = 0;
-		A += 0x0009 + C;
-		[0x0152] = A;
-		A = [0x0002 + Y];
-		[0x0155 + X] = A;
-		A = [0x0006 + Y];
-		[0x0159 + X] = A;
-		A = [0x0008 + Y];
-		[0x015B + X] = A;
-		A = [0x000A + Y];
-		[0x015D + X] = A;
-		A = Y;
-		C = 0;
-		A += 0x000C + C;
-		[0x0156 + X] = A;
-		P |= 0x20;
-		Stack.Push(B);
-		A = Stack.Pop();
-		[0x0158 + X] = A;
-		A = 0x01;
-		[0x0154] = A;
-		P &= ~0x20;
-	}
-
-	public void L828979()
-	{
-		return;
-	}
-
-	public void L82897A()
-	{
-		A = [0xBC];
-		A &= 0x0C00;
-		temp = A & [0xB8];[0xB8] |= A;
-		return;
-	}
-
-	public void L828982()
-	{
-		A = [0xB8];
-		temp = A & 0x0080;
-
-		if (Z == 0)
-			return this.L82898D();
-
-		this.L82898E();
-	}
-
-	public void L82898D()
-	{
-		return;
-	}
-
-	public void L82898E()
-	{
-		A = 0x0000;
-		C = 1;
-		A -= [0xBE] - !C;
-		C = 1;
-		A -= [0xB0] - !C;
-		[0x010F] = A;
-		A = 0x0000;
-		C = 1;
-		A -= [0xC0] - !C;
-		C = 1;
-		A -= [0xB2] - !C;
-		[0x0111] = A;
-		return;
-	}
-
-
-
-
-
-
-
-	public void R8391CD()
-	{
-		X = 0x003E;
-	}
-
-	public void L8391D0()
-	{
-		A = 0xFFFF;
-		[0x16A6 + X] = A;
-		A = 0x0000;
-		[0x16E6 + X] = A;
-		A = 0x8000;
-		[0x1726 + X] = A;
-		A = 0x0000;
-		[0x1926 + X] = A;
-		A = 0xFFFF;
-		[0x1826 + X] = A;
-		A = 0xFFFF;
-		[0x1766 + X] = A;
-		[0x17A6 + X] = A;
-		X--;
-		X--;
-		
-		if (N == 0)
-			return this.L8391D0();
-
-		A = 0x0000;
-		[0x14DA] = A;
-		[0x14DC] = A;
-		[0x14DE] = A;
-		[0x14E0] = A;
-		[0x14E2] = A;
-		[0x14E4] = A;
-		[0x14E8] = A;
-		[0x14EA] = A;
-		[0x14EC] = A;
-		[0x14EE] = A;
-		[0x14F0] = A;
-		[0x14F2] = A;
-		[0x14F4] = A;
-		[0x14F6] = A;
-		[0x14F8] = A;
-		[0x14FA] = A;
-		[0x14FC] = A;
-		[0x1504] = A;
-		[0x1506] = A;
-		[0x1500] = A;
-		[0x1508] = A;
-		A = 0x0180;
-		[0x14D8] = A;
-		[0x14E6] = A;
-		A = 0x0000;
-		[0x150E] = A;
-		[0x1514] = A;
-		[0x1516] = A;
-		[0x151A] = A;
-		[0x151E] = A;
-		[0x1520] = A;
-		[0x1AE1] = A;
-		[0x1AE3] = A;
-		[0x1AE5] = A;
-		[0x1AE7] = A;
-		[0x1AE9] = A;
-		[0x1AEB] = A;
-		[0x1AED] = A;
-		[0x1AEF] = A;
-		[0x1AF1] = A;
-		[0x1AF3] = A;
-		[0x7E39E7] = A;
-		[0x7E39E9] = A;
-		A |= 0x1000;
-		A |= 0x0800;
-		A = [0x150C];
-		A &= 0x4113;
-		A |= 0x2000;
-		[0x150C] = A;
-		this.L8393B5();
-		A = 0x0000;
-		[0x7E5BF1] = A;
-		A = 0xFFFF;
-		[0x1AC9] = A;
-		A = 0x8000;
-		[0x1AC5] = A;
-		[0x1AC7] = A;
-		A = 0x0000;
-		[0x1AC1] = A;
-		[0x1AC3] = A;
-		[0x1AD3] = A;
-		[0x1AD5] = A;
-		[0x1ACF] = A;
-		[0x1AD1] = A;
-		A = 0x0000;
-		[0x7E3987] = A;
-		[0x7E398B] = A;
-		[0x7E3989] = A;
-		[0x7E398D] = A;
-		[0x7E398F] = A;
-		[0x7E3993] = A;
-		[0x7E3991] = A;
-		[0x7E3995] = A;
-		A = 0x0000;
-		[0x7E5CCC] = A;
-		[0x7E5D0E] = A;
-		[0x7E5DAE] = A;
-		[0xB8] = 0;
-		A = 0xFFFF;
-		[0xB6] = A;
-		A = 0x0000;
-		[0x1978] = A;
-		[0x197A] = A;
-		[0x197C] = A;
-		[0x197E] = A;
-		[0x1980] = A;
-		[0x1982] = A;
-		[0x1984] = A;
-		[0x1986] = A;
-		[0x1988] = A;
-		[0x198A] = A;
-		[0x198C] = A;
-		[0x198E] = A;
-		[0x1990] = A;
-		[0x1992] = A;
-		[0x1994] = A;
-		[0x1996] = A;
-		[0x1998] = A;
-		[0x199A] = A;
-		[0x199C] = A;
-		[0x199E] = A;
-		[0x19A0] = A;
-		[0x19A2] = A;
-		[0x19A4] = A;
-		[0x19A6] = A;
-		A = 0x0000;
-		[0x1976] = 0;
-		[0x196A] = A;
-		[0x196C] = A;
-		this.R80E680();
-		A = 0x0000;
-		[0x7E5BEB] = A;
-		[0x7E5BED] = A;
-		A = 0x7FFF;
-		[0x001BA5] = A;
-		[0x001BA7] = A;
-		[0x001BA9] = A;
-		[0x001BAB] = A;
-		[0x001BAD] = A;
-		[0x001BAF] = A;
-		[0x001BB1] = A;
-		[0x001BB3] = A;
-		[0x001BB5] = A;
-		[0x001BB7] = A;
-		[0x7E5C18] = A;
-		[0x7E5C1A] = A;
-		[0x7E5C1C] = A;
-		[0x7E5C1E] = A;
-		[0x7E5C20] = A;
-		[0x7E5C22] = A;
-		[0x7E5C24] = A;
-		[0x7E5C26] = A;
-		[0x7E5C28] = A;
-		[0x7E5C2A] = A;
-		return;
-	}
-
-	public void L8393B5()
-	{
-		A = [0x50];
-		[0x1B11] = A;
-		A = 0x0060;
-		temp = A & [0x150C]; [0x150C] &= ~A;
-		A = [0x036F];
-		A--;
-		
-		if (Z == 0)
-			return this.L8393E2();
-
-		A = [0x0371];
-		temp = A - 0x0003;
-		
-		if (Z == 1)
-			return this.L8393E2();
-
-		A = [0x036D];
-		temp = A - 0x0004;
-		
-		if (C == 0)
-			return this.L8393D9();
-
-		A = 0x0003;
-	}
-
-	public void L8393D9()
-	{
-		A <<= 1;
-		X = A;
-		A = [0x83940E + X];
-		temp = A & [0x150C]; [0x150C] |= A;
-	}
-
-	public void L8393E2()
-	{
-		A = [0x50];
-		temp = A & 0x0210;
-		
-		if (Z == 1)
-			return this.L83940D();
-
-		A = 0x0060;
-		temp = A & [0x150C]; [0x150C] &= ~A;
-		X = 0x0000;
-		A = [0x50];
-		temp = A & 0x0020;
-		
-		if (Z == 1)
-			return this.L8393FB();
-
-		X++;
-		X++;
-	}
-
-	public void L8393FB()
-	{
-		A = [0x50];
-		temp = A & 0x0010;
-		
-		if (Z == 1)
-			return this.L839406();
-
-		X++;
-		X++;
-		X++;
-		X++;
-	}
-
-	public void L839406()
-	{
-		A = [0x83940E + X];
-		temp = A & [0x150C]; [0x150C] |= A;
-	}
-
-	public void L83940D()
-	{
-		return;
-	}
-
-	public void R839416()
-	{
-		X = 0x001E;
-	}
-
-	public void L839419()
-	{
-		A = 0x0000;
-		[0x19EB + X] = A;
-		[0x7E5CCE + X] = A;
-		[0x7E5D6E + X] = A;
-		[0x7E5D8E + X] = A;
-		[0x7E5CEE + X] = A;
-		[0x7E5D2E + X] = A;
-		A = 0x0050;
-		[0x7E5D0E + X] = A;
-		[0x7E5D4E + X] = A;
-		X--;
-		X--;
-		
-		if (N == 0)
-			return this.L839419();
-
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void L83955A()
-	{
-		A = [0x014C];
-		A >>= 1;
-
-		if (C == 0)
-			return this.L839563();
-
-		return this.L8396AE();
-	}
-
-	public void L839563()
-	{
-		A = [0x7E3963];
-
-		if (Z == 1)
-			return this.L83958C();
-
-		A = [0x7E3903];
-		[0x12] = A;
-		A = [0x7E3923];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L83958C();
-
-		A = [0x7E3943];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L83958C()
-	{
-		A = [0x7E3967];
-
-		if (Z == 1)
-			return this.L8395B5();
-
-		A = [0x7E3907];
-		[0x12] = A;
-		A = [0x7E3927];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L8395B5();
-
-		A = [0x7E3947];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L8395B5()
-	{
-		A = [0x7E396B];
-
-		if (Z == 1)
-			return this.L8395DE();
-
-		A = [0x7E390B];
-		[0x12] = A;
-		A = [0x7E392B];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L8395DE();
-
-		A = [0x7E394B];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L8395DE()
-	{
-		A = [0x7E396F];
-
-		if (Z == 1)
-			return this.L839607();
-
-		A = [0x7E390F];
-		[0x12] = A;
-		A = [0x7E392F];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L839607();
-
-		A = [0x7E394F];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L839607()
-	{
-		A = [0x7E3973];
-
-		if (Z == 1)
-			return this.L839630();
-
-		A = [0x7E3913];
-		[0x12] = A;
-		A = [0x7E3933];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L839630();
-
-		A = [0x7E3953];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L839630()
-	{
-		A = [0x7E3977];
-
-		if (Z == 1)
-			return this.L839659();
-
-		A = [0x7E3917];
-		[0x12] = A;
-		A = [0x7E3937];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L839659();
-
-		A = [0x7E3957];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L839659()
-	{
-		A = [0x7E397B];
-
-		if (Z == 1)
-			return this.L839682();
-
-		A = [0x7E391B];
-		[0x12] = A;
-		A = [0x7E393B];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L839682();
-
-		A = [0x7E395B];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L839682()
-	{
-		A = [0x7E397F];
-
-		if (Z == 1)
-			return this.L8396AB();
-
-		A = [0x7E391F];
-		[0x12] = A;
-		A = [0x7E393F];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L8396AB();
-
-		A = [0x7E395F];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L8396AB()
-	{
-		return this.L8397F6();
-	}
-
-	public void L8396AE()
-	{
-		A = [0x7E3965];
-
-		if (Z == 1)
-			return this.L8396D7();
-
-		A = [0x7E3905];
-		[0x12] = A;
-		A = [0x7E3925];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L8396D7();
-
-		A = [0x7E3945];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L8396D7()
-	{
-		A = [0x7E3969];
-
-		if (Z == 1)
-			return this.L839700();
-
-		A = [0x7E3909];
-		[0x12] = A;
-		A = [0x7E3929];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L839700();
-
-		A = [0x7E3949];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L839700()
-	{
-		A = [0x7E396D];
-
-		if (Z == 1)
-			return this.L839729();
-
-		A = [0x7E390D];
-		[0x12] = A;
-		A = [0x7E392D];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L839729();
-
-		A = [0x7E394D];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L839729()
-	{
-		A = [0x7E3971];
-
-		if (Z == 1)
-			return this.L839752();
-
-		A = [0x7E3911];
-		[0x12] = A;
-		A = [0x7E3931];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L839752();
-
-		A = [0x7E3951];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L839752()
-	{
-		A = [0x7E3975];
-
-		if (Z == 1)
-			return this.L83977B();
-
-		A = [0x7E3915];
-		[0x12] = A;
-		A = [0x7E3935];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L83977B();
-
-		A = [0x7E3955];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L83977B()
-	{
-		A = [0x7E3979];
-
-		if (Z == 1)
-			return this.L8397A4();
-
-		A = [0x7E3919];
-		[0x12] = A;
-		A = [0x7E3939];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L8397A4();
-
-		A = [0x7E3959];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L8397A4()
-	{
-		A = [0x7E397D];
-
-		if (Z == 1)
-			return this.L8397CD();
-
-		A = [0x7E391D];
-		[0x12] = A;
-		A = [0x7E393D];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L8397CD();
-
-		A = [0x7E395D];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L8397CD()
-	{
-		A = [0x7E3981];
-
-		if (Z == 1)
-			return this.L8397F6();
-
-		A = [0x7E3921];
-		[0x12] = A;
-		A = [0x7E3941];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L8397F6();
-
-		A = [0x7E3961];
-		[0x16] = A;
-		this.L839B44();
-	}
-
-	public void L8397F6()
-	{
-		return;
-	}
-
-	public void L8397F7()
-	{
-		A = [0x014C];
-		A >>= 1;
-
-		if (C == 0)
-			return this.L839800();
-
-		return this.L83994B();
-	}
-
-	public void L839800()
-	{
-		A = [0x7E3963];
-
-		if (Z == 1)
-			return this.L839829();
-
-		A = [0x7E3903];
-		[0x12] = A;
-		A = [0x7E3923];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L839829();
-
-		A = [0x7E3943];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L839829()
-	{
-		A = [0x7E3967];
-
-		if (Z == 1)
-			return this.L839852();
-
-		A = [0x7E3907];
-		[0x12] = A;
-		A = [0x7E3927];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L839852();
-
-		A = [0x7E3947];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L839852()
-	{
-		A = [0x7E396B];
-
-		if (Z == 1)
-			return this.L83987B();
-
-		A = [0x7E390B];
-		[0x12] = A;
-		A = [0x7E392B];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L83987B();
-
-		A = [0x7E394B];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L83987B()
-	{
-		A = [0x7E396F];
-
-		if (Z == 1)
-			return this.L8398A4();
-
-		A = [0x7E390F];
-		[0x12] = A;
-		A = [0x7E392F];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L8398A4();
-
-		A = [0x7E394F];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L8398A4()
-	{
-		A = [0x7E3973];
-
-		if (Z == 1)
-			return this.L8398CD();
-
-		A = [0x7E3913];
-		[0x12] = A;
-		A = [0x7E3933];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L8398CD();
-
-		A = [0x7E3953];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L8398CD()
-	{
-		A = [0x7E3977];
-
-		if (Z == 1)
-			return this.L8398F6();
-
-		A = [0x7E3917];
-		[0x12] = A;
-		A = [0x7E3937];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L8398F6();
-
-		A = [0x7E3957];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L8398F6()
-	{
-		A = [0x7E397B];
-
-		if (Z == 1)
-			return this.L83991F();
-
-		A = [0x7E391B];
-		[0x12] = A;
-		A = [0x7E393B];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L83991F();
-
-		A = [0x7E395B];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L83991F()
-	{
-		A = [0x7E397F];
-
-		if (Z == 1)
-			return this.L839948();
-
-		A = [0x7E391F];
-		[0x12] = A;
-		A = [0x7E393F];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L839948();
-
-		A = [0x7E395F];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L839948()
-	{
-		return this.L839A93();
-	}
-
-	public void L83994B()
-	{
-		A = [0x7E3965];
-
-		if (Z == 1)
-			return this.L839974();
-
-		A = [0x7E3905];
-		[0x12] = A;
-		A = [0x7E3925];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L839974();
-
-		A = [0x7E3945];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L839974()
-	{
-		A = [0x7E3969];
-
-		if (Z == 1)
-			return this.L83999D();
-
-		A = [0x7E3909];
-		[0x12] = A;
-		A = [0x7E3929];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L83999D();
-
-		A = [0x7E3949];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L83999D()
-	{
-		A = [0x7E396D];
-
-		if (Z == 1)
-			return this.L8399C6();
-
-		A = [0x7E390D];
-		[0x12] = A;
-		A = [0x7E392D];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L8399C6();
-
-		A = [0x7E394D];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L8399C6()
-	{
-		A = [0x7E3971];
-
-		if (Z == 1)
-			return this.L8399EF();
-
-		A = [0x7E3911];
-		[0x12] = A;
-		A = [0x7E3931];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L8399EF();
-
-		A = [0x7E3951];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L8399EF()
-	{
-		A = [0x7E3975];
-
-		if (Z == 1)
-			return this.L839A18();
-
-		A = [0x7E3915];
-		[0x12] = A;
-		A = [0x7E3935];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L839A18();
-
-		A = [0x7E3955];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L839A18()
-	{
-		A = [0x7E3979];
-
-		if (Z == 1)
-			return this.L839A41();
-
-		A = [0x7E3919];
-		[0x12] = A;
-		A = [0x7E3939];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L839A41();
-
-		A = [0x7E3959];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L839A41()
-	{
-		A = [0x7E397D];
-
-		if (Z == 1)
-			return this.L839A6A();
-
-		A = [0x7E391D];
-		[0x12] = A;
-		A = [0x7E393D];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L839A6A();
-
-		A = [0x7E395D];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L839A6A()
-	{
-		A = [0x7E3981];
-
-		if (Z == 1)
-			return this.L839A93();
-
-		A = [0x7E3921];
-		[0x12] = A;
-		A = [0x7E3941];
-		[0x14] = A;
-		this.L839C42();
-		Y = 0x0002;
-		A = [[0x00] + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L839A93();
-
-		A = [0x7E3961];
-		[0x16] = A;
-		this.L839BC3();
-	}
-
-	public void L839A93()
-	{
-		A = [0x7E3963];
-
-		if (Z == 1)
-			return this.L839A9E();
-
-		A--;
-		[0x7E3963] = A;
-	}
-
-	public void L839A9E()
-	{
-		A = [0x7E3965];
-
-		if (Z == 1)
-			return this.L839AA9();
-
-		A--;
-		[0x7E3965] = A;
-	}
-
-	public void L839AA9()
-	{
-		A = [0x7E3967];
-
-		if (Z == 1)
-			return this.L839AB4();
-
-		A--;
-		[0x7E3967] = A;
-	}
-
-	public void L839AB4()
-	{
-		A = [0x7E3969];
-
-		if (Z == 1)
-			return this.L839ABF();
-
-		A--;
-		[0x7E3969] = A;
-	}
-
-	public void L839ABF()
-	{
-		A = [0x7E396B];
-
-		if (Z == 1)
-			return this.L839ACA();
-
-		A--;
-		[0x7E396B] = A;
-	}
-
-	public void L839ACA()
-	{
-		A = [0x7E396D];
-
-		if (Z == 1)
-			return this.L839AD5();
-
-		A--;
-		[0x7E396D] = A;
-	}
-
-	public void L839AD5()
-	{
-		A = [0x7E396F];
-
-		if (Z == 1)
-			return this.L839AE0();
-
-		A--;
-		[0x7E396F] = A;
-	}
-
-	public void L839AE0()
-	{
-		A = [0x7E3971];
-
-		if (Z == 1)
-			return this.L839AEB();
-
-		A--;
-		[0x7E3971] = A;
-	}
-
-	public void L839AEB()
-	{
-		A = [0x7E3973];
-
-		if (Z == 1)
-			return this.L839AF6();
-
-		A--;
-		[0x7E3973] = A;
-	}
-
-	public void L839AF6()
-	{
-		A = [0x7E3975];
-
-		if (Z == 1)
-			return this.L839B01();
-
-		A--;
-		[0x7E3975] = A;
-	}
-
-	public void L839B01()
-	{
-		A = [0x7E3977];
-
-		if (Z == 1)
-			return this.L839B0C();
-
-		A--;
-		[0x7E3977] = A;
-	}
-
-	public void L839B0C()
-	{
-		A = [0x7E3979];
-
-		if (Z == 1)
-			return this.L839B17();
-
-		A--;
-		[0x7E3979] = A;
-	}
-
-	public void L839B17()
-	{
-		A = [0x7E397B];
-
-		if (Z == 1)
-			return this.L839B22();
-
-		A--;
-		[0x7E397B] = A;
-	}
-
-	public void L839B22()
-	{
-		A = [0x7E397D];
-
-		if (Z == 1)
-			return this.L839B2D();
-
-		A--;
-		[0x7E397D] = A;
-	}
-
-	public void L839B2D()
-	{
-		A = [0x7E397F];
-
-		if (Z == 1)
-			return this.L839B38();
-
-		A--;
-		[0x7E397F] = A;
-	}
-
-	public void L839B38()
-	{
-		A = [0x7E3981];
-
-		if (Z == 1)
-			return this.L839B43();
-
-		A--;
-		[0x7E3981] = A;
-	}
-
-	public void L839B43()
-	{
-		return;
-	}
-
-	public void L839B44()
-	{
-		A = [0x1866 + X];
-
-		if (N == 1)
-			return this.L839BA0();
-
-		A = [[0x00]];
-		temp = A & 0x0080;
-
-		if (Z == 0)
-			return this.L839B55();
-
-		A &= 0x007F;
-		return this.L839B58();
-	}
-
-	public void L839B55()
-	{
-		A |= 0xFF80;
-	}
-
-	public void L839B58()
-	{
-		C = 0;
-		A += [0x15A6 + X] + C;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0020 + C;
-		temp = A - 0x0140;
-
-		if (C == 1)
-			return this.L839BA0();
-
-		Y = 0x0001;
-		A = [[0x00] + Y];
-		temp = A & 0x0080;
-
-		if (Z == 0)
-			return this.L839B76();
-
-		A &= 0x007F;
-		return this.L839B79();
-	}
-
-	public void L839B76()
-	{
-		A |= 0xFF80;
-	}
-
-	public void L839B79()
-	{
-		C = 0;
-		A += [0x15E6 + X] + C;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0020 + C;
-		temp = A - 0x00E8;
-
-		if (C == 1)
-			return this.L839BA0();
-
-		A = 0xC1FF;
-		[0xA8] = A;
-		A = [0x14D6];
-		A <<= 1;
-		X = A;
-		A = [0x839BA1 + X];
-		[0xAA] = A;
-		A = [0x16];
-		[0xB4] = A;
-		this.L8280C2();
-	}
-
-	public void L839BA0()
-	{
-		return;
-	}
-
-	public void L839BC3()
-	{
-		A = [0x1866 + X];
-
-		if (N == 1)
-			return this.L839C1F();
-
-		A = [[0x00]];
-		temp = A & 0x0080;
-
-		if (Z == 0)
-			return this.L839BD4();
-
-		A &= 0x007F;
-		return this.L839BD7();
-	}
-
-	public void L839BD4()
-	{
-		A |= 0xFF80;
-	}
-
-	public void L839BD7()
-	{
-		C = 0;
-		A += [0x15A6 + X] + C;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0020 + C;
-		temp = A - 0x0140;
-
-		if (C == 1)
-			return this.L839C1F();
-
-		Y = 0x0001;
-		A = [[0x00] + Y];
-		temp = A & 0x0080;
-
-		if (Z == 0)
-			return this.L839BF5();
-
-		A &= 0x007F;
-		return this.L839BF8();
-	}
-
-	public void L839BF5()
-	{
-		A |= 0xFF80;
-	}
-
-	public void L839BF8()
-	{
-		C = 0;
-		A += [0x15E6 + X] + C;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0020 + C;
-		temp = A - 0x00E8;
-
-		if (C == 1)
-			return this.L839C1F();
-
-		A = 0xC1FF;
-		[0xA8] = A;
-		A = [0x14D6];
-		A <<= 1;
-		X = A;
-		A = [0x839C20 + X];
-		[0xAA] = A;
-		A = [0x16];
-		[0xB4] = A;
-		this.L8280C2();
-	}
-
-	public void L839C1F()
-	{
-		return;
-	}
-
-	public void L839C42()
-	{
-		A = [0x7E3901];
-		[0x01] = A;
-		A = [0x7E3900];
-		[0x00] = A;
-		A = [0x12];
-		A <<= 1;
-		X = A;
-		A = [0x1666 + X];
-		A <<= 1;
-		Y = A;
-		A = [[0x00] + Y];
-		C = 0;
-		A += [0x00] + C;
-		[0x00] = A;
-		A = [0x14];
-		A <<= 1;
-		C = 0;
-		A += [0x14] + C;
-		C = 0;
-		A += [0x00] + C;
-		[0x00] = A;
-		return;
-	}
-
-	public void L839C9C()
-	{
-		A = [0x1A81];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839CB0();
-
-		A &= 0x7FFF;
-		[0x1A81] = A;
-		X = 0x0000;
-		this.L839F1E();
-	}
-
-	public void L839CB0()
-	{
-		A = [0x1A83];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839CC4();
-
-		A &= 0x7FFF;
-		[0x1A83] = A;
-		X = 0x0002;
-		this.L839F1E();
-	}
-
-	public void L839CC4()
-	{
-		A = [0x1A85];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839CD8();
-
-		A &= 0x7FFF;
-		[0x1A85] = A;
-		X = 0x0004;
-		this.L839F1E();
-	}
-
-	public void L839CD8()
-	{
-		A = [0x1A87];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839CEC();
-
-		A &= 0x7FFF;
-		[0x1A87] = A;
-		X = 0x0006;
-		this.L839F1E();
-	}
-
-	public void L839CEC()
-	{
-		A = [0x1A89];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839D00();
-
-		A &= 0x7FFF;
-		[0x1A89] = A;
-		X = 0x0008;
-		this.L839F1E();
-	}
-
-	public void L839D00()
-	{
-		A = [0x1A8B];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839D14();
-
-		A &= 0x7FFF;
-		[0x1A8B] = A;
-		X = 0x000A;
-		this.L839F1E();
-	}
-
-	public void L839D14()
-	{
-		A = [0x1A8D];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839D28();
-
-		A &= 0x7FFF;
-		[0x1A8D] = A;
-		X = 0x000C;
-		this.L839F1E();
-	}
-
-	public void L839D28()
-	{
-		A = [0x1A8F];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839D3C();
-
-		A &= 0x7FFF;
-		[0x1A8F] = A;
-		X = 0x000E;
-		this.L839F1E();
-	}
-
-	public void L839D3C()
-	{
-		A = [0x1A91];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839D50();
-
-		A &= 0x7FFF;
-		[0x1A91] = A;
-		X = 0x0010;
-		this.L839F1E();
-	}
-
-	public void L839D50()
-	{
-		A = [0x1A93];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839D64();
-
-		A &= 0x7FFF;
-		[0x1A93] = A;
-		X = 0x0012;
-		this.L839F1E();
-	}
-
-	public void L839D64()
-	{
-		A = [0x1A95];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839D78();
-
-		A &= 0x7FFF;
-		[0x1A95] = A;
-		X = 0x0014;
-		this.L839F1E();
-	}
-
-	public void L839D78()
-	{
-		A = [0x1A97];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839D8C();
-
-		A &= 0x7FFF;
-		[0x1A97] = A;
-		X = 0x0016;
-		this.L839F1E();
-	}
-
-	public void L839D8C()
-	{
-		A = [0x1A99];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839DA0();
-
-		A &= 0x7FFF;
-		[0x1A99] = A;
-		X = 0x0018;
-		this.L839F1E();
-	}
-
-	public void L839DA0()
-	{
-		A = [0x1A9B];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839DB4();
-
-		A &= 0x7FFF;
-		[0x1A9B] = A;
-		X = 0x001A;
-		this.L839F1E();
-	}
-
-	public void L839DB4()
-	{
-		A = [0x1A9D];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839DC8();
-
-		A &= 0x7FFF;
-		[0x1A9D] = A;
-		X = 0x001C;
-		this.L839F1E();
-	}
-
-	public void L839DC8()
-	{
-		A = [0x1A9F];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L839DDC();
-
-		A &= 0x7FFF;
-		[0x1A9F] = A;
-		X = 0x001E;
-		this.L839F1E();
-	}
-
-	public void L839DDC()
-	{
-		return;
-	}
-
-	public void L839DDD()
-	{
-		A = [0x1A81];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839DF1();
-
-		A &= 0xBFFF;
-		[0x1A81] = A;
-		X = 0x0000;
-		this.L839F1E();
-	}
-
-	public void L839DF1()
-	{
-		A = [0x1A83];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839E05();
-
-		A &= 0xBFFF;
-		[0x1A83] = A;
-		X = 0x0002;
-		this.L839F1E();
-	}
-
-	public void L839E05()
-	{
-		A = [0x1A85];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839E19();
-
-		A &= 0xBFFF;
-		[0x1A85] = A;
-		X = 0x0004;
-		this.L839F1E();
-	}
-
-	public void L839E19()
-	{
-		A = [0x1A87];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839E2D();
-
-		A &= 0xBFFF;
-		[0x1A87] = A;
-		X = 0x0006;
-		this.L839F1E();
-	}
-
-	public void L839E2D()
-	{
-		A = [0x1A89];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839E41();
-
-		A &= 0xBFFF;
-		[0x1A89] = A;
-		X = 0x0008;
-		this.L839F1E();
-	}
-
-	public void L839E41()
-	{
-		A = [0x1A8B];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839E55();
-
-		A &= 0xBFFF;
-		[0x1A8B] = A;
-		X = 0x000A;
-		this.L839F1E();
-	}
-
-	public void L839E55()
-	{
-		A = [0x1A8D];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839E69();
-
-		A &= 0xBFFF;
-		[0x1A8D] = A;
-		X = 0x000C;
-		this.L839F1E();
-	}
-
-	public void L839E69()
-	{
-		A = [0x1A8F];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839E7D();
-
-		A &= 0xBFFF;
-		[0x1A8F] = A;
-		X = 0x000E;
-		this.L839F1E();
-	}
-
-	public void L839E7D()
-	{
-		A = [0x1A91];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839E91();
-
-		A &= 0xBFFF;
-		[0x1A91] = A;
-		X = 0x0010;
-		this.L839F1E();
-	}
-
-	public void L839E91()
-	{
-		A = [0x1A93];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839EA5();
-
-		A &= 0xBFFF;
-		[0x1A93] = A;
-		X = 0x0012;
-		this.L839F1E();
-	}
-
-	public void L839EA5()
-	{
-		A = [0x1A95];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839EB9();
-
-		A &= 0xBFFF;
-		[0x1A95] = A;
-		X = 0x0014;
-		this.L839F1E();
-	}
-
-	public void L839EB9()
-	{
-		A = [0x1A97];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839ECD();
-
-		A &= 0xBFFF;
-		[0x1A97] = A;
-		X = 0x0016;
-		this.L839F1E();
-	}
-
-	public void L839ECD()
-	{
-		A = [0x1A99];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839EE1();
-
-		A &= 0xBFFF;
-		[0x1A99] = A;
-		X = 0x0018;
-		this.L839F1E();
-	}
-
-	public void L839EE1()
-	{
-		A = [0x1A9B];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839EF5();
-
-		A &= 0xBFFF;
-		[0x1A9B] = A;
-		X = 0x001A;
-		this.L839F1E();
-	}
-
-	public void L839EF5()
-	{
-		A = [0x1A9D];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839F09();
-
-		A &= 0xBFFF;
-		[0x1A9D] = A;
-		X = 0x001C;
-		this.L839F1E();
-	}
-
-	public void L839F09()
-	{
-		A = [0x1A9F];
-		temp = A & 0x4000;
-
-		if (Z == 1)
-			return this.L839F1D();
-
-		A &= 0xBFFF;
-		[0x1A9F] = A;
-		X = 0x001E;
-		this.L839F1E();
-	}
-
-	public void L839F1D()
-	{
-		return;
-	}
-
-	public void L839F1E()
-	{
-		A = [0x7E5C2C + X];
-		[0xB0] = A;
-		C = 0;
-		A += 0x0020 + C;
-		temp = A - 0x0140;
-
-		if (C == 1)
-			return this.L839F52();
-
-		A = [0x7E5C4C + X];
-		[0xB2] = A;
-		C = 0;
-		A += 0x0020 + C;
-		temp = A - 0x00E8;
-
-		if (C == 1)
-			return this.L839F52();
-
-		A = [0x7E5C6C + X];
-		[0xB4] = A;
-		A = [0x7E5C8C + X];
-		[0xA8] = A;
-		A = [0x7E5CAC + X];
-		[0xAA] = A;
-		this.L8280C2();
-	}
-
-	public void L839F52()
-	{
-		return;
-	}
-
-
-
-
-
-
-
-
-
-	// Bank 0x84
-
-	// Bank 0x85
-	public void R858000()
-	{
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		C = 1;
-		A = [0x7E5E2C];
-		A -= [0x197C] - !C;
-		[0x7E5E2C] = A;
-		A = [0x7E5E2E];
-		A -= [0x197E] - !C;
-		[0x7E5E2E] = A;
-		C = 1;
-		A = [0x7E5E30];
-		A -= [0x1988] - !C;
-		[0x7E5E30] = A;
-		A = [0x7E5E32];
-		A -= [0x198A] - !C;
-		[0x7E5E32] = A;
-		A = [0x7E5E2E];
-		temp = A - 0x8000;
-		Cpu.ROR();
-		[0x7E5E36] = A;
-		temp = A - 0x8000;
-		Cpu.ROR();
-		[0x7E5E3E] = A;
-		temp = A - 0x8000;
-		Cpu.ROR();
-		[0x7E5E46] = A;
-		A = [0x7E5E32];
-		temp = A - 0x8000;
-		Cpu.ROR();
-		[0x7E5E3A] = A;
-		temp = A - 0x8000;
-		Cpu.ROR();
-		[0x7E5E42] = A;
-		temp = A - 0x8000;
-		Cpu.ROR();
-		[0x7E5E4A] = A;
-		A = 0x0000;
-		[0xAA] = A;
-		A = 0xFFFF;
-		[0xA8] = A;
-		A = [0x7E5E2E];
-		[0x14] = A;
-		A = [0x7E5E32];
-		[0x16] = A;
-		A = [0x14];
-		C = 0;
-		A += [0x8609] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858092();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L8580AD();
-
-	}
-
-	public void L858092()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x860B] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L8580A7();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L8580AD();
-
-	}
-
-	public void L8580A7()
-	{
-		[0xB2] = A;
-		this.L858681();
-	}
-
-	public void L8580AD()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x860D] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8580C0();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L8580DB();
-
-	}
-
-	public void L8580C0()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x860F] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L8580D5();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L8580DB();
-
-	}
-
-	public void L8580D5()
-	{
-		[0xB2] = A;
-		this.L858681();
-	}
-
-	public void L8580DB()
-	{
-		A = [0x7E5E36];
-		[0x14] = A;
-		A = [0x7E5E3A];
-		[0x16] = A;
-		A = [0x14];
-		C = 0;
-		A += [0x8611] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8580FA();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858115();
-
-	}
-
-	public void L8580FA()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8613] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L85810F();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858115();
-
-	}
-
-	public void L85810F()
-	{
-		[0xB2] = A;
-		this.L858751();
-	}
-
-	public void L858115()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8615] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858128();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858143();
-
-	}
-
-	public void L858128()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8617] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L85813D();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858143();
-
-	}
-
-	public void L85813D()
-	{
-		[0xB2] = A;
-		this.L858751();
-	}
-
-	public void L858143()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8619] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858156();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858171();
-
-	}
-
-	public void L858156()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x861B] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L85816B();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858171();
-
-	}
-
-	public void L85816B()
-	{
-		[0xB2] = A;
-		this.L858751();
-	}
-
-	public void L858171()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x861D] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858184();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L85819F();
-
-	}
-
-	public void L858184()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x861F] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L858199();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L85819F();
-
-	}
-
-	public void L858199()
-	{
-		[0xB2] = A;
-		this.L858751();
-	}
-
-	public void L85819F()
-	{
-		A = [0x7E5E3E];
-		[0x14] = A;
-		A = [0x7E5E42];
-		[0x16] = A;
-		A = [0x14];
-		C = 0;
-		A += [0x8621] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8581BE();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L8581D9();
-
-	}
-
-	public void L8581BE()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8623] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L8581D3();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L8581D9();
-
-	}
-
-	public void L8581D3()
-	{
-		[0xB2] = A;
-		this.L8587CB();
-	}
-
-	public void L8581D9()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8625] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8581EC();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858207();
-
-	}
-
-	public void L8581EC()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8627] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L858201();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858207();
-
-	}
-
-	public void L858201()
-	{
-		[0xB2] = A;
-		this.L8587CB();
-	}
-
-	public void L858207()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8629] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L85821A();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858235();
-
-	}
-
-	public void L85821A()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x862B] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L85822F();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858235();
-
-	}
-
-	public void L85822F()
-	{
-		[0xB2] = A;
-		this.L8587CB();
-	}
-
-	public void L858235()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x862D] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858248();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858263();
-
-	}
-
-	public void L858248()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x862F] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L85825D();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858263();
-
-	}
-
-	public void L85825D()
-	{
-		[0xB2] = A;
-		this.L8587CB();
-	}
-
-	public void L858263()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8631] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858276();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858291();
-
-	}
-
-	public void L858276()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8633] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L85828B();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858291();
-
-	}
-
-	public void L85828B()
-	{
-		[0xB2] = A;
-		this.L8587CB();
-	}
-
-	public void L858291()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8635] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8582A4();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L8582BF();
-
-	}
-
-	public void L8582A4()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8637] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L8582B9();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L8582BF();
-
-	}
-
-	public void L8582B9()
-	{
-		[0xB2] = A;
-		this.L8587CB();
-	}
-
-	public void L8582BF()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8639] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8582D2();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L8582ED();
-
-	}
-
-	public void L8582D2()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x863B] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L8582E7();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L8582ED();
-
-	}
-
-	public void L8582E7()
-	{
-		[0xB2] = A;
-		this.L8587CB();
-	}
-
-	public void L8582ED()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x863D] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858300();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L85831B();
-
-	}
-
-	public void L858300()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x863F] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L858315();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L85831B();
-
-	}
-
-	public void L858315()
-	{
-		[0xB2] = A;
-		this.L8587CB();
-	}
-
-	public void L85831B()
-	{
-		A = [0x7E5E46];
-		[0x14] = A;
-		A = [0x7E5E4A];
-		[0x16] = A;
-		A = [0x14];
-		C = 0;
-		A += [0x8641] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L85833A();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858355();
-
-	}
-
-	public void L85833A()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8643] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L85834F();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858355();
-
-	}
-
-	public void L85834F()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L858355()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8645] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858368();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858383();
-
-	}
-
-	public void L858368()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8647] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L85837D();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858383();
-
-	}
-
-	public void L85837D()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L858383()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8649] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858396();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L8583B1();
-
-	}
-
-	public void L858396()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x864B] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L8583AB();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L8583B1();
-
-	}
-
-	public void L8583AB()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L8583B1()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x864D] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8583C4();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L8583DF();
-
-	}
-
-	public void L8583C4()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x864F] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L8583D9();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L8583DF();
-
-	}
-
-	public void L8583D9()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L8583DF()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8651] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8583F2();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L85840D();
-
-	}
-
-	public void L8583F2()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8653] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L858407();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L85840D();
-
-	}
-
-	public void L858407()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L85840D()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8655] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858420();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L85843B();
-
-	}
-
-	public void L858420()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8657] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L858435();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L85843B();
-
-	}
-
-	public void L858435()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L85843B()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8659] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L85844E();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858469();
-
-	}
-
-	public void L85844E()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x865B] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L858463();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858469();
-
-	}
-
-	public void L858463()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L858469()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x865D] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L85847C();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858497();
-
-	}
-
-	public void L85847C()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x865F] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L858491();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858497();
-
-	}
-
-	public void L858491()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L858497()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8661] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8584AA();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L8584C5();
-
-	}
-
-	public void L8584AA()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8663] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L8584BF();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L8584C5();
-
-	}
-
-	public void L8584BF()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L8584C5()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8665] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8584D8();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L8584F3();
-
-	}
-
-	public void L8584D8()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8667] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L8584ED();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L8584F3();
-
-	}
-
-	public void L8584ED()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L8584F3()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8669] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858506();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858521();
-
-	}
-
-	public void L858506()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x866B] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L85851B();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858521();
-
-	}
-
-	public void L85851B()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L858521()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x866D] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858534();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L85854F();
-
-	}
-
-	public void L858534()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x866F] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L858549();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L85854F();
-
-	}
-
-	public void L858549()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L85854F()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8671] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858562();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L85857D();
-
-	}
-
-	public void L858562()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8673] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L858577();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L85857D();
-
-	}
-
-	public void L858577()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L85857D()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8675] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L858590();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L8585AB();
-
-	}
-
-	public void L858590()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x8677] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L8585A5();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L8585AB();
-
-	}
-
-	public void L8585A5()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L8585AB()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x8679] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8585BE();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L8585D9();
-
-	}
-
-	public void L8585BE()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x867B] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L8585D3();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L8585D9();
-
-	}
-
-	public void L8585D3()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L8585D9()
-	{
-		A = [0x14];
-		C = 0;
-		A += [0x867D] + C;
-		A &= 0x01FF;
-		temp = A - 0x01EB;
-
-		if (C == 1)
-			return this.L8585EC();
-
-		temp = A - 0x0114;
-
-		if (C == 1)
-			return this.L858607();
-
-	}
-
-	public void L8585EC()
-	{
-		[0xB0] = A;
-		A = [0x16];
-		C = 0;
-		A += [0x867F] + C;
-		A &= 0x00FF;
-		temp = A - 0x00EB;
-
-		if (C == 1)
-			return this.L858601();
-
-		temp = A - 0x00BC;
-
-		if (C == 1)
-			return this.L858607();
-
-	}
-
-	public void L858601()
-	{
-		[0xB2] = A;
-		this.L858816();
-	}
-
-	public void L858607()
-	{
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L858681()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		P &= ~0x30;
-		Y = [0xA6];
-		temp = Y - 0x01F1;
-
-		if (C == 0)
-			return this.L85868F();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L85868F()
-	{
-		A = Y;
-		C = 0;
-		A += 0x0010 + C;
-		[0xA6] = A;
-		P |= 0x20;
-		A = 0x82;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		A = [0xB0];
-		[0x7800 + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L8586B2();
-
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x82B8 + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L8586B2()
-	{
-		A = [0xB2];
-		[0x7801 + Y] = A;
-		A = 0x0EA6;
-		[0x7802 + Y] = A;
-		A = [0xB0];
-		C = 0;
-		A += 0x01F0 + C;
-		[0x7804 + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L8586D7();
-
-		X = [0x82BA + Y];
-		A = [0x00 + X];
-		A |= [0x84BC + Y];
-		[0x00 + X] = A;
-		return this.L8586E1();
-	}
-
-	public void L8586D7()
-	{
-		X = [0x82BA + Y];
-		A = [0x00 + X];
-		A |= [0x84BA + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L8586E1()
-	{
-		A = [0xB2];
-		[0x7805 + Y] = A;
-		A = 0x0EA4;
-		[0x7806 + Y] = A;
-		A = [0xB0];
-		[0x7808 + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L858702();
-
-		X = [0x82BE + Y];
-		A = [0x00 + X];
-		A |= [0x84C0 + Y];
-		[0x00 + X] = A;
-		return this.L85870C();
-	}
-
-	public void L858702()
-	{
-		X = [0x82BE + Y];
-		A = [0x00 + X];
-		A |= [0x84BE + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L85870C()
-	{
-		A = [0xB2];
-		C = 0;
-		A += 0x01F0 + C;
-		[0x7809 + Y] = A;
-		A = 0x0E86;
-		[0x780A + Y] = A;
-		A = [0xB0];
-		C = 0;
-		A += 0x01F0 + C;
-		[0x780C + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L858735();
-
-		X = [0x82C2 + Y];
-		A = [0x00 + X];
-		A |= [0x84C4 + Y];
-		[0x00 + X] = A;
-		return this.L85873F();
-	}
-
-	public void L858735()
-	{
-		X = [0x82C2 + Y];
-		A = [0x00 + X];
-		A |= [0x84C2 + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L85873F()
-	{
-		A = [0xB2];
-		C = 0;
-		A += 0x01F0 + C;
-		[0x780D + Y] = A;
-		A = 0x0E84;
-		[0x780E + Y] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L858751()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		P &= ~0x30;
-		Y = [0xA6];
-		temp = Y - 0x01F9;
-
-		if (C == 0)
-			return this.L85875F();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L85875F()
-	{
-		A = Y;
-		C = 0;
-		A += 0x0008 + C;
-		[0xA6] = A;
-		P |= 0x20;
-		A = 0x82;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		A = [0xB0];
-		[0x7800 + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L858784();
-
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x84B8 + Y];
-		[0x00 + X] = A;
-		return this.L85878E();
-	}
-
-	public void L858784()
-	{
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x84B6 + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L85878E()
-	{
-		A = [0xB2];
-		[0x7801 + Y] = A;
-		A = 0x0EA8;
-		[0x7802 + Y] = A;
-		A = [0xB0];
-		[0x7804 + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L8587AF();
-
-		X = [0x82BA + Y];
-		A = [0x00 + X];
-		A |= [0x84BC + Y];
-		[0x00 + X] = A;
-		return this.L8587B9();
-	}
-
-	public void L8587AF()
-	{
-		X = [0x82BA + Y];
-		A = [0x00 + X];
-		A |= [0x84BA + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L8587B9()
-	{
-		A = [0xB2];
-		C = 0;
-		A += 0x01F0 + C;
-		[0x7805 + Y] = A;
-		A = 0x0E88;
-		[0x7806 + Y] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L8587CB()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		P &= ~0x30;
-		Y = [0xA6];
-		temp = Y - 0x01FD;
-
-		if (C == 0)
-			return this.L8587D9();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L8587D9()
-	{
-		A = Y;
-		C = 0;
-		A += 0x0004 + C;
-		[0xA6] = A;
-		P |= 0x20;
-		A = 0x82;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		A = [0xB0];
-		[0x7800 + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L8587FE();
-
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x84B8 + Y];
-		[0x00 + X] = A;
-		return this.L858808();
-	}
-
-	public void L8587FE()
-	{
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x84B6 + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L858808()
-	{
-		A = [0xB2];
-		[0x7801 + Y] = A;
-		A = 0x0E8A;
-		[0x7802 + Y] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L858816()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		P &= ~0x30;
-		Y = [0xA6];
-		temp = Y - 0x01FD;
-
-		if (C == 0)
-			return this.L858824();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L858824()
-	{
-		A = Y;
-		C = 0;
-		A += 0x0004 + C;
-		[0xA6] = A;
-		P |= 0x20;
-		A = 0x82;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		A = [0xB0];
-		[0x7800 + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L858847();
-
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x82B8 + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L858847()
-	{
-		A = [0xB2];
-		[0x7801 + Y] = A;
-		A = 0x0E8C;
-		[0x7802 + Y] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L86CA27()
-	{
-		A = 0x0080;
-		[0xB0] = A;
-		A = [0x014C];
-		A ^= 0xFFFF;
-		A++;
-		A &= 0x00FF;
-		A <<= 1;
-		A <<= 1;
-		A <<= 1;
-		[0xB2] = A;
-		A = [0x7FB3EF];
-
-		if (N == 1)
-			return this.L86CA69();
-
-		temp = A - 0x01E0;
-
-		if (C == 0)
-			return this.L86CA4B();
-
-		A = 0x00C9;
-		return this.L86CA6C();
-	}
-
-	public void L86CA4B()
-	{
-		temp = A - 0x0168;
-
-		if (C == 0)
-			return this.L86CA55();
-
-		A = 0x00C8;
-		return this.L86CA6C();
-	}
-
-	public void L86CA55()
-	{
-		temp = A - 0x00F0;
-
-		if (C == 0)
-			return this.L86CA5F();
-
-		A = 0x00C7;
-		return this.L86CA6C();
-	}
-
-	public void L86CA5F()
-	{
-		temp = A - 0x0078;
-
-		if (C == 0)
-			return this.L86CA69();
-
-		A = 0x00C6;
-		return this.L86CA6C();
-	}
-
-	public void L86CA69()
-	{
-		A = 0x00C0;
-	}
-
-	public void L86CA6C()
-	{
-		[0xB4] = A;
-		A = 0xCFFF;
-		[0xA8] = A;
-		A = 0x2000;
-		[0xAA] = A;
-		this.L8286B6();
-	}
-
-	public void L86CA7C()
-	{
-		return;
-	}
-
-	public void L86CA88()
-	{
-		A = 0x0080;
-		[0xB0] = A;
-		A = [0x014C];
-		A ^= 0xFFFF;
-		A++;
-		A &= 0x00FF;
-		A <<= 1;
-		A <<= 1;
-		[0x26] = A;
-		A <<= 1;
-		C = 0;
-		A += [0x26] + C;
-		[0xB2] = A;
-		A = [0x7FB3EF];
-
-		if (N == 1)
-			return this.L86CAD6();
-
-		temp = A - 0x01E0;
-
-		if (C == 0)
-			return this.L86CAB1();
-
-		A = 0x00C5;
-		return this.L86CAD9();
-	}
-
-	public void L86CAB1()
-	{
-		temp = A - 0x0168;
-
-		if (C == 0)
-			return this.L86CABB();
-
-		A = 0x00C4;
-		return this.L86CAD9();
-	}
-
-	public void L86CABB()
-	{
-		temp = A - 0x00F0;
-
-		if (C == 0)
-			return this.L86CAC5();
-
-		A = 0x00C3;
-		return this.L86CAD9();
-	}
-
-	public void L86CAC5()
-	{
-		temp = A - 0x0078;
-
-		if (C == 0)
-			return this.L86CACF();
-
-		A = 0x00C2;
-		return this.L86CAD9();
-	}
-
-	public void L86CACF()
-	{
-
-		if (N == 1)
-			return this.L86CAD6();
-
-		A = 0x00C1;
-		return this.L86CAD9();
-	}
-
-	public void L86CAD6()
-	{
-		A = 0x00BF;
-	}
-
-	public void L86CAD9()
-	{
-		[0xB4] = A;
-		A = 0xCFFF;
-		[0xA8] = A;
-		A = 0x2000;
-		[0xAA] = A;
-		this.L8286B6();
-	}
-
-	public void L86CAE9()
-	{
-		return;
-	}
-
-
-
-
-
-
-
-	public void R809FDF()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-		A = [0x14CE];
-
-		if (Z == 1)
-			return this.L80A003_Done();
-
-		A = [0x0265];
-		temp = A & 0x1000;
-
-		if (Z == 1)
-			return this.L80A003_Done();
-
-		A = [0x14CC];
-
-		if (Z == 0)
-			return this.L80A003_Done();
-
-		[0x0265] = 0;
-		A = [0x026D];
-		[0x14CA] = A;
-		A = 0x001B;
-		[0x026D] = A;
-	}
-
-	public void L80A003_Done()
-	{
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R80A005()
-	{
-		A = [0x58];
-		temp = A & 0x1000;
-
-		if (Z == 0)
-			return this.L80A00F();
-
-		return this.L80A093_Done();
-	}
-
-	public void L80A00F()
-	{
-		A = [0x026D];
-		temp = A - 0x001A;
-
-		if (Z == 0)
-			return this.L80A020_Done();
-
-		A = [0x0371];
-		A--;
-
-		if (Z == 1)
-			return this.L80A022();
-
-		A--;
-
-		if (Z == 1)
-			return this.L80A022();
-
-	}
-
-	public void L80A020_Done()
-	{
-		return this.L80A093_Done();
-	}
-
-	public void L80A022()
-	{
-		P |= 0x20;
-		A = [0x4A];
-		Stack.Push(A);
-		P &= ~0x20;
-		this.R808202_WaitFor014BFlag1();
-		P |= 0x20;
-		A = Stack.Pop();
-		[0x4A] = A;
-		P &= ~0x20;
-		A = [0x026D];
-		temp = A - 0x001A;
-
-		if (Z == 0)
-			return this.L80A05C();
-
-		this.R909993_ResetRam();
-		this.R80A094_ResetRam();
-		A = 0x8000;
-		[0x01] = A;
-		A = 0xA053;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		return this.L80A05C();
-	}
-
-	public byte[] DmaTransferRecord80A053 = new byte[]
-	{
-		// Type 0x02, RAM Address 0x7E3000, Length 0x0780, VRAM Control 0x80, VRAM Address 0x1000
-		0x02, 0x00, 0x30, 0x7E, 0x80, 0x07, 0x80, 0x00, 0x10
-	}
-
-	public void L80A05C()
-	{
-		P |= 0x20;
-		A = [0x4A];
-		Stack.Push(A);
-		P &= ~0x20;
-		this.R808202_WaitFor014BFlag1();
-		P |= 0x20;
-		A = Stack.Pop();
-		[0x4A] = A;
-		P &= ~0x20;
-		A = [0x58];
-		temp = A & 0x1000;
-
-		if (Z == 0)
-			return this.L80A07E();
-
-		A = [0x5A];
-		temp = A & 0x1000;
-
-		if (Z == 0)
-			return this.L80A07E();
-
-		return this.L80A05C();
-	}
-
-	public void L80A07E()
-	{
-		this.R80A0C6_ResetRam();
-		P |= 0x20;
-		A = [0x4A];
-		Stack.Push(A);
-		P &= ~0x20;
-		this.R808202_WaitFor014BFlag1();
-		P |= 0x20;
-		A = Stack.Pop();
-		[0x4A] = A;
-		P &= ~0x20;
-	}
-
-	public void L80A093_Done()
-	{
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R80A094_ResetRam()
-	{
-		A = 0x2199;
-		[0x7E3318] = A;
-		A = 0x2194;
-		[0x7E331A] = A;
-		A = 0x2195;
-		[0x7E331C] = A;
-		A = 0x2196;
-		[0x7E331E] = A;
-		A = 0x2197;
-		[0x7E3320] = A;
-		A = 0x2198;
-		[0x7E3322] = A;
-		A = 0x2199;
-		[0x7E3324] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R80A0C6_ResetRam()
-	{
-		A = 0x0080;
-		[0x7E3318] = A;
-		[0x7E331A] = A;
-		[0x7E331C] = A;
-		[0x7E331E] = A;
-		[0x7E3320] = A;
-		[0x7E3322] = A;
-		[0x7E3324] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void L80A0E6()
-	{
-		[0x026D]++;
-		return this.L81E739();
-	}
-
-
-
-
-
-
-
-
-
-	public void R80A1E2()
-	{
-		P &= ~0x30;
-		A = 0x0000;
-		[0x0B36] = A;
-		A = 0x0000;
-		[0x0B38] = A;
-		A = 0x0000;
-		[0x0B3A] = A;
-		A = 0x0000;
-		[0x14D6] = A;
-		A = 0x0000;
-		[0x0381] = A;
-		A = 0x0001;
-		[0x7E3983] = A;
-		A = 0x0000;
-		[0x7E3985] = A;
-		A = 0x0000;
-		[0x7E5BF3] = A;
-		[0x1B0E] = A;
-		A = 0xFFDD;
-		[0x025D] = A;
-		A = 0xFFE4;
-		[0x025F] = A;
-		A = 0x0000;
-		[0x150C] = A;
-		A = 0x0002;
-		[0x4E] = A;
-		A = 0x001B;
-		[0x4C] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-		public void L80CC06()
-	{
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x117C];
-		
-		if (N == 1)
-			return this.L80CC14();
-
-		Y = 0x0000;
-		this.L80CE15();
-	}
-
-	public void L80CC14()
-	{
-		A = [0x117E];
-		
-		if (N == 1)
-			return this.L80CC1F();
-
-		Y = 0x0002;
-		this.L80CE15();
-	}
-
-	public void L80CC1F()
-	{
-		A = [0x1180];
-		
-		if (N == 1)
-			return this.L80CC2A();
-
-		Y = 0x0004;
-		this.L80CE15();
-	}
-
-	public void L80CC2A()
-	{
-		A = [0x1182];
-		
-		if (N == 1)
-			return this.L80CC35();
-
-		Y = 0x0006;
-		this.L80CE15();
-	}
-
-	public void L80CC35()
-	{
-		A = [0x1184];
-		
-		if (N == 1)
-			return this.L80CC40();
-
-		Y = 0x0008;
-		this.L80CE15();
-	}
-
-	public void L80CC40()
-	{
-		A = [0x1186];
-		
-		if (N == 1)
-			return this.L80CC4B();
-
-		Y = 0x000A;
-		this.L80CE15();
-	}
-
-	public void L80CC4B()
-	{
-		A = [0x1188];
-		
-		if (N == 1)
-			return this.L80CC56();
-
-		Y = 0x000C;
-		this.L80CE15();
-	}
-
-	public void L80CC56()
-	{
-		A = [0x118A];
-		
-		if (N == 1)
-			return this.L80CC61();
-
-		Y = 0x000E;
-		this.L80CE15();
-	}
-
-	public void L80CC61()
-	{
-		A = [0x118C];
-		
-		if (N == 1)
-			return this.L80CC6C();
-
-		Y = 0x0010;
-		this.L80CE15();
-	}
-
-	public void L80CC6C()
-	{
-		A = [0x118E];
-		
-		if (N == 1)
-			return this.L80CC77();
-
-		Y = 0x0012;
-		this.L80CE15();
-	}
-
-	public void L80CC77()
-	{
-		A = [0x1190];
-		
-		if (N == 1)
-			return this.L80CC82();
-
-		Y = 0x0014;
-		this.L80CE15();
-	}
-
-	public void L80CC82()
-	{
-		A = [0x1192];
-		
-		if (N == 1)
-			return this.L80CC8D();
-
-		Y = 0x0016;
-		this.L80CE15();
-	}
-
-	public void L80CC8D()
-	{
-		A = [0x1194];
-		
-		if (N == 1)
-			return this.L80CC98();
-
-		Y = 0x0018;
-		this.L80CE15();
-	}
-
-	public void L80CC98()
-	{
-		A = [0x1196];
-		
-		if (N == 1)
-			return this.L80CCA3();
-
-		Y = 0x001A;
-		this.L80CE15();
-	}
-
-	public void L80CCA3()
-	{
-		A = [0x1198];
-		
-		if (N == 1)
-			return this.L80CCAE();
-
-		Y = 0x001C;
-		this.L80CE15();
-	}
-
-	public void L80CCAE()
-	{
-		A = [0x119A];
-		
-		if (N == 1)
-			return this.L80CCB9();
-
-		Y = 0x001E;
-		this.L80CE15();
-	}
-
-	public void L80CCB9()
-	{
-		A = [0x119C];
-		
-		if (N == 1)
-			return this.L80CCC4();
-
-		Y = 0x0020;
-		this.L80CE15();
-	}
-
-	public void L80CCC4()
-	{
-		A = [0x119E];
-		
-		if (N == 1)
-			return this.L80CCCF();
-
-		Y = 0x0022;
-		this.L80CE15();
-	}
-
-	public void L80CCCF()
-	{
-		A = [0x11A0];
-		
-		if (N == 1)
-			return this.L80CCDA();
-
-		Y = 0x0024;
-		this.L80CE15();
-	}
-
-	public void L80CCDA()
-	{
-		A = [0x11A2];
-		
-		if (N == 1)
-			return this.L80CCE5();
-
-		Y = 0x0026;
-		this.L80CE15();
-	}
-
-	public void L80CCE5()
-	{
-		A = [0x11A4];
-		
-		if (N == 1)
-			return this.L80CCF0();
-
-		Y = 0x0028;
-		this.L80CE15();
-	}
-
-	public void L80CCF0()
-	{
-		A = [0x11A6];
-		
-		if (N == 1)
-			return this.L80CCFB();
-
-		Y = 0x002A;
-		this.L80CE15();
-	}
-
-	public void L80CCFB()
-	{
-		A = [0x11A8];
-		
-		if (N == 1)
-			return this.L80CD06();
-
-		Y = 0x002C;
-		this.L80CE15();
-	}
-
-	public void L80CD06()
-	{
-		A = [0x11AA];
-		
-		if (N == 1)
-			return this.L80CD11();
-
-		Y = 0x002E;
-		this.L80CE15();
-	}
-
-	public void L80CD11()
-	{
-		A = [0x11AC];
-		
-		if (N == 1)
-			return this.L80CD1C();
-
-		Y = 0x0030;
-		this.L80CE15();
-	}
-
-	public void L80CD1C()
-	{
-		A = [0x11AE];
-		
-		if (N == 1)
-			return this.L80CD27();
-
-		Y = 0x0032;
-		this.L80CE15();
-	}
-
-	public void L80CD27()
-	{
-		A = [0x11B0];
-		
-		if (N == 1)
-			return this.L80CD32();
-
-		Y = 0x0034;
-		this.L80CE15();
-	}
-
-	public void L80CD32()
-	{
-		A = [0x11B2];
-		
-		if (N == 1)
-			return this.L80CD3D();
-
-		Y = 0x0036;
-		this.L80CE15();
-	}
-
-	public void L80CD3D()
-	{
-		A = [0x11B4];
-		
-		if (N == 1)
-			return this.L80CD48();
-
-		Y = 0x0038;
-		this.L80CE15();
-	}
-
-	public void L80CD48()
-	{
-		A = [0x11B6];
-		
-		if (N == 1)
-			return this.L80CD53();
-
-		Y = 0x003A;
-		this.L80CE15();
-	}
-
-	public void L80CD53()
-	{
-		A = [0x11B8];
-		
-		if (N == 1)
-			return this.L80CD5E();
-
-		Y = 0x003C;
-		this.L80CE15();
-	}
-
-	public void L80CD5E()
-	{
-		A = [0x11BA];
-		
-		if (N == 1)
-			return this.L80CD69();
-
-		Y = 0x003E;
-		this.L80CE15();
-	}
-
-	public void L80CD69()
-	{
-		A = [0x11BC];
-		
-		if (N == 1)
-			return this.L80CD74();
-
-		Y = 0x0040;
-		this.L80CE15();
-	}
-
-	public void L80CD74()
-	{
-		A = [0x11BE];
-		
-		if (N == 1)
-			return this.L80CD7F();
-
-		Y = 0x0042;
-		this.L80CE15();
-	}
-
-	public void L80CD7F()
-	{
-		A = [0x11C0];
-		
-		if (N == 1)
-			return this.L80CD8A();
-
-		Y = 0x0044;
-		this.L80CE15();
-	}
-
-	public void L80CD8A()
-	{
-		A = [0x11C2];
-		
-		if (N == 1)
-			return this.L80CD95();
-
-		Y = 0x0046;
-		this.L80CE15();
-	}
-
-	public void L80CD95()
-	{
-		A = [0x11C4];
-		
-		if (N == 1)
-			return this.L80CDA0();
-
-		Y = 0x0048;
-		this.L80CE15();
-	}
-
-	public void L80CDA0()
-	{
-		A = [0x11C6];
-		
-		if (N == 1)
-			return this.L80CDAB();
-
-		Y = 0x004A;
-		this.L80CE15();
-	}
-
-	public void L80CDAB()
-	{
-		A = [0x11C8];
-		
-		if (N == 1)
-			return this.L80CDB6();
-
-		Y = 0x004C;
-		this.L80CE15();
-	}
-
-	public void L80CDB6()
-	{
-		A = [0x11CA];
-		
-		if (N == 1)
-			return this.L80CDC1();
-
-		Y = 0x004E;
-		this.L80CE15();
-	}
-
-	public void L80CDC1()
-	{
-		A = [0x11CC];
-		
-		if (N == 1)
-			return this.L80CDCC();
-
-		Y = 0x0050;
-		this.L80CE15();
-	}
-
-	public void L80CDCC()
-	{
-		A = [0x11CE];
-		
-		if (N == 1)
-			return this.L80CDD7();
-
-		Y = 0x0052;
-		this.L80CE15();
-	}
-
-	public void L80CDD7()
-	{
-		A = [0x11D0];
-		
-		if (N == 1)
-			return this.L80CDE2();
-
-		Y = 0x0054;
-		this.L80CE15();
-	}
-
-	public void L80CDE2()
-	{
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R80CDE4()
-	{
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x11D2];
-		
-		if (N == 1)
-			return this.L80CDF2();
-
-		Y = 0x0056;
-		this.L80CE15();
-	}
-
-	public void L80CDF2()
-	{
-		A = [0x11D4];
-		
-		if (N == 1)
-			return this.L80CDFD();
-
-		Y = 0x0058;
-		this.L80CE15();
-	}
-
-	public void L80CDFD()
-	{
-		A = [0x11D6];
-		
-		if (N == 1)
-			return this.L80CE08();
-
-		Y = 0x005A;
-		this.L80CE15();
-	}
-
-	public void L80CE08()
-	{
-		A = [0x11D8];
-		
-		if (N == 1)
-			return this.L80CE13();
-
-		Y = 0x005C;
-		this.L80CE15();
-	}
-
-	public void L80CE13()
-	{
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L80CE15()
-	{
-		Stack.Push(B);
-		this.R80CE1C();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R80CE1C()
-	{
-		A = [0x117C + Y];
-		A <<= 1;
-		C = 0;
-		A += [0x117C + Y] + C;
-		X = A;
-		A = [0xCE86 + X];
-		[0x00] = A;
-		P |= 0x20;
-		A = [0xCE88 + X];
-		[0x02] = A;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		return [[0x0000]]();	//24-Bit Address
-	}
-
-
-
-
-
-
-
-	// Bank 0x82
-	public void R828000()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0xB4];
-		A <<= 1;
-		X = A;
-		A = [0x8A2A + X];
-		C = 0;
-		A += 0x8A2A + C;
-		Y = A;
-		A = [0x0000 + Y];
-		
-		if (N == 0)
-			return this.L82802A();
-
-		A = 0x8200;
-		[0x01] = A;
-		Y++;
-		Y++;
-		[0x00] = Y;
-		this.L828027();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L828027()
-	{
-		return [[0x0000]]();	//24-Bit Address
-	}
-
-	public void L82802A()
-	{
-		[0xA1] = A;
-		A = [0xA6];
-		A >>= 1;
-		A >>= 1;
-		[0x9E] = A;
-		temp = A - 0x0080;
-		
-		if (C == 1)
-			return this.L828054();
-
-		C = 0;
-		A += [0xA1] + C;
-		temp = A - 0x0080;
-		
-		if (C == 1)
-			return this.L828045();
-
-		A <<= 1;
-		A <<= 1;
-		[0xA6] = A;
-		return this.L828057();
-	}
-
-	public void L828045()
-	{
-		A = 0x0080;
-		C = 1;
-		A -= [0x9E] - !C;
-		[0xA1] = A;
-		A = 0x0200;
-		[0xA6] = A;
-		return this.L828057();
-	}
-
-	public void L828054()
-	{
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L828057()
-	{
-		A = [0x9E];
-		A <<= 1;
-		A <<= 1;
-		X = A;
-		Y++;
-		Y++;
-	}
-
-	public void L82805E()
-	{
-		A = [0x0000 + Y];
-		
-		if (N == 1)
-			return this.L82807C();
-
-		C = 0;
-		A += [0xB0] + C;
-		[0x7800 + X] = A;
-		temp = A & 0x0100;
-		
-		if (Z == 1)
-			return this.L8280A1();
-
-		A = [0x82B6 + X];
-		[0x9E] = A;
-		A = [(0x9E)];
-		A |= [0x82B8 + X];
-		[(0x9E)] = A;
-		return this.L8280A1();
-	}
-
-	public void L82807C()
-	{
-		C = 0;
-		A += [0xB0] + C;
-		[0x7800 + X] = A;
-		temp = A & 0x0100;
-		
-		if (Z == 1)
-			return this.L828095();
-
-		A = [0x82B6 + X];
-		[0x9E] = A;
-		A = [(0x9E)];
-		A |= [0x84B8 + X];
-		[(0x9E)] = A;
-		return this.L8280A1();
-	}
-
-	public void L828095()
-	{
-		A = [0x82B6 + X];
-		[0x9E] = A;
-		A = [(0x9E)];
-		A |= [0x84B6 + X];
-		[(0x9E)] = A;
-	}
-
-	public void L8280A1()
-	{
-		A = [0x0002 + Y];
-		C = 0;
-		A += [0xB2] + C;
-		[0x7801 + X] = A;
-		A = [0x0003 + Y];
-		[0x7802 + X] = A;
-		Y++;
-		Y++;
-		Y++;
-		Y++;
-		Y++;
-		X++;
-		X++;
-		X++;
-		X++;
-		[0xA1]--;
-		
-		if (Z == 0)
-			return this.L82805E();
-
-		[0xA6] = X;
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public void R8280C2()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0xB4];
-		A <<= 1;
-		X = A;
-		A = [0x8A2A + X];
-		C = 0;
-		A += 0x8A2A + C;
-		Y = A;
-		A = [0x0000 + Y];
-		
-		if (N == 0)
-			return this.L8280EC();
-
-		A = 0x8200;
-		[0x01] = A;
-		Y++;
-		Y++;
-		[0x00] = Y;
-		this.R8280E9();
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public void R8280E9()
-	{
-		return [[0x0000]]();	//24-Bit Address
-	}
-
-	public void L8280EC()
-	{
-		[0xA1] = A;
-		A = [0xA6];
-		A >>= 1;
-		A >>= 1;
-		[0x9E] = A;
-		temp = A - 0x0080;
-		
-		if (C == 1)
-			return this.L828116();
-
-		C = 0;
-		A += [0xA1] + C;
-		temp = A - 0x0080;
-		
-		if (C == 1)
-			return this.L828107();
-
-		A <<= 1;
-		A <<= 1;
-		[0xA6] = A;
-		return this.L828119();
-	}
-
-	public void L828107()
-	{
-		A = 0x0080;
-		C = 1;
-		A -= [0x9E] - !C;
-		[0xA1] = A;
-		A = 0x0200;
-		[0xA6] = A;
-		return this.L828119();
-	}
-
-	public void L828116()
-	{
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L828119()
-	{
-		A = [0x7FF6];
-		A &= 0xFF00;
-		A |= [0x9E];
-		X = A;
-		Y++;
-		Y++;
-	}
-
-	public void L828124()
-	{
-		[0x7FF6] = X;
-		A = [0x0000 + Y];
-		
-		if (N == 0)
-			return this.L82813A();
-
-		C = 0;
-		A += [0xB0] + C;
-		[0x7FF0] = A;
-		A |= 0x0200;
-		[0x7FF3] = A;
-		return this.L828146();
-	}
-
-	public void L82813A()
-	{
-		C = 0;
-		A += [0xB0] + C;
-		[0x7FF0] = A;
-		A &= 0xFDFF;
-		[0x7FF3] = A;
-	}
-
-	public void L828146()
-	{
-		C = 0;
-		A = [0x0002 + Y];
-		A += [0xB2] + C;
-		[0x7FF1] = A;
-		A = [0x0003 + Y];
-		A &= [0xA8];
-		A |= [0xAA];
-		[0x7FF2] = A;
-		C = 0;
-		A = Y;
-		A += 0x0005 + C;
-		Y = A;
-		X++;
-		[0xA1]--;
-		
-		if (Z == 0)
-			return this.L828124();
-
-		B = Stack.Pop();
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-	// Bank 0x83
-	public void L838000()
-	{
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x19EB];
-		temp = A & 0x2000;
-
-		if (Z == 1)
-			return this.L83800E();
-
-		return this.L83813E();
-	}
-
-	public void L83800E()
-	{
-		A = [0x19EB];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L838021();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L838021();
-
-		Y = 0x0000;
-		this.L838160();
-	}
-
-	public void L838021()
-	{
-		A = [0x19ED];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L838034();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L838034();
-
-		Y = 0x0001;
-		this.L838160();
-	}
-
-	public void L838034()
-	{
-		A = [0x19EF];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L838047();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L838047();
-
-		Y = 0x0002;
-		this.L838160();
-	}
-
-	public void L838047()
-	{
-		A = [0x19F1];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L83805A();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L83805A();
-
-		Y = 0x0003;
-		this.L838160();
-	}
-
-	public void L83805A()
-	{
-		A = [0x19F3];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L83806D();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L83806D();
-
-		Y = 0x0004;
-		this.L838160();
-	}
-
-	public void L83806D()
-	{
-		A = [0x19F5];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L838080();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L838080();
-
-		Y = 0x0005;
-		this.L838160();
-	}
-
-	public void L838080()
-	{
-		A = [0x19F7];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L838093();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L838093();
-
-		Y = 0x0006;
-		this.L838160();
-	}
-
-	public void L838093()
-	{
-		A = [0x19F9];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L8380A6();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L8380A6();
-
-		Y = 0x0007;
-		this.L838160();
-	}
-
-	public void L8380A6()
-	{
-		A = [0x19FB];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L8380B9();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L8380B9();
-
-		Y = 0x0008;
-		this.L838160();
-	}
-
-	public void L8380B9()
-	{
-		A = [0x19FD];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L8380CC();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L8380CC();
-
-		Y = 0x0009;
-		this.L838160();
-	}
-
-	public void L8380CC()
-	{
-		A = [0x19FF];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L8380DF();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L8380DF();
-
-		Y = 0x000A;
-		this.L838160();
-	}
-
-	public void L8380DF()
-	{
-		A = [0x1A01];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L8380F2();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L8380F2();
-
-		Y = 0x000B;
-		this.L838160();
-	}
-
-	public void L8380F2()
-	{
-		A = [0x1A03];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L838105();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L838105();
-
-		Y = 0x000C;
-		this.L838160();
-	}
-
-	public void L838105()
-	{
-		A = [0x1A05];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L838118();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L838118();
-
-		Y = 0x000D;
-		this.L838160();
-	}
-
-	public void L838118()
-	{
-		A = [0x1A07];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L83812B();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L83812B();
-
-		Y = 0x000E;
-		this.L838160();
-	}
-
-	public void L83812B()
-	{
-		A = [0x1A09];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L83813E();
-
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L83813E();
-
-		Y = 0x000F;
-		this.L838160();
-	}
-
-	public void L83813E()
-	{
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L838160()
-	{
-		[0x1A7B] = Y;
-		A = [0x8140 + Y];
-		A &= 0x00FF;
-		[0x1A7D] = A;
-		A = [0x8150 + Y];
-		A &= 0x00FF;
-		[0x1A7F] = A;
-		A = [0x19DB + Y];
-		A &= 0x00FF;
-
-		if (Z == 0)
-			return this.L8381CB();
-
-		X = [0x1A7F];
-		A = [0x19AC + X];
-		[0x9C] = A;
-		A = [0x19AB + X];
-		[0x9B] = A;
-	}
-
-	public void L83818A()
-	{
-		A = [[0x9B]];
-		A &= 0x00FF;
-		temp = A & 0x0080;
-
-		if (Z == 0)
-			return this.L838199();
-
-		this.L838442();
-		return this.L8381A8();
-	}
-
-	public void L838199()
-	{
-		A ^= 0x00FF;
-		temp = A - 0x0039;
-
-		if (C == 0)
-			return this.L8381A3();
-
-	}
-
-	public void L8381A1()
-	{
-		return this.L8381A1();
-	}
-
-	public void L8381A3()
-	{
-		A <<= 1;
-		X = A;
-		Cpu.JSR((0x81D6 + X));
-	}
-
-	public void L8381A8()
-	{
-		X = [0x1A7D];
-		A = [0x19EB + X];
-		temp = A & 0x8000;
-
-		if (Z == 1)
-			return this.L8381D5();
-
-		Y = [0x1A7B];
-		A = [0x19DB + Y];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L83818A();
-
-		X = [0x1A7F];
-		A = [0x9C];
-		[0x19AC + X] = A;
-		A = [0x9B];
-		[0x19AB + X] = A;
-	}
-
-	public void L8381CB()
-	{
-		X = [0x1A7B];
-		P |= 0x20;
-		[0x19DB + X]--;
-		P &= ~0x20;
-	}
-
-	public void L8381D5()
-	{
-		return;
-	}
-
-	public void L838442()
-	{
-		X = [0x1A7F];
-		A = [0x1A1B + X];
-		[0x8F] = A;
-		A = [0x1A1C + X];
-		[0x90] = A;
-		A = [[0x9B]];
-		A &= 0x00FF;
-		[[]] = A;
-		[0xAE9BE6] = A;
-		Cpu.TDC();
-		A++;
-		P |= 0x20;
-		A = [[0x9B]];
-		[0x19DB + X] = A;
-		P &= ~0x20;
-		[0x9B]++;
-		return;
-	}
-
-	public void L838EE1()
-	{
-		A = [0x150C];
-		temp = A & 0x4000;
-
-		if (Z == 0)
-			return this.L838EFF();
-
-		A = [0x197A];
-		[0x12] = A;
-		A = 0x0000;
-		[0x14] = A;
-		A = [0x1986];
-		[0x16] = A;
-		A = 0x0000;
-		[0x18] = A;
-		return this.L838F15();
-	}
-
-	public void L838EFF()
-	{
-		A = [0x14DC];
-		[0x12] = A;
-		A = 0xFFD8;
-		[0x14] = A;
-		A = [0x14EA];
-		[0x16] = A;
-		A = 0xFFE8;
-		[0x18] = A;
-		return this.L838F15();
-	}
-
-	public void L838F15()
-	{
-		A = [0x14DC];
-		C = 1;
-		A -= [0x12] - !C;
-		[0x7E5BC3] = A;
-		C = 0;
-		A += 0x0080 + C;
-		C = 0;
-		A += [0x14] + C;
-		C = 0;
-		A += [0x14F6] + C;
-		[0x14D8] = A;
-		A = [0x14EA];
-		C = 1;
-		A -= [0x16] - !C;
-		[0x7E5BC5] = A;
-		C = 0;
-		A += [0x1500] + C;
-		C = 0;
-		A += [0x1508] + C;
-		C = 0;
-		A += [0x150A] + C;
-		C = 0;
-		A += [0x18] + C;
-		C = 0;
-		A += [0x14F8] + C;
-		[0x14E6] = A;
-		A = [0x7E5BC3];
-		C = 0;
-		A += [0x7E5BCB] + C;
-		[0x7E5BC3] = A;
-		A = [0x7E5BC5];
-		C = 0;
-		A += [0x7E5BCD] + C;
-		[0x7E5BC5] = A;
-		A = [0x14D8];
-		[0x1502] = A;
-		A = [0x1500];
-		C = 1;
-		A -= [0x16] - !C;
-		C = 0;
-		A += [0x1506] + C;
-		C = 0;
-		A += [0x150A] + C;
-		C = 0;
-		A += [0x18] + C;
-		[0x1504] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R839443()
-	{
-		A = 0x4110;
-		temp = A & [0x150C];[0x150C] &= ~A;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R839CEC()
-	{
-		A = [0x1A89];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839D00();
-
-		A &= 0x7FFF;
-		[0x1A89] = A;
-		X = 0x0008;
-		this.R839F1E();
-	}
-
-	public void L839D00()
-	{
-		A = [0x1A8B];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839D14();
-
-		A &= 0x7FFF;
-		[0x1A8B] = A;
-		X = 0x000A;
-		this.R839F1E();
-	}
-
-	public void L839D14()
-	{
-		A = [0x1A8D];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839D28();
-
-		A &= 0x7FFF;
-		[0x1A8D] = A;
-		X = 0x000C;
-		this.R839F1E();
-	}
-
-	public void L839D28()
-	{
-		A = [0x1A8F];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839D3C();
-
-		A &= 0x7FFF;
-		[0x1A8F] = A;
-		X = 0x000E;
-		this.R839F1E();
-	}
-
-	public void L839D3C()
-	{
-		A = [0x1A91];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839D50();
-
-		A &= 0x7FFF;
-		[0x1A91] = A;
-		X = 0x0010;
-		this.R839F1E();
-	}
-
-	public void L839D50()
-	{
-		A = [0x1A93];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839D64();
-
-		A &= 0x7FFF;
-		[0x1A93] = A;
-		X = 0x0012;
-		this.R839F1E();
-	}
-
-	public void L839D64()
-	{
-		A = [0x1A95];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839D78();
-
-		A &= 0x7FFF;
-		[0x1A95] = A;
-		X = 0x0014;
-		this.R839F1E();
-	}
-
-	public void L839D78()
-	{
-		A = [0x1A97];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839D8C();
-
-		A &= 0x7FFF;
-		[0x1A97] = A;
-		X = 0x0016;
-		this.R839F1E();
-	}
-
-	public void L839D8C()
-	{
-		A = [0x1A99];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839DA0();
-
-		A &= 0x7FFF;
-		[0x1A99] = A;
-		X = 0x0018;
-		this.R839F1E();
-	}
-
-	public void L839DA0()
-	{
-		A = [0x1A9B];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839DB4();
-
-		A &= 0x7FFF;
-		[0x1A9B] = A;
-		X = 0x001A;
-		this.R839F1E();
-	}
-
-	public void L839DB4()
-	{
-		A = [0x1A9D];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839DC8();
-
-		A &= 0x7FFF;
-		[0x1A9D] = A;
-		X = 0x001C;
-		this.R839F1E();
-	}
-
-	public void L839DC8()
-	{
-		A = [0x1A9F];
-		temp = A & 0x8000;
-		
-		if (Z == 1)
-			return this.L839DDC_Done();
-
-		A &= 0x7FFF;
-		[0x1A9F] = A;
-		X = 0x001E;
-		this.R839F1E();
-	}
-
-	public void L839DDC_Done()
-	{
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R839DDD()
-	{
-		A = [0x1A81];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839DF1();
-
-		A &= 0xBFFF;
-		[0x1A81] = A;
-		X = 0x0000;
-		this.R839F1E();
-	}
-
-	public void L839DF1()
-	{
-		A = [0x1A83];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839E05();
-
-		A &= 0xBFFF;
-		[0x1A83] = A;
-		X = 0x0002;
-		this.R839F1E();
-	}
-
-	public void L839E05()
-	{
-		A = [0x1A85];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839E19();
-
-		A &= 0xBFFF;
-		[0x1A85] = A;
-		X = 0x0004;
-		this.R839F1E();
-	}
-
-	public void L839E19()
-	{
-		A = [0x1A87];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839E2D();
-
-		A &= 0xBFFF;
-		[0x1A87] = A;
-		X = 0x0006;
-		this.R839F1E();
-	}
-
-	public void L839E2D()
-	{
-		A = [0x1A89];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839E41();
-
-		A &= 0xBFFF;
-		[0x1A89] = A;
-		X = 0x0008;
-		this.R839F1E();
-	}
-
-	public void L839E41()
-	{
-		A = [0x1A8B];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839E55();
-
-		A &= 0xBFFF;
-		[0x1A8B] = A;
-		X = 0x000A;
-		this.R839F1E();
-	}
-
-	public void L839E55()
-	{
-		A = [0x1A8D];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839E69();
-
-		A &= 0xBFFF;
-		[0x1A8D] = A;
-		X = 0x000C;
-		this.R839F1E();
-	}
-
-	public void L839E69()
-	{
-		A = [0x1A8F];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839E7D();
-
-		A &= 0xBFFF;
-		[0x1A8F] = A;
-		X = 0x000E;
-		this.R839F1E();
-	}
-
-	public void L839E7D()
-	{
-		A = [0x1A91];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839E91();
-
-		A &= 0xBFFF;
-		[0x1A91] = A;
-		X = 0x0010;
-		this.R839F1E();
-	}
-
-	public void L839E91()
-	{
-		A = [0x1A93];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839EA5();
-
-		A &= 0xBFFF;
-		[0x1A93] = A;
-		X = 0x0012;
-		this.R839F1E();
-	}
-
-	public void L839EA5()
-	{
-		A = [0x1A95];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839EB9();
-
-		A &= 0xBFFF;
-		[0x1A95] = A;
-		X = 0x0014;
-		this.R839F1E();
-	}
-
-	public void L839EB9()
-	{
-		A = [0x1A97];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839ECD();
-
-		A &= 0xBFFF;
-		[0x1A97] = A;
-		X = 0x0016;
-		this.R839F1E();
-	}
-
-	public void L839ECD()
-	{
-		A = [0x1A99];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839EE1();
-
-		A &= 0xBFFF;
-		[0x1A99] = A;
-		X = 0x0018;
-		this.R839F1E();
-	}
-
-	public void L839EE1()
-	{
-		A = [0x1A9B];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839EF5();
-
-		A &= 0xBFFF;
-		[0x1A9B] = A;
-		X = 0x001A;
-		this.R839F1E();
-	}
-
-	public void L839EF5()
-	{
-		A = [0x1A9D];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839F09();
-
-		A &= 0xBFFF;
-		[0x1A9D] = A;
-		X = 0x001C;
-		this.R839F1E();
-	}
-
-	public void L839F09()
-	{
-		A = [0x1A9F];
-		temp = A & 0x4000;
-		
-		if (Z == 1)
-			return this.L839F1D_Done();
-
-		A &= 0xBFFF;
-		[0x1A9F] = A;
-		X = 0x001E;
-		this.R839F1E();
-	}
-
-	public void L839F1D_Done()
-	{
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R839F1E()
-	{
-		A = [0x7E5C2C + X];
-		[0xB0] = A;
-		C = 0;
-		A += 0x0020 + C;
-		temp = A - 0x0140;
-		
-		if (C == 1)
-			return this.L839F52_Done();
-
-		A = [0x7E5C4C + X];
-		[0xB2] = A;
-		C = 0;
-		A += 0x0020 + C;
-		temp = A - 0x00E8;
-		
-		if (C == 1)
-			return this.L839F52_Done();
-
-		A = [0x7E5C6C + X];
-		[0xB4] = A;
-		A = [0x7E5C8C + X];
-		[0xA8] = A;
-		A = [0x7E5CAC + X];
-		[0xAA] = A;
-		this.R8280C2();
-	}
-
-	public void L839F52_Done()
-	{
-		return;
-	}
-
-
-
-
-
-
-	// Bank 0x86
-	public void R86CA1C()
-	{
-		A = [0x7FB3EF];
-
-		if (N == 1)
-			return this.L86CA27();
-
-		temp = A - 0x02D0;
-
-		if (C == 1)
-			return this.L86CA7C();
-
-	}
-
-	public void L86CA27()
-	{
-		A = 0x0080;
-		[0xB0] = A;
-		A = [0x014C];
-		A ^= 0xFFFF;
-		A++;
-		A &= 0x00FF;
-		A <<= 1;
-		A <<= 1;
-		A <<= 1;
-		[0xB2] = A;
-		A = [0x7FB3EF];
-
-		if (N == 1)
-			return this.L86CA69();
-
-		temp = A - 0x01E0;
-
-		if (C == 0)
-			return this.L86CA4B();
-
-		A = 0x00C9;
-		return this.L86CA6C();
-	}
-
-	public void L86CA4B()
-	{
-		temp = A - 0x0168;
-
-		if (C == 0)
-			return this.L86CA55();
-
-		A = 0x00C8;
-		return this.L86CA6C();
-	}
-
-	public void L86CA55()
-	{
-		temp = A - 0x00F0;
-
-		if (C == 0)
-			return this.L86CA5F();
-
-		A = 0x00C7;
-		return this.L86CA6C();
-	}
-
-	public void L86CA5F()
-	{
-		temp = A - 0x0078;
-
-		if (C == 0)
-			return this.L86CA69();
-
-		A = 0x00C6;
-		return this.L86CA6C();
-	}
-
-	public void L86CA69()
-	{
-		A = 0x00C0;
-	}
-
-	public void L86CA6C()
-	{
-		[0xB4] = A;
-		A = 0xCFFF;
-		[0xA8] = A;
-		A = 0x2000;
-		[0xAA] = A;
-		this.L8286B6();
-	}
-
-	public void L86CA7C()
-	{
-		return;
-	}
-
-	public void R86CA7D()
-	{
-		A = [0x7FB3EF];
-
-		if (N == 1)
-			return this.L86CA88();
-
-		temp = A - 0x0258;
-
-		if (C == 1)
-			return this.L86CAE9_Done();
-
-	}
-
-	public void L86CA88()
-	{
-		A = 0x0080;
-		[0xB0] = A;
-		A = [0x014C];
-		A ^= 0xFFFF;
-		A++;
-		A &= 0x00FF;
-		A <<= 1;
-		A <<= 1;
-		[0x26] = A;
-		A <<= 1;
-		C = 0;
-		A += [0x26] + C;
-		[0xB2] = A;
-		A = [0x7FB3EF];
-
-		if (N == 1)
-			return this.L86CAD6();
-
-		temp = A - 0x01E0;
-
-		if (C == 0)
-			return this.L86CAB1();
-
-		A = 0x00C5;
-		return this.L86CAD9();
-	}
-
-	public void L86CAB1()
-	{
-		temp = A - 0x0168;
-
-		if (C == 0)
-			return this.L86CABB();
-
-		A = 0x00C4;
-		return this.L86CAD9();
-	}
-
-	public void L86CABB()
-	{
-		temp = A - 0x00F0;
-
-		if (C == 0)
-			return this.L86CAC5();
-
-		A = 0x00C3;
-		return this.L86CAD9();
-	}
-
-	public void L86CAC5()
-	{
-		temp = A - 0x0078;
-
-		if (C == 0)
-			return this.L86CACF();
-
-		A = 0x00C2;
-		return this.L86CAD9();
-	}
-
-	public void L86CACF()
-	{
-
-		if (N == 1)
-			return this.L86CAD6();
-
-		A = 0x00C1;
-		return this.L86CAD9();
-	}
-
-	public void L86CAD6()
-	{
-		A = 0x00BF;
-	}
-
-	public void L86CAD9()
-	{
-		[0xB4] = A;
-		A = 0xCFFF;
-		[0xA8] = A;
-		A = 0x2000;
-		[0xAA] = A;
-		this.L8286B6();
-	}
-
-	public void L86CAE9_Done()
-	{
-		return;
-	}
-
-
-
-
-
-
-	// Bank 0x8B
-	public void R8B8000()
-	{
-		A = 0x0000;
-		[0x7E6A82] = A;
-		[0x7E6A84] = A;
-		this.R8B8018();
-		return;
-	}
-
-	public void L8B8010()
-	{
-		this.R8B8000();
-		[0x026D]++;
-		return;
-	}
-
-	public void R8B8018()
-	{
-		P &= ~0x20;
-		A = 0x0000;
-		[0x7E6A82] = A;
-		[0x7E6A84] = A;
-		this.R8B85FF();
-		this.R8B863B();
-		A = 0xFFFF;
-		[0x7E6AC6] = A;
-		[0x7E6AC8] = A;
-		[0x7E6ACA] = A;
-		[0x7E6ACC] = A;
-		[0x7E6ACE] = A;
-		[0x7E6AD0] = A;
-		[0x7E6AD2] = A;
-		[0x7E6AD4] = A;
-		[0x7E6A80] = A;
-		A = [0x014D];
-		[0x7E6A8E] = A;
-		A &= 0x0001;
-		[0x7E6AB1] = A;
-		A = 0x0000;
-		[0x7E6AB3] = A;
-		[0x7E6AA1] = A;
-		[0x7E6AA5] = A;
-		[0x7E6A7A] = A;
-		[0x7E6A7E] = A;
-		[0x7E6AA9] = A;
-		[0x7E6AAB] = A;
-		[0x7E6AAD] = A;
-		[0x7E6AA7] = A;
-		[0x7E6A8A] = A;
-		P |= 0x20;
-		A = 0xFF;
-		[0x7E6AB5] = A;
-		P &= ~0x20;
-		A = 0xFFFF;
-		[0x7E6A88] = A;
-		[0x7E6A7C] = A;
-		this.R8B80AD();
-		this.R8B86C6();
-		this.R8B80E8();
-		this.R8B80C9();
-		return;
-	}
-
-	public void R8B80AD()
-	{
-		Stack.Push(P);
-		P |= 0x20;
-		A = 0x00;
-		[0x7E6A90] = A;
-		X = 0x000F;
-	}
-
-	public void L8B80B9()
-	{
-		A = X;
-		A &= 0x0F;
-		[0x7E6A91 + X] = A;
-		X--;
-		
-		if (N == 0)
-			return this.L8B80B9();
-
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8B80C9()
-	{
-		A = [0x0B3C];
-		A &= 0xFFFC;
-	}
-
-	public void L8B80CF()
-	{
-		
-		if (Z == 0)
-			return this.L8B80CF();
-
-		X = [0x0381];
-		A = [0x8B80E4 + X];
-		A &= 0x00FF;
-		C = 0;
-		A += [0x0B3C] + C;
-		[0x7E6AD6] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8B80E8()
-	{
-		Stack.Push(P);
-		P |= 0x20;
-		P &= ~0x10;
-		X = 0x000F;
-		A = 0x00;
-	}
-
-	public void L8B80F2()
-	{
-		[0x7E6AD8 + X] = A;
-		X--;
-		
-		if (N == 0)
-			return this.L8B80F2();
-
-		P = Stack.Pop();
-		A = [0x014D];
-		C = 0;
-		A += [0x014C] + C;
-		[0x7E6AD8] = A;
-		A = [0x014D];
-		[0x7E6ADC] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8B85FF()
-	{
-		A = [0x7E3D73];
-		[0x7E6AB6] = A;
-		[0x7E6AC6] = A;
-		A = [0x7E3D75];
-		[0x7E6AB8] = A;
-		[0x7E6AC8] = A;
-		A = [0x7E3D87];
-		[0x7E6ABA] = A;
-		[0x7E6ACA] = A;
-		A = [0x7E3D89];
-		[0x7E6ABC] = A;
-		[0x7E6ACC] = A;
-		A = 0x2000;
-		A |= [0x7E6AE0];
-		[0x7E6AE0] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8B863B()
-	{
-		A = [0x7E3D9B];
-		[0x7E6ABE] = A;
-		[0x7E6ACE] = A;
-		A = [0x7E3D9D];
-		[0x7E6AC0] = A;
-		[0x7E6AD0] = A;
-		A = [0x7E3DAF];
-		[0x7E6AC2] = A;
-		[0x7E6AD2] = A;
-		A = [0x7E3DB1];
-		[0x7E6AC4] = A;
-		[0x7E6AD4] = A;
-		A = 0x2000;
-		A |= [0x7E6AE0];
-		[0x7E6AE0] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8B86C6()
-	{
-		A = [0x14D6];
-		A <<= 1;
-		X = A;
-		A = [0x8B8EEC + X];
-		[0x12] = A;
-		A = [0x7E6AD6];
-		A <<= 1;
-		C = 0;
-		A += [0x12] + C;
-		X = A;
-		A = [0x8B0000 + X];
-		[0x7E6AA3] = A;
-		return;
-	}
-
-
-
-
-	// Bank 0x8C
-	public void R8CC0E8_ResetRegistersAndRam()
-	{
-		P &= ~0x30;
-		this.R80823D_Set0100Flag80();
-		P |= 0x20;
-		A = 0x8F;
-		[0x2100] = A;
-		[0x0100] = A;
-		A = 0x10;
-		[0x2102] = A;
-		[0x0102] = A;
-		A = 0x00;
-		[0x2103] = A;
-		[0x0103] = A;
-		A = 0x09;
-		[0x2105] = A;
-		[0x0104] = A;
-		A = 0x10;
-		[0x2109] = A;
-		[0x0108] = A;
-		A = 0x00;
-		[0x210C] = A;
-		[0x010B] = A;
-		A = 0x04;
-		[0x212C] = A;
-		[0x0126] = A;
-		A = 0x00;
-		[0x212D] = A;
-		[0x0127] = A;
-		A = 0x81;
-		[0x4200] = A;
-		[0x013C] = A;
-		P &= ~0x20;
-		A = 0x8C00;
-		[0x01] = A;
-		A = 0xC1C2;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		A = 0x8C00;
-		[0x01] = A;
-		A = 0xC1D4;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		this.R808202_WaitFor014BFlag1();
-		A = 0x0000;
-		Y = 0x0800;
-		X = 0x0000;
-	}
-
-	public void L8CC163_Loop()
-	{
-		[0x7E2000 + X] = A;
-		X++;
-		Y--;
-		X++;
-		Y--;
-
-		if (Z == 0)
-			return this.L8CC163_Loop();
-
-		Y = 0x0050;
-		X = 0x0000;
-	}
-
-	public void L8CC173_Loop()
-	{
-		A = [0x8CC1DB + X];
-		[0x7E2318 + X] = A;
-		X++;
-		Y--;
-		X++;
-		Y--;
-
-		if (Z == 0)
-			return this.L8CC173_Loop();
-
-		A = 0x8C00;
-		[0x01] = A;
-		A = 0xC1CB;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		this.R808202_WaitFor014BFlag1();
-		this.R808252_Clear0100Flag80();
-		return;
-	}
-
-	public byte[] Table8CC1C2 = new byte[]
-	{
-		//02 E4 BF 8C 00 01 80 00 00
-	}
-
-	public byte[] Table8CC1CB = new byte[]
-	{
-		//02 00 20 7E 00 08 80 00 10
-	}
-
-	public byte[] Table8CC1D4 = new byte[]
-	{
-		//01 2B C2 8C 04 00 00
-	}
-
-
-
-
-
-
-
-
-	public void L8CC456()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0x0163;
-		C = 0;
-		A += 0x000C + C;
-		[0xB4] = A;
-		this.R828000();
-		A = [0x014C];
-		A &= 0x0003;
-		temp = A - 0x0003;
-
-		if (Z == 0)
-			return this.L8CC48F_Done();
-
-		A = [0x014C];
-		A &= 0x001F;
-		C = 1;
-		A -= 0x0001 - !C;
-		X = A;
-		A = [0x8FA060 + X];
-		[0x7F0669] = A;
-		X--;
-		X--;
-		A = [0x8FA060 + X];
-		[0x7F0667] = A;
-	}
-
-	public void L8CC48F_Done()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-	// Bank 0x8E
-	public void R8E98BE()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x7E6AF6];
-		A &= 0x00FF;
-		A <<= 1;
-		X = A;
-		Cpu.JSR((0x98D4 + X));
-		this.R8EAB4D();
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void R8EAB4D()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-		this.R91B091();
-		this.R90829B();
-		A = [0x7E6B09];
-
-		if (Z == 1)
-			return this.L8EAB61();
-
-		this.R8EABEC();
-	}
-
-	public void L8EAB61()
-	{
-		A = [0x7E6AF6];
-		temp = A - 0x0006;
-
-		if (Z == 1)
-			return this.L8EAB73();
-
-
-		if (C == 0)
-			return this.L8EAB7F_Done();
-
-		temp = A - 0x000D;
-
-		if (C == 1)
-			return this.L8EAB7F_Done();
-
-		return this.L8EAB7C();
-	}
-
-	public void L8EAB73()
-	{
-		A = [0x7E6B26];
-		temp = A - 0x0002;
-
-		if (C == 0)
-			return this.L8EAB7F_Done();
-
-	}
-
-	public void L8EAB7C()
-	{
-		this.L8EAB81();
-	}
-
-	public void L8EAB7F_Done()
-	{
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L8EAB81()
-	{
-		P &= ~0x30;
-		A = 0x0080;
-		[0xB0] = A;
-		A = 0x002C;
-		[0xB2] = A;
-		A = [0x7E6AF6];
-		temp = A - 0x0006;
-
-		if (Z == 1)
-			return this.L8EABB8();
-
-		A = [0x7E6B26];
-		temp = A - 0x0002;
-
-		if (C == 0)
-			return this.L8EABAD();
-
-		A = [0x7E6AF6];
-		temp = A - 0x000A;
-
-		if (Z == 1)
-			return this.L8EABC3();
-
-		temp = A - 0x000D;
-
-		if (Z == 1)
-			return this.L8EABC3();
-
-	}
-
-	public void L8EABAD()
-	{
-		A = 0x01F0;
-		[0xB4] = A;
-		this.R828000();
-		return this.L8EABCE();
-	}
-
-	public void L8EABB8()
-	{
-		A = 0x01F1;
-		[0xB4] = A;
-		this.R828000();
-		return this.L8EABCE();
-	}
-
-	public void L8EABC3()
-	{
-		A = 0x01F2;
-		[0xB4] = A;
-		this.R828000();
-		return this.L8EABCE();
-	}
-
-	public void L8EABCE()
-	{
-		A = 0x01F3;
-		[0xB4] = A;
-		this.R828000();
-		A = [0x7E6B0E];
-
-		if (Z == 1)
-			return this.L8EABEB();
-
-		A = 0x007E;
-		[0xB0] = A;
-		A = 0x00AD;
-		[0xB2] = A;
-		this.L8CC456();
-	}
-
-	public void L8EABEB()
-	{
-		return;
-	}
-
-	public void R8EABEC()
-	{
-		A = 0x0001;
-		[0x0AB9] = A;
-		A = 0x0004;
-		[0x0AB5] = A;
-		this.L91AD8B();
-		A = [0x0AB5];
-
-		if (N == 1)
-			return this.L8EAC02();
-
-		return;
-	}
-
-	public void L8EAC02()
-	{
-		A = 0x0000;
-		[0x7E6B09] = A;
-		return;
-	}
-
-
-
-
-
-	// Bank 0x90
-	public void R9082B7()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		X = 0x07FE;
-		A = 0x0000;
-	}
-
-	public void L9082C3()
-	{
-		[0x7E3000 + X] = A;
-		X--;
-		X--;
-
-		if (N == 0)
-			return this.L9082C3();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-	public void R90829B()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0x9000;
-		[0x01] = A;
-		A = 0x82B0;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R909CDE()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		this.R80823D_Set0100Flag80();
-		this.R9081B1_ResetRam();
-		this.R94E94E();
-		this.R908000_ResetRam();
-		[0x026D]++;
-		P = Stack.Pop();
-		I = 0;
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void L90D15F()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x0371];
-		temp = A - 0x0004;
-		
-		if (Z == 1)
-			return this.L90D175();
-
-		temp = A - 0x0003;
-		
-		if (Z == 0)
-			return this.L90D17D();
-
-		A = [0x0369];
-		
-		if (Z == 1)
-			return this.L90D17D();
-
-	}
-
-	public void L90D175()
-	{
-		[0x026D]++;
-		[0x035D] = 0;
-		return this.L90D1B3();
-	}
-
-	public void L90D17D()
-	{
-		A = [0x0367];
-		A &= 0x00FF;
-		A <<= 1;
-		X = A;
-		Cpu.JSR((0xD1B6 + X));
-		A = [0x0100];
-		A &= 0x0080;
-		
-		if (Z == 0)
-			return this.L90D1B3();
-
-		this.L90E4C8();
-		[0x0B34] = 0;
-		this.L91B091();
-		this.L90829B();
-		P |= 0x20;
-		A = [0x0126];
-		[0x0996] = A;
-		[0x0998] = A;
-		A = [0x7F65EB];
-		A |= 0x06;
-		[0x4A] = A;
-		P &= ~0x20;
-	}
-
-	public void L90D1B3()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L90E4C8()
-	{
-		A = [0x043A];
-		C = 0;
-		A += 0x8000 + C;
-		[0x043A] = A;
-		A = [0x043C];
-		[0x12] = A;
-		A += 0x0000 + C;
-		[0x043C] = A;
-		P |= 0x20;
-		A = [0x043C];
-		A &= 0x1F;
-		A ^= 0x1F;
-		A++;
-		[0x7F3BEB] = A;
-		[0x7F3CEB] = A;
-		P &= ~0x20;
-		A = [0x043C];
-		A ^= [0x12];
-		A &= 0xFFE0;
-		
-		if (Z == 0)
-			return this.L90E4FC();
-
-		return;
-	}
-
-	public void L90E4FC()
-	{
-		A = [0x0472];
-		A++;
-		A &= 0x0007;
-		[0x0472] = A;
-		A <<= 1;
-		Y = A;
-		X = 0x0000;
-		A = [0x7F3BE9];
-		
-		if (Z == 0)
-			return this.L90E514();
-
-		X = 0x0100;
-	}
-
-	public void L90E514()
-	{
-		A = [0xE560 + Y];
-		[0x7F3BEE + X] = A;
-		A = [0xE562 + Y];
-		[0x7F3BF3 + X] = A;
-		A = [0xE564 + Y];
-		[0x7F3BF8 + X] = A;
-		A = [0xE566 + Y];
-		[0x7F3BFD + X] = A;
-		A = [0xE568 + Y];
-		[0x7F3C02 + X] = A;
-		A = [0xE56A + Y];
-		[0x7F3C07 + X] = A;
-		A = [0xE56C + Y];
-		[0x7F3C0C + X] = A;
-		A = [0x7F3BE9];
-		A ^= 0x0001;
-		[0x7F3BE9] = A;
-		
-		if (Z == 0)
-			return this.L90E559();
-
-		A = 0x3BEB;
-		[0x0952] = A;
-		return;
-	}
-
-	public void L90E559()
-	{
-		A = 0x3CEB;
-		[0x0952] = A;
-		return;
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	public void R908000_ResetRam()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0xFFFF;
-		[0x03AD] = A;
-		[0x03AF] = A;
-		[0x036F] = 0;
-		[0x03FA] = 0;
-		[0x03FC] = 0;
-		A = 0x0000;
-		[0x7F0512] = A;
-		[0x7F0527] = A;
-		A = 0xFFFF;
-		[0x7F051B] = A;
-		[0x7F051D] = A;
-		[0x7F051F] = A;
-		[0x7F0521] = A;
-		[0x7F0523] = A;
-		[0x7F0525] = A;
-		P |= 0x20;
-		A = 0x01;
-		[0x03B2] = A;
-		A = 0x02;
-		[0x03CF] = A;
-		A = 0xFF;
-		[0x03B1] = A;
-		P &= ~0x20;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-	public void R908052()
-	{
-		Stack.Push(B);
-		Stack.Push(K);
-		B = Stack.Pop();
-		this.L91B06F();
-		this.L91AA56();
-		this.L91AD68();
-		P |= 0x20;
-		A = 0xFF;
-		[0x03EA] = A;
-		P &= ~0x20;
-		A = 0x0080;
-		[0x0375] = A;
-		[0x0379] = A;
-		[0x0377] = A;
-		[0x037B] = A;
-		A = 0xFFFF;
-		[0x00037F] = A;
-		[0x0393] = 0;
-		[0x0395] = 0;
-		[0x0404] = 0;
-		[0x0408] = 0;
-		[0x0408] = 0;
-		[0x040A] = 0;
-		[0x040C] = 0;
-		[0x040E] = 0;
-		[0x045A] = 0;
-		[0x045C] = 0;
-		[0x045E] = 0;
-		[0x0460] = 0;
-		[0x0462] = 0;
-		[0x0464] = 0;
-		[0x0466] = 0;
-		[0x0468] = 0;
-		[0x046A] = 0;
-		[0x046C] = 0;
-		[0x046E] = 0;
-		[0x0470] = 0;
-		[0x0452] = 0;
-		[0x0454] = 0;
-		[0x0456] = 0;
-		[0x0458] = 0;
-		[0x1BF5] = 0;
-		[0x03BB] = 0;
-		[0x03BD] = 0;
-		[0x03BF] = 0;
-		A = 0x0005;
-		[0x03DE] = A;
-		this.R9082B7();
-		this.R949B0B();
-		this.R9089DB();
-		this.R908A56();
-		this.R9088FD();
-		this.R94B383();
-		this.R948D87();
-		A = 0xFFFF;
-		[0x0312] = A;
-		[0x0402] = A;
-		[0x03AD] = A;
-		[0x03AF] = A;
-		[0x038D] = A;
-		[0x035D] = 0;
-		[0x035F] = 0;
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R9081B1_ResetRam()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		this.R80823D_Set0100Flag80();
-		this.R80827B_Clear013CAnd4200Flag10();
-		this.R8082A3_Clear013CAnd4200Flag20();
-		P |= 0x20;
-		A = 0x80;
-		[0x4340] = A;
-		A = 0x32;
-		[0x4341] = A;
-		A = 0x5C;
-		[0x4342] = A;
-		A = 0x82;
-		[0x4343] = A;
-		A = 0x90;
-		[0x4344] = A;
-		P &= ~0x20;
-		P |= 0x20;
-		A = 0x80;
-		[0x4350] = A;
-		A = 0x32;
-		[0x4351] = A;
-		A = 0x5C;
-		[0x4352] = A;
-		A = 0x82;
-		[0x4353] = A;
-		A = 0x90;
-		[0x4354] = A;
-		P &= ~0x20;
-		P |= 0x20;
-		A = 0x80;
-		[0x4360] = A;
-		A = 0x32;
-		[0x4361] = A;
-		A = 0x5C;
-		[0x4362] = A;
-		A = 0x82;
-		[0x4363] = A;
-		A = 0x90;
-		[0x4364] = A;
-		P &= ~0x20;
-		P |= 0x20;
-		A = 0x80;
-		[0x4370] = A;
-		A = 0x32;
-		[0x4371] = A;
-		A = 0x5C;
-		[0x4372] = A;
-		A = 0x82;
-		[0x4373] = A;
-		A = 0x90;
-		[0x4374] = A;
-		P &= ~0x20;
-		P |= 0x20;
-		A = [0x013C];
-		A &= 0x81;
-		[0x013C] = A;
-		[0x420C] = 0;
-		[0x0141] = 0;
-		[0x4A] = 0;
-		[0x434A] = 0;
-		[0x435A] = 0;
-		[0x436A] = 0;
-		[0x437A] = 0;
-		P &= ~0x20;
-		this.R808202_WaitFor014BFlag1();
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void L9084BD()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x0367];
-		temp = A - 0x0007;
-
-		if (Z == 1)
-			return this.L9084D6();
-
-		temp = A - 0x0001;
-
-		if (Z == 1)
-			return this.L9084F4();
-
-		temp = A - 0x0002;
-
-		if (Z == 1)
-			return this.L9084FA();
-	}
-
-	public void L9084D3()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L9084D6()
-	{
-		A = [0x7FB3EF];
-
-		if (N == 0)
-			return this.L9084E4();
-
-		this.R86CA7D();
-		this.R86CA1C();
-	}
-
-	public void L9084E4()
-	{
-		A = [0x036F];
-
-		if (Z == 0)
-			return this.L9084F2();
-
-		A = [0x0381];
-
-		if (Z == 0)
-			return this.L9084F2();
-
-		this.R90C047();
-	}
-
-	public void L9084F2()
-	{
-		return this.L9084D3();
-	}
-
-	public void L9084F4()
-	{
-		this.R9BD1EC();
-		return this.L9084D3();
-	}
-
-	public void L9084FA()
-	{
-		this.R858000();
-		return this.L9084D3();
-	}
-
-
-
-
-
-
-
-	public void L9089DB()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P |= 0x20;
-		P &= ~0x10;
-		X = 0xC0E1;
-		[0x3E] = X;
-		A = 0xA2;
-		[0x40] = A;
-		X = 0xAB38;
-		[0x43] = X;
-		A = 0x7E;
-		[0x45] = A;
-		this.L808888();
-		P &= ~0x30;
-		A = 0x9000;
-		[0x01] = A;
-		A = 0x8A44;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		A = 0x9000;
-		[0x01] = A;
-		A = 0x8A4D;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		P &= ~0x20;
-		Y = 0x003E;
-		X = 0x0000;
-	}
-
-	public void L908A1F()
-	{
-		A = [0x95D700 + X];
-		[0x7F0563 + X] = A;
-		X++;
-		Y--;
-		X++;
-		Y--;
-
-		if (Z == 0)
-			return this.L908A1F();
-
-		Y = 0x003E;
-		X = 0x0000;
-	}
-
-	public void L908A33()
-	{
-		A = [0x95D700 + X];
-		[0x7F1063 + X] = A;
-		X++;
-		Y--;
-		X++;
-		Y--;
-
-		if (Z == 0)
-			return this.L908A33();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void L9094E4()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		this.R9094EE();
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void R9094EE()
-	{
-		A = [0x0458];
-
-		if (N == 0)
-			return this.L9094F7();
-
-		A ^= 0xFFFF;
-		A++;
-	}
-
-	public void L9094F7()
-	{
-		A &= 0x000E;
-		A ^= 0x000E;
-		A >>= 1;
-		[0x12] = A;
-		A = [0x03E2];
-		[0x03E2]++;
-		temp = A - [0x12];
-
-		if (C == 0)
-			return this.L90952D();
-
-		[0x03E2] = 0;
-		A = [0x03E0];
-		A--;
-
-		if (N == 0)
-			return this.L909516();
-
-		A = 0x0003;
-	}
-
-	public void L909516()
-	{
-		[0x03E0] = A;
-		A <<= 1;
-		C = 0;
-		A += [0x03E0] + C;
-		X = A;
-		A = [0x952F + X];
-		[0x01] = A;
-		A = [0x952E + X];
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-	}
-
-	public void L90952D()
-	{
-		return;
-	}
-
-
-
-
-
-
-
-	public void R909EE5()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		this.L908453();
-		this.L9084BD();
-		A = [0x0367];
-		temp = A - 0x0009;
-
-		if (Z == 1)
-			return this.L909EFF();
-
-		[0x026D]++;
-	}
-
-	public void L909EFC()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L909EFF()
-	{
-		A = 0x0055;
-		[0x026D] = A;
-		return this.L909EFC();
-	}
-
-	public void L90C047()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-	}
-
-	public void L90C04B()
-	{
-		A = [0x7FB3F1];
-
-		if (N == 0)
-			return this.L90C054();
-
-		return this.L90C0DA();
-	}
-
-	public void L90C054()
-	{
-		X = A;
-		A = [0x7FB3F5];
-		[0x03E6] = A;
-		A = [0xC104 + X];
-		temp = A - 0x8000;
-
-		if (Z == 1)
-			return this.L90C0DD();
-
-		temp = A - 0x8001;
-
-		if (Z == 1)
-			return this.L90C0E6();
-
-		temp = A - 0x8002;
-
-		if (Z == 0)
-			return this.L90C071();
-
-		return this.L90C0F9();
-	}
-
-	public void L90C071()
-	{
-		A &= 0x0F00;
-
-		if (Z == 1)
-			return this.L90C0A0();
-
-		A = 0x0001;
-		[0x7FB3F5] = A;
-		P |= 0x20;
-		A = 0x20;
-		[0x012E] = A;
-		A = 0xCF;
-		[0x012D] = A;
-		[0x012C] = A;
-		A = 0x00;
-		[0x012A] = A;
-		A = 0xBF;
-		[0x012B] = A;
-		A = [0x4A];
-		A &= 0xFC;
-		[0x4A] = A;
-		P &= ~0x20;
-		return this.L90C0BA();
-	}
-
-	public void L90C0A0()
-	{
-		A = 0x0000;
-		[0x7FB3F5] = A;
-		P |= 0x20;
-		A = 0xB3;
-		[0x012B] = A;
-		A = 0x12;
-		[0x012A] = A;
-		A = 0xE0;
-		[0x012C] = A;
-		P &= ~0x20;
-	}
-
-	public void L90C0BA()
-	{
-		A = [0xC104 + X];
-
-		if (N == 1)
-			return this.L90C0C4();
-
-		A &= 0x000F;
-		return this.L90C0C7();
-	}
-
-	public void L90C0C4()
-	{
-		A |= 0x0F00;
-	}
-
-	public void L90C0C7()
-	{
-		[0x0117] = A;
-		[0x7F0002] = A;
-		A = [0x7FB3F1];
-		C = 0;
-		A += 0x0002 + C;
-		[0x7FB3F1] = A;
-	}
-
-	public void L90C0DA()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L90C0DD()
-	{
-		A = 0xFFFF;
-		[0x7FB3F1] = A;
-		return this.L90C0DA();
-	}
-
-	public void L90C0E6()
-	{
-		A = [0x7FB3F1];
-		C = 0;
-		A += 0x0002 + C;
-		[0x7FB3F1] = A;
-		[0x7FB3F3] = A;
-		return this.L90C04B();
-	}
-
-	public void L90C0F9()
-	{
-		A = [0x7FB3F3];
-		[0x7FB3F1] = A;
-		return this.L90C04B();
-	}
-
-
-
-
-
-
-
-
-	public void R90C047()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-	}
-
-	public void L90C04B()
-	{
-		A = [0x7FB3F1];
-
-		if (N == 0)
-			return this.L90C054();
-
-		return this.L90C0DA();
-	}
-
-	public void L90C054()
-	{
-		X = A;
-		A = [0x7FB3F5];
-		[0x03E6] = A;
-		A = [0xC104 + X];
-		temp = A - 0x8000;
-
-		if (Z == 1)
-			return this.L90C0DD();
-
-		temp = A - 0x8001;
-
-		if (Z == 1)
-			return this.L90C0E6();
-
-		temp = A - 0x8002;
-
-		if (Z == 0)
-			return this.L90C071();
-
-		return this.L90C0F9();
-	}
-
-	public void L90C071()
-	{
-		A &= 0x0F00;
-
-		if (Z == 1)
-			return this.L90C0A0();
-
-		A = 0x0001;
-		[0x7FB3F5] = A;
-		P |= 0x20;
-		A = 0x20;
-		[0x012E] = A;
-		A = 0xCF;
-		[0x012D] = A;
-		[0x012C] = A;
-		A = 0x00;
-		[0x012A] = A;
-		A = 0xBF;
-		[0x012B] = A;
-		A = [0x4A];
-		A &= 0xFC;
-		[0x4A] = A;
-		P &= ~0x20;
-		return this.L90C0BA();
-	}
-
-	public void L90C0A0()
-	{
-		A = 0x0000;
-		[0x7FB3F5] = A;
-		P |= 0x20;
-		A = 0xB3;
-		[0x012B] = A;
-		A = 0x12;
-		[0x012A] = A;
-		A = 0xE0;
-		[0x012C] = A;
-		P &= ~0x20;
-	}
-
-	public void L90C0BA()
-	{
-		A = [0xC104 + X];
-
-		if (N == 1)
-			return this.L90C0C4();
-
-		A &= 0x000F;
-		return this.L90C0C7();
-	}
-
-	public void L90C0C4()
-	{
-		A |= 0x0F00;
-	}
-
-	public void L90C0C7()
-	{
-		[0x0117] = A;
-		[0x7F0002] = A;
-		A = [0x7FB3F1];
-		C = 0;
-		A += 0x0002 + C;
-		[0x7FB3F1] = A;
-	}
-
-	public void L90C0DA()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L90C0DD()
-	{
-		A = 0xFFFF;
-		[0x7FB3F1] = A;
-		return this.L90C0DA();
-	}
-
-	public void L90C0E6()
-	{
-		A = [0x7FB3F1];
-		C = 0;
-		A += 0x0002 + C;
-		[0x7FB3F1] = A;
-		[0x7FB3F3] = A;
-		return this.L90C04B();
-	}
-
-	public void L90C0F9()
-	{
-		A = [0x7FB3F3];
-		[0x7FB3F1] = A;
-		return this.L90C04B();
-	}
-
-
-
-
-
-
-
-	public void L91AD8B()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x0AB5];
-		temp = A - [0x0AB7];
-
-		if (Z == 0)
-			return this.L91ADCC();
-
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L91ADC3();
-
-		A = [0x0AB9];
-
-		if (Z == 1)
-			return this.L91ADAC();
-
-		A = [0x0ABB];
-		A |= [0x0ABD];
-		A |= [0x0ABF];
-
-		if (Z == 1)
-			return this.L91ADC6();
-
-	}
-
-	public void L91ADAC()
-	{
-		X = 0x0004;
-	}
-
-	public void L91ADAF()
-	{
-		A = [0x0ABB + X];
-
-		if (Z == 1)
-			return this.L91ADBF();
-
-		A = [0x0AC1 + X];
-
-		if (Z == 1)
-			return this.L91AE08();
-
-		this.L91AFFA();
-		[0x0AC1 + X]--;
-	}
-
-	public void L91ADBF()
-	{
-		X--;
-		X--;
-
-		if (N == 0)
-			return this.L91ADAF();
-
-	}
-
-	public void L91ADC3()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L91ADC6()
-	{
-		A = 0xFFFF;
-		[0x0AB5] = A;
-	}
-
-	public void L91ADCC()
-	{
-		[0x0ABB] = 0;
-		[0x0ABD] = 0;
-		[0x0ABF] = 0;
-		[0x0ADF] = 0;
-		[0x0AE1] = 0;
-		[0x0AE3] = 0;
-		A = [0x0AB5];
-		[0x0AB7] = A;
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L91ADC3();
-
-		A <<= 1;
-		C = 0;
-		A += [0x0AB5] + C;
-		X = A;
-		this.L91ADF5();
-		return this.L91ADAC();
-	}
-
-	public void L91ADF5()
-	{
-		A = [0xE0F3 + X];
-		[0x00] = A;
-		P |= 0x20;
-		A = [0xE0F5 + X];
-		[0x02] = A;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		return [[0x0000]]();    //24-Bit Address
-	}
-
-	public void L91AE08()
-	{
-		A = [0x0AC7 + X];
-		[0x00] = A;
-		A = [(0x00)];
-		A &= 0x00FF;
-		temp = A & 0x0080;
-
-		if (Z == 1)
-			return this.L91AE1A();
-
-		return this.L91AE8C();
-	}
-
-	public void L91AE1A()
-	{
-		temp = A - 0x0003;
-
-		if (Z == 0)
-			return this.L91AE22();
-
-		return this.L91AEDB();
-	}
-
-	public void L91AE22()
-	{
-		temp = A - 0x0004;
-
-		if (Z == 0)
-			return this.L91AE2A();
-
-		return this.L91AEE1();
-	}
-
-	public void L91AE2A()
-	{
-		temp = A - 0x0005;
-
-		if (Z == 0)
-			return this.L91AE32();
-
-		return this.L91AEE4();
-	}
-
-	public void L91AE32()
-	{
-		temp = A - 0x0007;
-
-		if (Z == 0)
-			return this.L91AE3A();
-
-		return this.L91AF0C();
-	}
-
-	public void L91AE3A()
-	{
-		temp = A - 0x0008;
-
-		if (Z == 0)
-			return this.L91AE42();
-
-		return this.L91AF4C();
-	}
-
-	public void L91AE42()
-	{
-		temp = A - 0x0002;
-
-		if (Z == 0)
-			return this.L91AE4A();
-
-		return this.L91AEC1();
-	}
-
-	public void L91AE4A()
-	{
-		temp = A - 0x0009;
-
-		if (Z == 0)
-			return this.L91AE52();
-
-		return this.L91AF57();
-	}
-
-	public void L91AE52()
-	{
-		temp = A - 0x000A;
-
-		if (Z == 0)
-			return this.L91AE5A();
-
-		return this.L91AF6C();
-	}
-
-	public void L91AE5A()
-	{
-		temp = A - 0x000B;
-
-		if (Z == 0)
-			return this.L91AE62();
-
-		return this.L91AF75();
-	}
-
-	public void L91AE62()
-	{
-		temp = A - 0x000C;
-
-		if (Z == 0)
-			return this.L91AE6A();
-
-		return this.L91AF8D();
-	}
-
-	public void L91AE6A()
-	{
-		temp = A - 0x0006;
-
-		if (Z == 0)
-			return this.L91AE72();
-
-		return this.L91AF24();
-	}
-
-	public void L91AE72()
-	{
-		temp = A - 0x000D;
-
-		if (Z == 0)
-			return this.L91AE7A();
-
-		return this.L91AFC2();
-	}
-
-	public void L91AE7A()
-	{
-		temp = A - 0x0001;
-
-		if (Z == 0)
-			return this.L91AE82();
-
-		return this.L91AEA1();
-	}
-
-	public void L91AE82()
-	{
-		temp = A - 0x000E;
-
-		if (Z == 0)
-			return this.L91AE8A();
-
-		return this.L91AFDD();
-	}
-
-	public void L91AE8A()
-	{
-		return this.L91AE8A();
-	}
-
-	public void L91AE8C()
-	{
-		A &= 0x007F;
-		[0x0AC1 + X] = A;
-		A = 0x0001;
-		[0x0ADF + X] = A;
-		[0x0AFB] = 0;
-		[0x0AC7 + X]++;
-		return this.L91ADAF();
-	}
-
-	public void L91AEA1()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x007F;
-		[0x0AC1 + X] = A;
-		A = 0x0001;
-		[0x0ADF + X] = A;
-		A = 0x0001;
-		[0x0AFB] = A;
-		[0x0AC7 + X]++;
-		[0x0AC7 + X]++;
-		return this.L91ADAF();
-	}
-
-	public void L91AEC1()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x007F;
-		[0x0AC1 + X] = A;
-		[0x0AFB] = 0;
-		[0x0ADF + X] = 0;
-		[0x0AC7 + X]++;
-		[0x0AC7 + X]++;
-		return this.L91ADAF();
-	}
-
-	public void L91AEDB()
-	{
-		[0x0ABB + X] = 0;
-		return this.L91ADBF();
-	}
-
-	public void L91AEE1()
-	{
-		return this.L91ADC6();
-	}
-
-	public void L91AEE4()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0ACD + X] = A;
-		Y = 0x0003;
-		A = [(0x00) + Y];
-		[0x0AD3 + X] = A;
-		Y = 0x0005;
-		A = [(0x00) + Y];
-		[0x0AD9 + X] = A;
-		A = [0x0AC7 + X];
-		C = 0;
-		A += 0x0007 + C;
-		[0x0AC7 + X] = A;
-		[0x0AFB] = 0;
-		return this.L91ADAF();
-	}
-
-	public void L91AF0C()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0AD9 + X] = A;
-		A = [0x0AC7 + X];
-		C = 0;
-		A += 0x0003 + C;
-		[0x0AC7 + X] = A;
-		[0x0AFB] = 0;
-		return this.L91ADAF();
-	}
-
-	public void L91AF24()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		C = 0;
-		A += [0x0AF1] + C;
-		[0x0AD9 + X] = A;
-		A = [0x0AF3];
-		[0x0AF5] = A;
-		A = [0x0AF7];
-		[0x0AF9] = A;
-		A = [0x0AC7 + X];
-		C = 0;
-		A += 0x0002 + C;
-		[0x0AC7 + X] = A;
-		return this.L91ADAF();
-	}
-
-	public void L91AF4C()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0AC7 + X] = A;
-		return this.L91ADAF();
-	}
-
-	public void L91AF57()
-	{
-		Y = 0x0001;
-		A = [0x0AC7 + X];
-		C = 0;
-		A += 0x0003 + C;
-		[0x0AEB + X] = A;
-		A = [(0x00) + Y];
-		[0x0AC7 + X] = A;
-		return this.L91ADAF();
-	}
-
-	public void L91AF6C()
-	{
-		A = [0x0AEB + X];
-		[0x0AC7 + X] = A;
-		return this.L91ADAF();
-	}
-
-	public void L91AF75()
-	{
-		Stack.Push(X);
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		X = A;
-		[0x0AE5 + X] = 0;
-		X = Stack.Pop();
-		A = [0x0AC7 + X];
-		C = 0;
-		A += 0x0003 + C;
-		[0x0AC7 + X] = A;
-		return this.L91ADAF();
-	}
-
-	public void L91AF8D()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		Y = A;
-		A = [0x0AE5 + Y];
-		A++;
-		[0x0AE5 + Y] = A;
-		[0x12] = A;
-		Y = 0x0003;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		temp = A - [0x12];
-
-		if (Z == 1)
-			return this.L91AFB5();
-
-
-		if (C == 0)
-			return this.L91AFB5();
-
-		Y = 0x0004;
-		A = [(0x00) + Y];
-		[0x0AC7 + X] = A;
-		return this.L91ADAF();
-	}
-
-	public void L91AFB5()
-	{
-		A = [0x0AC7 + X];
-		C = 0;
-		A += 0x0006 + C;
-		[0x0AC7 + X] = A;
-		return this.L91ADAF();
-	}
-
-	public void L91AFC2()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x03] = A;
-		Y = 0x0003;
-		A = [(0x00) + Y];
-		[(0x03)] = A;
-		A = [0x0AC7 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0AC7 + X] = A;
-		return this.L91ADAF();
-	}
-
-	public void L91AFDD()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0AF5] = A;
-		Y = 0x0003;
-		A = [(0x00) + Y];
-		[0x0AF9] = A;
-		A = [0x0AC7 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0AC7 + X] = A;
-		return this.L91ADAF();
-	}
-
-	public void L91AFFA()
-	{
-		A = [0x0ADF + X];
-
-		if (Z == 1)
-			return this.L91B020();
-
-		A = [0x0AFD];
-
-		if (Z == 0)
-			return this.L91B043();
-
-		A = [0x0AFB];
-
-		if (Z == 0)
-			return this.L91B021();
-
-		A = [0x0ACD + X];
-		[0xB0] = A;
-		A = [0x0AD3 + X];
-		[0xB2] = A;
-		A = [0x0AD9 + X];
-		[0xB4] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.R828000();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-	}
-
-	public void L91B020()
-	{
-		return;
-	}
-
-	public void L91B021()
-	{
-		A = [0x0ACD + X];
-		[0xB0] = A;
-		A = [0x0AD3 + X];
-		[0xB2] = A;
-		A = [0x0AD9 + X];
-		[0xB4] = A;
-		A = [0x0AF5];
-		[0xA8] = A;
-		A = [0x0AF9];
-		[0xAA] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L8280C2();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		return;
-	}
-
-	public void L91B043()
-	{
-		A = [0x0ACD + X];
-		[0xB0] = A;
-		A = [0x0AD3 + X];
-		[0xB2] = A;
-		A = [0x0AD9 + X];
-		[0xB4] = A;
-		A = [0x0AF5];
-		[0xA8] = A;
-		A = [0x0AF9];
-		[0xAA] = A;
-		A = [0x0AFE];
-		[0xA4] = A;
-		A = [0x0AFD];
-		[0xA3] = A;
-		Stack.Push(X);
-		Stack.Push(Y);
-		this.L8286B6();
-		Y = Stack.Pop();
-		X = Stack.Pop();
-		return;
-	}
-
-	// Bank 0x91
-	public void R91B091()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x0B00];
-		temp = A - [0x0B02];
-
-		if (Z == 0)
-			return this.L91B0D2();
-
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L91B0C9();
-
-		A = [0x0B04];
-		A |= [0x0B06];
-		A |= [0x0B08];
-		A |= [0x0B0A];
-		A |= [0x0B0C];
-		A |= [0x0B0E];
-
-		if (Z == 0)
-			return this.L91B0BB();
-
-		A = [0x0B34];
-
-		if (Z == 0)
-			return this.L91B0CC();
-
-	}
-
-	public void L91B0BB()
-	{
-		X = 0x000A;
-	}
-
-	public void L91B0BE()
-	{
-		A = [0x0B04 + X];
-
-		if (Z == 1)
-			return this.L91B0C5();
-
-
-		if (N == 0)
-			return this.L91B117();
-
-	}
-
-	public void L91B0C5()
-	{
-		X--;
-		X--;
-
-		if (N == 0)
-			return this.L91B0BE();
-
-	}
-
-	public void L91B0C9()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L91B0CC()
-	{
-		A = 0xFFFF;
-		[0x0B00] = A;
-	}
-
-	public void L91B0D2()
-	{
-		[0x0B0E] = 0;
-		[0x0B26] = 0;
-		A = [0x0B00];
-		[0x0B02] = A;
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L91B0F0();
-
-		[0x12] = A;
-		A <<= 1;
-		C = 0;
-		A += [0x12] + C;
-		X = A;
-		this.L91B104();
-		return this.L91B0BB();
-	}
-
-	public void L91B0F0()
-	{
-		[0x0B04] = 0;
-		[0x0B06] = 0;
-		[0x0B08] = 0;
-		[0x0B0A] = 0;
-		[0x0B0C] = 0;
-		[0x0B0E] = 0;
-		return this.L91B0C9();
-	}
-
-	public void L91B104()
-	{
-		A = [0xB2A5 + X];
-		[0x00] = A;
-		P |= 0x20;
-		A = [0xB2A7 + X];
-		[0x02] = A;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		return [[0x0000]]();    //24-Bit Address
-	}
-
-	public void L91B117()
-	{
-		A = [0x0B1C + X];
-
-		if (Z == 1)
-			return this.L91B121();
-
-		[0x0B1C + X]--;
-		return this.L91B0C5();
-	}
-
-	public void L91B121()
-	{
-		A = [0x0B10 + X];
-		[0x00] = A;
-		A = [(0x00)];
-		A &= 0x00FF;
-		temp = A - 0x0081;
-
-		if (Z == 0)
-			return this.L91B133();
-
-		return this.L91B17E();
-	}
-
-	public void L91B133()
-	{
-		temp = A - 0x0083;
-
-		if (Z == 0)
-			return this.L91B13B();
-
-		return this.L91B216();
-	}
-
-	public void L91B13B()
-	{
-		Y = A;
-		A &= 0x00C0;
-		temp = A - 0x00C0;
-
-		if (Z == 0)
-			return this.L91B147();
-
-		return this.L91B221();
-	}
-
-	public void L91B147()
-	{
-		A = Y;
-		A &= 0x00A0;
-		temp = A - 0x00A0;
-
-		if (Z == 0)
-			return this.L91B153();
-
-		return this.L91B23B();
-	}
-
-	public void L91B153()
-	{
-		A = Y;
-		temp = A - 0x0085;
-
-		if (Z == 0)
-			return this.L91B15C();
-
-		return this.L91B29F();
-	}
-
-	public void L91B15C()
-	{
-		temp = A - 0x0086;
-
-		if (Z == 0)
-			return this.L91B164();
-
-		return this.L91B263();
-	}
-
-	public void L91B164()
-	{
-		temp = A - 0x0087;
-
-		if (Z == 0)
-			return this.L91B16C();
-
-		return this.L91B281();
-	}
-
-	public void L91B16C()
-	{
-		temp = A - 0x0082;
-
-		if (Z == 0)
-			return this.L91B174();
-
-		return this.L91B1C8();
-	}
-
-	public void L91B174()
-	{
-		A &= 0x0080;
-
-		if (Z == 0)
-			return this.L91B17C();
-
-		return this.L91B208();
-	}
-
-	public void L91B17C()
-	{
-		return this.L91B17C();
-	}
-
-	public void L91B17E()
-	{
-		Stack.Push(X);
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		A <<= 1;
-		[0x12] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		[0x14] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A <<= 1;
-		[0x16] = A;
-	}
-
-	public void L91B198()
-	{
-		X = [0x16];
-		A = [0x7F0761 + X];
-		Y = A;
-		A = [0x7F1261 + X];
-		X = [0x12];
-		[0x7F1061 + X] = A;
-		A = Y;
-		[0x7F0561 + X] = A;
-		[0x12]++;
-		[0x12]++;
-		[0x16]++;
-		[0x16]++;
-		[0x14]--;
-
-		if (Z == 0)
-			return this.L91B198();
-
-		X = Stack.Pop();
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B1C8()
-	{
-		Stack.Push(X);
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		A <<= 1;
-		[0x12] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		[0x14] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A <<= 1;
-		[0x16] = A;
-	}
-
-	public void L91B1E2()
-	{
-		X = [0x16];
-		A = [0x7F0761 + X];
-		X = [0x12];
-		[0x7F0561 + X] = A;
-		[0x12]++;
-		[0x12]++;
-		[0x16]++;
-		[0x16]++;
-		[0x14]--;
-
-		if (Z == 0)
-			return this.L91B1E2();
-
-		X = Stack.Pop();
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B208()
-	{
-		A = [(0x00)];
-		A &= 0x00FF;
-		[0x0B1C + X] = A;
-		[0x0B10 + X]++;
-		return this.L91B0C5();
-	}
-
-	public void L91B216()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B221()
-	{
-		A = [(0x00)];
-		A &= 0x001F;
-		A <<= 1;
-		Y = A;
-		[0x00]++;
-		A = [(0x00)];
-		A &= 0x00FF;
-		[0x0B28 + Y] = A;
-		[0x0B10 + X]++;
-		[0x0B10 + X]++;
-		return this.L91B121();
-	}
-
-	public void L91B23B()
-	{
-		A = [(0x00)];
-		A &= 0x001F;
-		A <<= 1;
-		Y = A;
-		A = [0x0B28 + Y];
-		A--;
-		[0x0B28 + Y] = A;
-
-		if (Z == 1)
-			return this.L91B256();
-
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B256()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0003 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B263()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		Y = A;
-		A = [0x0B04 + Y];
-
-		if (Z == 1)
-			return this.L91B274();
-
-		A = 0xFFFF;
-		[0x0B04 + Y] = A;
-	}
-
-	public void L91B274()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0002 + C;
-		[0x0B10 + X] = A;
-		return this.L91B0C5();
-	}
-
-	public void L91B281()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		Y = A;
-		A = [0x0B04 + Y];
-
-		if (Z == 1)
-			return this.L91B292();
-
-		A = 0x0001;
-		[0x0B04 + Y] = A;
-	}
-
-	public void L91B292()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0002 + C;
-		[0x0B10 + X] = A;
-		return this.L91B0C5();
-	}
-
-	public void L91B29F()
-	{
-		[0x0B04 + X] = 0;
-		return this.L91B0C5();
-	}
-
-
-
-
-
-
-
-	public void R8ECB6E()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x7E6AF6];
-		A &= 0x00FF;
-		A <<= 1;
-		X = A;
-		Cpu.JSR((0xCB84 + X));
-		this.R8ECB90();
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8ECB90()
-	{
-		this.R8EDC74();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8EDC74()
-	{
-		P &= ~0x20;
-		A = [0x0B00];
-		
-		if (N == 1)
-			return this.L8EDC8C_Done();
-
-		A = [0x7E6AEA];
-		temp = A - 0x0001;
-		
-		if (Z == 1)
-			return this.L8EDC8C_Done();
-
-		this.R91B091();
-		this.R90829B();
-	}
-
-	public void L8EDC8C_Done()
-	{
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R90829B()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0x9000;
-		[0x01] = A;
-		A = 0x82B0;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R91B091()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x0B00];
-		temp = A - [0x0B02];
-		
-		if (Z == 0)
-			return this.L91B0D2();
-
-		temp = A - 0xFFFF;
-		
-		if (Z == 1)
-			return this.L91B0C9();
-
-		A = [0x0B04];
-		A |= [0x0B06];
-		A |= [0x0B08];
-		A |= [0x0B0A];
-		A |= [0x0B0C];
-		A |= [0x0B0E];
-		
-		if (Z == 0)
-			return this.L91B0BB();
-
-		A = [0x0B34];
-		
-		if (Z == 0)
-			return this.L91B0CC();
-	}
-
-	public void L91B0BB()
-	{
-		X = 0x000A;
-	}
-
-	public void L91B0BE()
-	{
-		A = [0x0B04 + X];
-		
-		if (Z == 1)
-			return this.L91B0C5();
-
-		
-		if (N == 0)
-			return this.L91B117();
-
-	}
-
-	public void L91B0C5()
-	{
-		X--;
-		X--;
-		
-		if (N == 0)
-			return this.L91B0BE();
-
-	}
-
-	public void L91B0C9_Done()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L91B0CC()
-	{
-		A = 0xFFFF;
-		[0x0B00] = A;
-	}
-
-	public void L91B0D2()
-	{
-		[0x0B0E] = 0;
-		[0x0B26] = 0;
-		A = [0x0B00];
-		[0x0B02] = A;
-		temp = A - 0xFFFF;
-		
-		if (Z == 1)
-			return this.L91B0F0();
-
-		[0x12] = A;
-		A <<= 1;
-		C = 0;
-		A += [0x12] + C;
-		X = A;
-		this.L91B104();
-		return this.L91B0BB();
-	}
-
-	public void L91B0F0()
-	{
-		[0x0B04] = 0;
-		[0x0B06] = 0;
-		[0x0B08] = 0;
-		[0x0B0A] = 0;
-		[0x0B0C] = 0;
-		[0x0B0E] = 0;
-		return this.L91B0C9();
-	}
-
-	public void L91B104()
-	{
-		A = [0xB2A5 + X];
-		[0x00] = A;
-		P |= 0x20;
-		A = [0xB2A7 + X];
-		[0x02] = A;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		return [[0x0000]]();	//24-Bit Address
-	}
-
-	public void L91B117()
-	{
-		A = [0x0B1C + X];
-		
-		if (Z == 1)
-			return this.L91B121();
-
-		[0x0B1C + X]--;
-		return this.L91B0C5();
-	}
-
-	public void L91B121()
-	{
-		A = [0x0B10 + X];
-		[0x00] = A;
-		A = [(0x00)];
-		A &= 0x00FF;
-		temp = A - 0x0081;
-		
-		if (Z == 0)
-			return this.L91B133();
-
-		return this.L91B17E();
-	}
-
-	public void L91B133()
-	{
-		temp = A - 0x0083;
-		
-		if (Z == 0)
-			return this.L91B13B();
-
-		return this.L91B216();
-	}
-
-	public void L91B13B()
-	{
-		Y = A;
-		A &= 0x00C0;
-		temp = A - 0x00C0;
-		
-		if (Z == 0)
-			return this.L91B147();
-
-		return this.L91B221();
-	}
-
-	public void L91B147()
-	{
-		A = Y;
-		A &= 0x00A0;
-		temp = A - 0x00A0;
-		
-		if (Z == 0)
-			return this.L91B153();
-
-		return this.L91B23B();
-	}
-
-	public void L91B153()
-	{
-		A = Y;
-		temp = A - 0x0085;
-		
-		if (Z == 0)
-			return this.L91B15C();
-
-		return this.L91B29F();
-	}
-
-	public void L91B15C()
-	{
-		temp = A - 0x0086;
-		
-		if (Z == 0)
-			return this.L91B164();
-
-		return this.L91B263();
-	}
-
-	public void L91B164()
-	{
-		temp = A - 0x0087;
-		
-		if (Z == 0)
-			return this.L91B16C();
-
-		return this.L91B281();
-	}
-
-	public void L91B16C()
-	{
-		temp = A - 0x0082;
-		
-		if (Z == 0)
-			return this.L91B174();
-
-		return this.L91B1C8();
-	}
-
-	public void L91B174()
-	{
-		A &= 0x0080;
-		
-		if (Z == 0)
-			return this.L91B17C();
-
-		return this.L91B208();
-	}
-
-	public void L91B17C()
-	{
-		return this.L91B17C();
-	}
-
-	public void L91B17E()
-	{
-		Stack.Push(X);
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		A <<= 1;
-		[0x12] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		[0x14] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A <<= 1;
-		[0x16] = A;
-	}
-
-	public void L91B198()
-	{
-		X = [0x16];
-		A = [0x7F0761 + X];
-		Y = A;
-		A = [0x7F1261 + X];
-		X = [0x12];
-		[0x7F1061 + X] = A;
-		A = Y;
-		[0x7F0561 + X] = A;
-		[0x12]++;
-		[0x12]++;
-		[0x16]++;
-		[0x16]++;
-		[0x14]--;
-		
-		if (Z == 0)
-			return this.L91B198();
-
-		X = Stack.Pop();
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B1C8()
-	{
-		Stack.Push(X);
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		A <<= 1;
-		[0x12] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		[0x14] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A <<= 1;
-		[0x16] = A;
-	}
-
-	public void L91B1E2()
-	{
-		X = [0x16];
-		A = [0x7F0761 + X];
-		X = [0x12];
-		[0x7F0561 + X] = A;
-		[0x12]++;
-		[0x12]++;
-		[0x16]++;
-		[0x16]++;
-		[0x14]--;
-		
-		if (Z == 0)
-			return this.L91B1E2();
-
-		X = Stack.Pop();
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B208()
-	{
-		A = [(0x00)];
-		A &= 0x00FF;
-		[0x0B1C + X] = A;
-		[0x0B10 + X]++;
-		return this.L91B0C5();
-	}
-
-	public void L91B216()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B221()
-	{
-		A = [(0x00)];
-		A &= 0x001F;
-		A <<= 1;
-		Y = A;
-		[0x00]++;
-		A = [(0x00)];
-		A &= 0x00FF;
-		[0x0B28 + Y] = A;
-		[0x0B10 + X]++;
-		[0x0B10 + X]++;
-		return this.L91B121();
-	}
-
-	public void L91B23B()
-	{
-		A = [(0x00)];
-		A &= 0x001F;
-		A <<= 1;
-		Y = A;
-		A = [0x0B28 + Y];
-		A--;
-		[0x0B28 + Y] = A;
-		
-		if (Z == 1)
-			return this.L91B256();
-
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B256()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0003 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B263()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		Y = A;
-		A = [0x0B04 + Y];
-		
-		if (Z == 1)
-			return this.L91B274();
-
-		A = 0xFFFF;
-		[0x0B04 + Y] = A;
-	}
-
-	public void L91B274()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0002 + C;
-		[0x0B10 + X] = A;
-		return this.L91B0C5();
-	}
-
-	public void L91B281()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		Y = A;
-		A = [0x0B04 + Y];
-		
-		if (Z == 1)
-			return this.L91B292();
-
-		A = 0x0001;
-		[0x0B04 + Y] = A;
-	}
-
-	public void L91B292()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0002 + C;
-		[0x0B10 + X] = A;
-		return this.L91B0C5();
-	}
-
-	public void L91B29F()
-	{
-		[0x0B04 + X] = 0;
-		return this.L91B0C5();
-	}
-
-
-
-
-
-
-
-	public void L91B091()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x0B00];
-		temp = A - [0x0B02];
-
-		if (Z == 0)
-			return this.L91B0D2();
-
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L91B0C9();
-
-		A = [0x0B04];
-		A |= [0x0B06];
-		A |= [0x0B08];
-		A |= [0x0B0A];
-		A |= [0x0B0C];
-		A |= [0x0B0E];
-
-		if (Z == 0)
-			return this.L91B0BB();
-
-		A = [0x0B34];
-
-		if (Z == 0)
-			return this.L91B0CC();
-
-	}
-
-	public void L91B0BB()
-	{
-		X = 0x000A;
-	}
-
-	public void L91B0BE()
-	{
-		A = [0x0B04 + X];
-
-		if (Z == 1)
-			return this.L91B0C5();
-
-
-		if (N == 0)
-			return this.L91B117();
-
-	}
-
-	public void L91B0C5()
-	{
-		X--;
-		X--;
-
-		if (N == 0)
-			return this.L91B0BE();
-
-	}
-
-	public void L91B0C9()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L91B0CC()
-	{
-		A = 0xFFFF;
-		[0x0B00] = A;
-	}
-
-	public void L91B0D2()
-	{
-		[0x0B0E] = 0;
-		[0x0B26] = 0;
-		A = [0x0B00];
-		[0x0B02] = A;
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L91B0F0();
-
-		[0x12] = A;
-		A <<= 1;
-		C = 0;
-		A += [0x12] + C;
-		X = A;
-		this.L91B104();
-		return this.L91B0BB();
-	}
-
-	public void L91B0F0()
-	{
-		[0x0B04] = 0;
-		[0x0B06] = 0;
-		[0x0B08] = 0;
-		[0x0B0A] = 0;
-		[0x0B0C] = 0;
-		[0x0B0E] = 0;
-		return this.L91B0C9();
-	}
-
-	public void L91B104()
-	{
-		A = [0xB2A5 + X];
-		[0x00] = A;
-		P |= 0x20;
-		A = [0xB2A7 + X];
-		[0x02] = A;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		return [[0x0000]]();    //24-Bit Address
-	}
-
-	public void L91B117()
-	{
-		A = [0x0B1C + X];
-
-		if (Z == 1)
-			return this.L91B121();
-
-		[0x0B1C + X]--;
-		return this.L91B0C5();
-	}
-
-	public void L91B121()
-	{
-		A = [0x0B10 + X];
-		[0x00] = A;
-		A = [(0x00)];
-		A &= 0x00FF;
-		temp = A - 0x0081;
-
-		if (Z == 0)
-			return this.L91B133();
-
-		return this.L91B17E();
-	}
-
-	public void L91B133()
-	{
-		temp = A - 0x0083;
-
-		if (Z == 0)
-			return this.L91B13B();
-
-		return this.L91B216();
-	}
-
-	public void L91B13B()
-	{
-		Y = A;
-		A &= 0x00C0;
-		temp = A - 0x00C0;
-
-		if (Z == 0)
-			return this.L91B147();
-
-		return this.L91B221();
-	}
-
-	public void L91B147()
-	{
-		A = Y;
-		A &= 0x00A0;
-		temp = A - 0x00A0;
-
-		if (Z == 0)
-			return this.L91B153();
-
-		return this.L91B23B();
-	}
-
-	public void L91B153()
-	{
-		A = Y;
-		temp = A - 0x0085;
-
-		if (Z == 0)
-			return this.L91B15C();
-
-		return this.L91B29F();
-	}
-
-	public void L91B15C()
-	{
-		temp = A - 0x0086;
-
-		if (Z == 0)
-			return this.L91B164();
-
-		return this.L91B263();
-	}
-
-	public void L91B164()
-	{
-		temp = A - 0x0087;
-
-		if (Z == 0)
-			return this.L91B16C();
-
-		return this.L91B281();
-	}
-
-	public void L91B16C()
-	{
-		temp = A - 0x0082;
-
-		if (Z == 0)
-			return this.L91B174();
-
-		return this.L91B1C8();
-	}
-
-	public void L91B174()
-	{
-		A &= 0x0080;
-
-		if (Z == 0)
-			return this.L91B17C();
-
-		return this.L91B208();
-	}
-
-	public void L91B17C()
-	{
-		return this.L91B17C();
-	}
-
-	public void L91B17E()
-	{
-		Stack.Push(X);
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		A <<= 1;
-		[0x12] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		[0x14] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A <<= 1;
-		[0x16] = A;
-	}
-
-	public void L91B198()
-	{
-		X = [0x16];
-		A = [0x7F0761 + X];
-		Y = A;
-		A = [0x7F1261 + X];
-		X = [0x12];
-		[0x7F1061 + X] = A;
-		A = Y;
-		[0x7F0561 + X] = A;
-		[0x12]++;
-		[0x12]++;
-		[0x16]++;
-		[0x16]++;
-		[0x14]--;
-
-		if (Z == 0)
-			return this.L91B198();
-
-		X = Stack.Pop();
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B1C8()
-	{
-		Stack.Push(X);
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		A <<= 1;
-		[0x12] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		[0x14] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A <<= 1;
-		[0x16] = A;
-	}
-
-	public void L91B1E2()
-	{
-		X = [0x16];
-		A = [0x7F0761 + X];
-		X = [0x12];
-		[0x7F0561 + X] = A;
-		[0x12]++;
-		[0x12]++;
-		[0x16]++;
-		[0x16]++;
-		[0x14]--;
-
-		if (Z == 0)
-			return this.L91B1E2();
-
-		X = Stack.Pop();
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B208()
-	{
-		A = [(0x00)];
-		A &= 0x00FF;
-		[0x0B1C + X] = A;
-		[0x0B10 + X]++;
-		return this.L91B0C5();
-	}
-
-	public void L91B216()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B221()
-	{
-		A = [(0x00)];
-		A &= 0x001F;
-		A <<= 1;
-		Y = A;
-		[0x00]++;
-		A = [(0x00)];
-		A &= 0x00FF;
-		[0x0B28 + Y] = A;
-		[0x0B10 + X]++;
-		[0x0B10 + X]++;
-		return this.L91B121();
-	}
-
-	public void L91B23B()
-	{
-		A = [(0x00)];
-		A &= 0x001F;
-		A <<= 1;
-		Y = A;
-		A = [0x0B28 + Y];
-		A--;
-		[0x0B28 + Y] = A;
-
-		if (Z == 1)
-			return this.L91B256();
-
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B256()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0003 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B263()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		Y = A;
-		A = [0x0B04 + Y];
-
-		if (Z == 1)
-			return this.L91B274();
-
-		A = 0xFFFF;
-		[0x0B04 + Y] = A;
-	}
-
-	public void L91B274()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0002 + C;
-		[0x0B10 + X] = A;
-		return this.L91B0C5();
-	}
-
-	public void L91B281()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		Y = A;
-		A = [0x0B04 + Y];
-
-		if (Z == 1)
-			return this.L91B292();
-
-		A = 0x0001;
-		[0x0B04 + Y] = A;
-	}
-
-	public void L91B292()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0002 + C;
-		[0x0B10 + X] = A;
-		return this.L91B0C5();
-	}
-
-	public void L91B29F()
-	{
-		[0x0B04 + X] = 0;
-		return this.L91B0C5();
-	}
-
-
-
-
-
-
-
-
-
-	public void L91B0BB()
-	{
-		X = 0x000A;
-	}
-
-	public void L91B0BE()
-	{
-		A = [0x0B04 + X];
-
-		if (Z == 1)
-			return this.L91B0C5();
-
-
-		if (N == 0)
-			return this.L91B117();
-
-	}
-
-	public void L91B0C5()
-	{
-		X--;
-		X--;
-
-		if (N == 0)
-			return this.L91B0BE();
-
-	}
-
-	public void L91B0C9()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L91B0CC()
-	{
-		A = 0xFFFF;
-		[0x0B00] = A;
-	}
-
-	public void L91B0D2()
-	{
-		[0x0B0E] = 0;
-		[0x0B26] = 0;
-		A = [0x0B00];
-		[0x0B02] = A;
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L91B0F0();
-
-		[0x12] = A;
-		A <<= 1;
-		C = 0;
-		A += [0x12] + C;
-		X = A;
-		this.L91B104();
-		return this.L91B0BB();
-	}
-
-	public void L91B0F0()
-	{
-		[0x0B04] = 0;
-		[0x0B06] = 0;
-		[0x0B08] = 0;
-		[0x0B0A] = 0;
-		[0x0B0C] = 0;
-		[0x0B0E] = 0;
-		return this.L91B0C9();
-	}
-
-	public void L91B104()
-	{
-		A = [0xB2A5 + X];
-		[0x00] = A;
-		P |= 0x20;
-		A = [0xB2A7 + X];
-		[0x02] = A;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		return [[0x0000]]();    //24-Bit Address
-	}
-
-	public void L91B117()
-	{
-		A = [0x0B1C + X];
-
-		if (Z == 1)
-			return this.L91B121();
-
-		[0x0B1C + X]--;
-		return this.L91B0C5();
-	}
-
-	public void L91B121()
-	{
-		A = [0x0B10 + X];
-		[0x00] = A;
-		A = [(0x00)];
-		A &= 0x00FF;
-		temp = A - 0x0081;
-
-		if (Z == 0)
-			return this.L91B133();
-
-		return this.L91B17E();
-	}
-
-	public void L91B133()
-	{
-		temp = A - 0x0083;
-
-		if (Z == 0)
-			return this.L91B13B();
-
-		return this.L91B216();
-	}
-
-	public void L91B13B()
-	{
-		Y = A;
-		A &= 0x00C0;
-		temp = A - 0x00C0;
-
-		if (Z == 0)
-			return this.L91B147();
-
-		return this.L91B221();
-	}
-
-	public void L91B147()
-	{
-		A = Y;
-		A &= 0x00A0;
-		temp = A - 0x00A0;
-
-		if (Z == 0)
-			return this.L91B153();
-
-		return this.L91B23B();
-	}
-
-	public void L91B153()
-	{
-		A = Y;
-		temp = A - 0x0085;
-
-		if (Z == 0)
-			return this.L91B15C();
-
-		return this.L91B29F();
-	}
-
-	public void L91B15C()
-	{
-		temp = A - 0x0086;
-
-		if (Z == 0)
-			return this.L91B164();
-
-		return this.L91B263();
-	}
-
-	public void L91B164()
-	{
-		temp = A - 0x0087;
-
-		if (Z == 0)
-			return this.L91B16C();
-
-		return this.L91B281();
-	}
-
-	public void L91B16C()
-	{
-		temp = A - 0x0082;
-
-		if (Z == 0)
-			return this.L91B174();
-
-		return this.L91B1C8();
-	}
-
-	public void L91B174()
-	{
-		A &= 0x0080;
-
-		if (Z == 0)
-			return this.L91B17C();
-
-		return this.L91B208();
-	}
-
-	public void L91B17C()
-	{
-		return this.L91B17C();
-	}
-
-	public void L91B17E()
-	{
-		Stack.Push(X);
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		A <<= 1;
-		[0x12] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		[0x14] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A <<= 1;
-		[0x16] = A;
-	}
-
-	public void L91B198()
-	{
-		X = [0x16];
-		A = [0x7F0761 + X];
-		Y = A;
-		A = [0x7F1261 + X];
-		X = [0x12];
-		[0x7F1061 + X] = A;
-		A = Y;
-		[0x7F0561 + X] = A;
-		[0x12]++;
-		[0x12]++;
-		[0x16]++;
-		[0x16]++;
-		[0x14]--;
-
-		if (Z == 0)
-			return this.L91B198();
-
-		X = Stack.Pop();
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B1C8()
-	{
-		Stack.Push(X);
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		A <<= 1;
-		[0x12] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		[0x14] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A <<= 1;
-		[0x16] = A;
-	}
-
-	public void L91B1E2()
-	{
-		X = [0x16];
-		A = [0x7F0761 + X];
-		X = [0x12];
-		[0x7F0561 + X] = A;
-		[0x12]++;
-		[0x12]++;
-		[0x16]++;
-		[0x16]++;
-		[0x14]--;
-
-		if (Z == 0)
-			return this.L91B1E2();
-
-		X = Stack.Pop();
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B208()
-	{
-		A = [(0x00)];
-		A &= 0x00FF;
-		[0x0B1C + X] = A;
-		[0x0B10 + X]++;
-		return this.L91B0C5();
-	}
-
-	public void L91B216()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B221()
-	{
-		A = [(0x00)];
-		A &= 0x001F;
-		A <<= 1;
-		Y = A;
-		[0x00]++;
-		A = [(0x00)];
-		A &= 0x00FF;
-		[0x0B28 + Y] = A;
-		[0x0B10 + X]++;
-		[0x0B10 + X]++;
-		return this.L91B121();
-	}
-
-	public void L91B23B()
-	{
-		A = [(0x00)];
-		A &= 0x001F;
-		A <<= 1;
-		Y = A;
-		A = [0x0B28 + Y];
-		A--;
-		[0x0B28 + Y] = A;
-
-		if (Z == 1)
-			return this.L91B256();
-
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B256()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0003 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B263()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		Y = A;
-		A = [0x0B04 + Y];
-
-		if (Z == 1)
-			return this.L91B274();
-
-		A = 0xFFFF;
-		[0x0B04 + Y] = A;
-	}
-
-	public void L91B274()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0002 + C;
-		[0x0B10 + X] = A;
-		return this.L91B0C5();
-	}
-
-	public void L91B281()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		Y = A;
-		A = [0x0B04 + Y];
-
-		if (Z == 1)
-			return this.L91B292();
-
-		A = 0x0001;
-		[0x0B04 + Y] = A;
-	}
-
-	public void L91B292()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0002 + C;
-		[0x0B10 + X] = A;
-		return this.L91B0C5();
-	}
-
-	public void L91B29F()
-	{
-		[0x0B04 + X] = 0;
-		return this.L91B0C5();
-	}
-
-	public void L9BD1EC()
-	{
-		A = [0x197C];
-		[0x12] = A;
-		A = [0x197E];
-		[0x14] = A;
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		C = 1;
-		A = [0x7E5DDC];
-		A -= [0x12] - !C;
-		[0x7E5DDC] = A;
-		A = [0x7E5DE4];
-		A -= [0x14] - !C;
-		[0x7E5DE4] = A;
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		C = 1;
-		A = [0x7E5DDE];
-		A -= [0x12] - !C;
-		[0x7E5DDE] = A;
-		A = [0x7E5DE6];
-		A -= [0x14] - !C;
-		[0x7E5DE6] = A;
-		A = [0x1988];
-		[0x12] = A;
-		A = [0x198A];
-		[0x14] = A;
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		C = 1;
-		A = [0x7E5DEC];
-		A -= [0x12] - !C;
-		[0x7E5DEC] = A;
-		A = [0x7E5DF4];
-		A -= [0x14] - !C;
-		[0x7E5DF4] = A;
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		C = 1;
-		A = [0x7E5DEE];
-		A -= [0x12] - !C;
-		[0x7E5DEE] = A;
-		A = [0x7E5DF6];
-		A -= [0x14] - !C;
-		[0x7E5DF6] = A;
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x00A0 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD2AE();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x00E0 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD2AE();
-
-		this.R9BD54D();
-	}
-
-	public void L9BD2AE()
-	{
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x0004 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD2DE();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x0040 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD2DE();
-
-		this.R9BD54D();
-	}
-
-	public void L9BD2DE()
-	{
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x00FC + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD30E();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x0003 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD30E();
-
-		this.R9BD54D();
-	}
-
-	public void L9BD30E()
-	{
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x0000 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD33E();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x0060 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD33E();
-
-		this.L9BD594();
-	}
-
-	public void L9BD33E()
-	{
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x0060 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD36E();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x0000 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD36E();
-
-		this.L9BD594();
-	}
-
-	public void L9BD36E()
-	{
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x0080 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD39E();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x0080 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD39E();
-
-		this.L9BD594();
-	}
-
-	public void L9BD39E()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x00E4 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD3CE();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x0020 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD3CE();
-
-		this.L9BD4BF();
-	}
-
-	public void L9BD3CE()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x002E + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD3FE();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x0005 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD3FE();
-
-		this.L9BD4BF();
-	}
-
-	public void L9BD3FE()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x00B8 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD42E();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x002E + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD42E();
-
-		this.L9BD4BF();
-	}
-
-	public void L9BD42E()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x0066 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD45E();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x0066 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD45E();
-
-		this.L9BD506();
-	}
-
-	public void L9BD45E()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x0080 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD48E();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x009C + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD48E();
-
-		this.L9BD506();
-	}
-
-	public void L9BD48E()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x0020 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-
-		if (C == 1)
-			return this.L9BD4BE();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x0040 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-
-		if (C == 1)
-			return this.L9BD4BE();
-
-		this.L9BD506();
-	}
-
-	public void L9BD4BE()
-	{
-		return;
-	}
-
-	public void L9BD4BF()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		P &= ~0x30;
-		Y = [0xA6];
-		temp = Y - 0x01FD;
-
-		if (C == 0)
-			return this.L9BD4CD();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L9BD4CD()
-	{
-		A = Y;
-		C = 0;
-		A += 0x0004 + C;
-		[0xA6] = A;
-		P |= 0x20;
-		A = 0x82;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		A = [0xB0];
-		C = 0;
-		A += 0x01FC + C;
-		[0x7800 + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L9BD4F4();
-
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x82B8 + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L9BD4F4()
-	{
-		A = [0xB2];
-		C = 0;
-		A += 0x01FC + C;
-		[0x7801 + Y] = A;
-		A = 0x2E87;
-		[0x7802 + Y] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L9BD506()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		P &= ~0x30;
-		Y = [0xA6];
-		temp = Y - 0x01FD;
-
-		if (C == 0)
-			return this.L9BD514();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L9BD514()
-	{
-		A = Y;
-		C = 0;
-		A += 0x0004 + C;
-		[0xA6] = A;
-		P |= 0x20;
-		A = 0x82;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		A = [0xB0];
-		C = 0;
-		A += 0x01FB + C;
-		[0x7800 + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L9BD53B();
-
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x82B8 + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L9BD53B()
-	{
-		A = [0xB2];
-		C = 0;
-		A += 0x01FB + C;
-		[0x7801 + Y] = A;
-		A = 0x2E9C;
-		[0x7802 + Y] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void R9BD54D()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		P &= ~0x30;
-		Y = [0xA6];
-		temp = Y - 0x01FD;
-
-		if (C == 0)
-			return this.L9BD55B();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L9BD55B()
-	{
-		A = Y;
-		C = 0;
-		A += 0x0004 + C;
-		[0xA6] = A;
-		P |= 0x20;
-		A = 0x82;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		A = [0xB0];
-		C = 0;
-		A += 0x01FC + C;
-		[0x7800 + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L9BD582();
-
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x82B8 + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L9BD582()
-	{
-		A = [0xB2];
-		C = 0;
-		A += 0x01FC + C;
-		[0x7801 + Y] = A;
-		A = 0x2ED5;
-		[0x7802 + Y] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L9BD594()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		P &= ~0x30;
-		Y = [0xA6];
-		temp = Y - 0x01FD;
-
-		if (C == 0)
-			return this.L9BD5A2();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L9BD5A2()
-	{
-		A = Y;
-		C = 0;
-		A += 0x0004 + C;
-		[0xA6] = A;
-		P |= 0x20;
-		A = 0x82;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		A = [0xB0];
-		C = 0;
-		A += 0x01FC + C;
-		[0x7800 + Y] = A;
-		temp = A & 0x0100;
-
-		if (Z == 1)
-			return this.L9BD5C9();
-
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x82B8 + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L9BD5C9()
-	{
-		A = [0xB2];
-		C = 0;
-		A += 0x01FC + C;
-		[0x7801 + Y] = A;
-		A = 0x2ED4;
-		[0x7802 + Y] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	public void L94C700()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x035D];
-		A &= 0x00FF;
-		A <<= 1;
-		X = A;
-		Cpu.JSR((0xC722 + X));
-		A = [0x0100];
-		A &= 0x0080;
-		
-		if (Z == 0)
-			return this.L94C71F();
-
-		this.L9094E4();
-		this.L9084BD();
-	}
-
-	public void L94C71F()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	// Bank 0x9B
-	public void R9BD1EC()
-	{
-		A = [0x197C];
-		[0x12] = A;
-		A = [0x197E];
-		[0x14] = A;
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		C = 1;
-		A = [0x7E5DDC];
-		A -= [0x12] - !C;
-		[0x7E5DDC] = A;
-		A = [0x7E5DE4];
-		A -= [0x14] - !C;
-		[0x7E5DE4] = A;
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		C = 1;
-		A = [0x7E5DDE];
-		A -= [0x12] - !C;
-		[0x7E5DDE] = A;
-		A = [0x7E5DE6];
-		A -= [0x14] - !C;
-		[0x7E5DE6] = A;
-		A = [0x1988];
-		[0x12] = A;
-		A = [0x198A];
-		[0x14] = A;
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		C = 1;
-		A = [0x7E5DEC];
-		A -= [0x12] - !C;
-		[0x7E5DEC] = A;
-		A = [0x7E5DF4];
-		A -= [0x14] - !C;
-		[0x7E5DF4] = A;
-		A = [0x14];
-		Cpu.ROL();
-		Cpu.ROR(0x14);
-		Cpu.ROR(0x12);
-		C = 1;
-		A = [0x7E5DEE];
-		A -= [0x12] - !C;
-		[0x7E5DEE] = A;
-		A = [0x7E5DF6];
-		A -= [0x14] - !C;
-		[0x7E5DF6] = A;
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x00A0 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD2AE();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x00E0 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD2AE();
-
-		this.R9BD54D();
-	}
-
-	public void L9BD2AE()
-	{
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x0004 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD2DE();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x0040 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD2DE();
-
-		this.R9BD54D();
-	}
-
-	public void L9BD2DE()
-	{
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x00FC + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD30E();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x0003 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD30E();
-
-		this.R9BD54D();
-	}
-
-	public void L9BD30E()
-	{
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x0000 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD33E();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x0060 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD33E();
-
-		this.L9BD594();
-	}
-
-	public void L9BD33E()
-	{
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x0060 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD36E();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x0000 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD36E();
-
-		this.L9BD594();
-	}
-
-	public void L9BD36E()
-	{
-		A = [0x7E5DE4];
-		C = 0;
-		A += 0x0080 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD39E();
-
-		A = [0x7E5DF4];
-		C = 0;
-		A += 0x0080 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD39E();
-
-		this.L9BD594();
-	}
-
-	public void L9BD39E()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x00E4 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD3CE();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x0020 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD3CE();
-
-		this.L9BD4BF();
-	}
-
-	public void L9BD3CE()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x002E + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD3FE();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x0005 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD3FE();
-
-		this.L9BD4BF();
-	}
-
-	public void L9BD3FE()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x00B8 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD42E();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x002E + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD42E();
-
-		this.L9BD4BF();
-	}
-
-	public void L9BD42E()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x0066 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD45E();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x0066 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD45E();
-
-		this.L9BD506();
-	}
-
-	public void L9BD45E()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x0080 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD48E();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x009C + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD48E();
-
-		this.L9BD506();
-	}
-
-	public void L9BD48E()
-	{
-		A = [0x7E5DE6];
-		C = 0;
-		A += 0x0020 + C;
-		A &= 0x01FF;
-		[0xB0] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x0128;
-		
-		if (C == 1)
-			return this.L9BD4BE();
-
-		A = [0x7E5DF6];
-		C = 0;
-		A += 0x0040 + C;
-		A &= 0x00FF;
-		[0xB2] = A;
-		C = 0;
-		A += 0x0014 + C;
-		temp = A - 0x00D0;
-		
-		if (C == 1)
-			return this.L9BD4BE();
-
-		this.L9BD506();
-	}
-
-	public void L9BD4BE()
-	{
-		return;
-	}
-
-	public void L9BD4BF()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		P &= ~0x30;
-		Y = [0xA6];
-		temp = Y - 0x01FD;
-		
-		if (C == 0)
-			return this.L9BD4CD();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L9BD4CD()
-	{
-		A = Y;
-		C = 0;
-		A += 0x0004 + C;
-		[0xA6] = A;
-		P |= 0x20;
-		A = 0x82;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		A = [0xB0];
-		C = 0;
-		A += 0x01FC + C;
-		[0x7800 + Y] = A;
-		temp = A & 0x0100;
-		
-		if (Z == 1)
-			return this.L9BD4F4();
-
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x82B8 + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L9BD4F4()
-	{
-		A = [0xB2];
-		C = 0;
-		A += 0x01FC + C;
-		[0x7801 + Y] = A;
-		A = 0x2E87;
-		[0x7802 + Y] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L9BD506()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		P &= ~0x30;
-		Y = [0xA6];
-		temp = Y - 0x01FD;
-		
-		if (C == 0)
-			return this.L9BD514();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L9BD514()
-	{
-		A = Y;
-		C = 0;
-		A += 0x0004 + C;
-		[0xA6] = A;
-		P |= 0x20;
-		A = 0x82;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		A = [0xB0];
-		C = 0;
-		A += 0x01FB + C;
-		[0x7800 + Y] = A;
-		temp = A & 0x0100;
-		
-		if (Z == 1)
-			return this.L9BD53B();
-
-		X = [0x82B6 + Y];
-		A = [0x00 + X];
-		A |= [0x82B8 + Y];
-		[0x00 + X] = A;
-	}
-
-	public void L9BD53B()
-	{
-		A = [0xB2];
-		C = 0;
-		A += 0x01FB + C;
-		[0x7801 + Y] = A;
-		A = 0x2E9C;
-		[0x7802 + Y] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-
-	// Bank 0x94
-	public void R94E94E()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P |= 0x20;
-		Y = 0x0017;
-		X = 0x0000;
-	}
-
-	public void L94E95A()
-	{
-		A = [0x706002 + X];
-		temp = A - [0xE90F + X];
-		
-		if (Z == 0)
-			return this.L94E974();
-
-		X++;
-		Y--;
-		
-		if (N == 0)
-			return this.L94E95A();
-
-		P &= ~0x20;
-		this.R94E9F3();
-		A = [0x12];
-		temp = A - [0x706000];
-		
-		if (Z == 1)
-			return this.L94E977();
-
-	}
-
-	public void L94E974()
-	{
-		this.R94E97A();
-	}
-
-	public void L94E977()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void R94E97A()
-	{
-		P |= 0x20;
-		Y = 0x0387;
-		X = 0x0000;
-	}
-
-	public void L94E982()
-	{
-		A = 0xFF;
-		[0x706002 + X] = A;
-		X++;
-		Y--;
-		
-		if (N == 0)
-			return this.L94E982();
-
-		Y = 0x0017;
-		X = 0x0000;
-	}
-
-	public void L94E992()
-	{
-		A = [0xE90F + X];
-		[0x706002 + X] = A;
-		X++;
-		Y--;
-		
-		if (N == 0)
-			return this.L94E992();
-
-		A = 0x00;
-		[0x706058] = A;
-		[0x706059] = A;
-		[0x706057] = A;
-		A = 0x07;
-		[0x706056] = A;
-		Y = 0x001F;
-		X = 0x0000;
-		A = 0x00;
-	}
-
-	public void L94E9B9()
-	{
-		[0x706028 + X] = A;
-		[0x706090 + X] = A;
-		X++;
-		Y--;
-		
-		if (N == 0)
-			return this.L94E9B9();
-
-		P &= ~0x20;
-		A = 0x001F;
-		[0x70601A] = A;
-		A = 0x0000;
-		[0x70601E] = A;
-		[0x70601C] = A;
-		[0x706020] = A;
-		[0x706022] = A;
-		[0x706024] = A;
-		[0x706026] = A;
-		this.R94E9F3();
-		A = [0x12];
-		[0x706000] = A;
-		return;
-	}
-
-	public void R94E9F3()
-	{
-		Stack.Push(P);
-		P &= ~0x20;
-		[0x12] = 0;
-		P |= 0x20;
-		Y = 0x0387;
-		X = 0x0000;
-	}
-
-	public void L94EA00()
-	{
-		A = [0x706002 + X];
-		C = 0;
-		A += [0x12] + C;
-		[0x12] = A;
-		A = [0x13];
-		A += 0x00 + C;
-		[0x13] = A;
-		X++;
-		Y--;
-		
-		if (N == 0)
-			return this.L94EA00();
-
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-	public void R909993_ResetRam()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0xFFFF;
-		[0x037F] = A;
-		X = 0x0216;
-		this.R909ACF_ResetRam3000();
-		X = 0x04C6;
-		this.R909ACF_ResetRam3000();
-		A = 0xFFFF;
-		[0x02F3] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R909ACF_ResetRam3000()
-	{
-		A = 0x0080;
-		[0x7E3000 + X] = A;
-		[0x7E3002 + X] = A;
-		[0x7E3004 + X] = A;
-		[0x7E3006 + X] = A;
-		[0x7E3008 + X] = A;
-		[0x7E300A + X] = A;
-		[0x7E300C + X] = A;
-		[0x7E300E + X] = A;
-		[0x7E3010 + X] = A;
-		[0x7E3012 + X] = A;
-		[0x7E3040 + X] = A;
-		[0x7E3042 + X] = A;
-		[0x7E3044 + X] = A;
-		[0x7E3046 + X] = A;
-		[0x7E3048 + X] = A;
-		[0x7E304A + X] = A;
-		[0x7E304C + X] = A;
-		[0x7E304E + X] = A;
-		[0x7E3050 + X] = A;
-		[0x7E3052 + X] = A;
-		return;
-	}
-
-
-
-
-
-
-
-	public void R909CF9()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		this.R91B06F();
-		A = 0x0000;
-		[0x7E6AF6] = A;
-		[0x7E5BF3] = A;
-		[0x035D] = 0;
-		[0x035F] = 0;
-		[0x0365] = 0;
-		[0x0371] = 0;
-		[0x1BC7] = 0;
-		[0x03C1] = 0;
-		A = 0x0001;
-		[0x0373] = A;
-		A = 0x0002;
-		[0x7E6B22] = A;
-		[0x7E6B24] = A;
-		A = 0x0000;
-		[0x7FE717] = A;
-		[0x7F052B] = A;
-		this.R90A5AD();
-		A = 0x0000;
-		[0x7F0527] = A;
-		A = 0x0009;
-		[0x7F051B] = A;
-		[0x7F051D] = A;
-		[0x7F051F] = A;
-		[0x7F0521] = A;
-		[0x7F0523] = A;
-		[0x7F0525] = A;
-		this.R809559_InitializeRam();
-		A = 0x00E0;
-		this.R809517();
-		A = 0x00F9;
-		this.R8094E2();
-		P |= 0x20;
-		A = 0xFF;
-		[0x03B1] = A;
-		P &= ~0x20;
-		[0x026D]++;
-		P = Stack.Pop();
-		I = 0;
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R909D97()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		[0x026D]++;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-	public void R909DA1()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		this.R9081B1();
-		this.R9086B7();
-		this.R908052();
-		A = [0x0371];
-		
-		if (Z == 1)
-			return this.L909DC5();
-
-		temp = A - 0x0003;
-		
-		if (C == 0)
-			return this.L909DCB();
-
-		temp = A - 0x0005;
-		
-		if (C == 1)
-			return this.L909DCB();
-
-		this.R90A597();
-		return this.L909DCB();
-	}
-
-	public void L909DC5()
-	{
-		this.L90A7DE();
-		this.L90A8CF();
-	}
-
-	public void L909DCB()
-	{
-		A = [0x0381];
-		
-		if (Z == 0)
-			return this.L909DE5();
-
-		A = [0x0367];
-		temp = A - 0x000E;
-		
-		if (Z == 0)
-			return this.L909DE5();
-
-		A = [0x7F052B];
-		A--;
-		
-		if (Z == 0)
-			return this.L909DE5();
-
-		this.L90955E();
-		return this.L909DE9();
-	}
-
-	public void L909DE5()
-	{
-		this.L90EF24();
-	}
-
-	public void L909DE9()
-	{
-		A = [0x0367];
-		temp = A - 0x0009;
-		
-		if (Z == 1)
-			return this.L909DF8();
-
-	}
-
-	public void L909DF1()
-	{
-		[0x026D]++;
-		P = Stack.Pop();
-		I = 0;
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L909DF8()
-	{
-		A = [0x150C];
-		temp = A & 0x0100;
-		
-		if (Z == 0)
-			return this.L909DF1();
-
-		A = 0x8033;
-		[0x02EB] = A;
-		return this.L909DF1();
-	}
-
-	public void R90A597()
-	{
-		A = 0x0000;
-		[0x7E3983] = A;
-		[0x7E3985] = A;
-		[0x0B3A] = A;
-		[0x0B38] = A;
-		this.L90A5AD();
-		return;
-	}
-
-	public void L90A5AD()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0x0001;
-		[0x03FE] = A;
-		A = 0x0000;
-		[0x03F2] = A;
-		[0x03FA] = A;
-		A = 0x0003;
-		[0x03F4] = A;
-		A = 0xFFFF;
-		[0x03F6] = A;
-		[0x03F8] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-	public void R9086B7()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P |= 0x30;
-		A = 0x8F;
-		[0x2100] = A;
-		[0x0100] = A;
-		A = 0x01;
-		[0x2101] = A;
-		[0x0101] = A;
-		[0x2102] = 0;
-		[0x0102] = 0;
-		A = 0x80;
-		[0x2103] = A;
-		[0x0103] = A;
-		[0x2104] = 0;
-		[0x2104] = 0;
-		A = 0x09;
-		[0x2105] = A;
-		[0x0104] = A;
-		[0x2106] = 0;
-		[0x0105] = 0;
-		A = 0x01;
-		[0x2107] = A;
-		[0x0106] = A;
-		A = 0x09;
-		[0x2108] = A;
-		[0x0107] = A;
-		A = 0x10;
-		[0x2109] = A;
-		[0x0108] = A;
-		A = 0x00;
-		[0x210A] = A;
-		[0x0109] = A;
-		A = 0x44;
-		[0x210B] = A;
-		[0x010A] = A;
-		A = 0x41;
-		[0x210C] = A;
-		[0x010B] = A;
-		[0x210D] = 0;
-		[0x210D] = 0;
-		[0x210E] = 0;
-		[0x210E] = 0;
-		[0x210F] = 0;
-		[0x210F] = 0;
-		[0x2110] = 0;
-		[0x2110] = 0;
-		[0x2111] = 0;
-		[0x2111] = 0;
-		[0x2112] = 0;
-		[0x2112] = 0;
-		[0x2113] = 0;
-		[0x2113] = 0;
-		[0x2114] = 0;
-		[0x2114] = 0;
-		[0x2115] = 0;
-		[0x211A] = 0;
-		[0x010C] = 0;
-		[0x211B] = 0;
-		[0x211C] = 0;
-		[0x211D] = 0;
-		[0x211E] = 0;
-		[0x211F] = 0;
-		[0x2120] = 0;
-		[0x2123] = 0;
-		[0x010D] = 0;
-		[0x2123] = 0;
-		[0x010D] = 0;
-		[0x2124] = 0;
-		[0x010E] = 0;
-		[0x2125] = 0;
-		[0x011F] = 0;
-		[0x2126] = 0;
-		[0x0120] = 0;
-		[0x2127] = 0;
-		[0x0121] = 0;
-		[0x2128] = 0;
-		[0x0122] = 0;
-		[0x2129] = 0;
-		[0x0123] = 0;
-		[0x212A] = 0;
-		[0x0124] = 0;
-		[0x212B] = 0;
-		[0x0125] = 0;
-		A = 0x17;
-		[0x212C] = A;
-		[0x0126] = A;
-		[0x212E] = 0;
-		[0x0128] = 0;
-		A = 0x00;
-		[0x212D] = A;
-		[0x0127] = A;
-		[0x212F] = 0;
-		[0x0129] = 0;
-		A = 0x02;
-		[0x2130] = A;
-		[0x012A] = A;
-		A = 0x3F;
-		[0x2131] = A;
-		[0x012B] = A;
-		A = 0xE0;
-		[0x2132] = A;
-		[0x012C] = A;
-		[0x012E] = A;
-		[0x012D] = A;
-		[0x012C] = A;
-		A = 0x00;
-		[0x2133] = A;
-		[0x012F] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L90A7DE()
-	{
-		A = [0x7F0512];
-		
-		if (Z == 0)
-			return this.L90A7F6();
-
-		A = [0x1BC7];
-		
-		if (Z == 0)
-			return this.L90A7F6();
-
-		A = [0x036F];
-		temp = A - 0x0002;
-		
-		if (Z == 1)
-			return this.L90A7F6();
-
-		A = [0x0371];
-		
-		if (Z == 1)
-			return this.L90A7F7();
-
-	}
-
-	public void L90A7F6()
-	{
-		return;
-	}
-
-	public void L90A7F7()
-	{
-		P &= ~0x20;
-		A = 0x0000;
-		[0x706020] = A;
-		A = [0x0381];
-		[0x70605A] = A;
-		A = [0x0365];
-		[0x70605C] = A;
-		A = [0x036D];
-		[0x70605E] = A;
-		A = [0x036F];
-		[0x706060] = A;
-		A = [0x0371];
-		[0x706062] = A;
-		A = [0x03FE];
-		[0x70606C] = A;
-		A = [0x7F052B];
-		[0x70607C] = A;
-		A = [0x7F0527];
-		[0x70607A] = A;
-		A = [0x03F2];
-		[0x706064] = A;
-		A = [0x03F4];
-		[0x706066] = A;
-		A = [0x03F6];
-		[0x706068] = A;
-		A = [0x03F8];
-		[0x70606A] = A;
-		A = [0x7F051B];
-		[0x70606E] = A;
-		A = [0x7F051D];
-		[0x706070] = A;
-		A = [0x7F051F];
-		[0x706072] = A;
-		A = [0x7F0521];
-		[0x706074] = A;
-		A = [0x7F0523];
-		[0x706076] = A;
-		A = [0x7F0525];
-		[0x706078] = A;
-		A = [0x7E3983];
-		[0x70607E] = A;
-		A = [0x7E3985];
-		[0x706080] = A;
-		A = [0x0B36];
-		[0x706082] = A;
-		A = [0x0B38];
-		[0x706084] = A;
-		A = [0x0B3A];
-		[0x706086] = A;
-		A = [0x0B3C];
-		[0x706088] = A;
-		A = [0x7F055B];
-		[0x70608A] = A;
-		A = [0x7F055D];
-		[0x70608C] = A;
-		A = [0x7F055F];
-		[0x70608E] = A;
-		this.L94E927();
-		return;
-	}
-
-	public void L90A8CF()
-	{
-		A = [0x7F0512];
-		
-		if (Z == 0)
-			return this.L90A8E7();
-
-		A = [0x1BC7];
-		
-		if (Z == 0)
-			return this.L90A8E7();
-
-		A = [0x036F];
-		temp = A - 0x0002;
-		
-		if (Z == 1)
-			return this.L90A8E7();
-
-		A = [0x0371];
-		
-		if (Z == 1)
-			return this.L90A8E8();
-
-	}
-
-	public void L90A8E7()
-	{
-		return;
-	}
-
-	public void L90A8E8()
-	{
-		A = 0x0001;
-		[0x706020] = A;
-		this.L94E927();
-		return;
-	}
-
-	public void L90EEAE()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		[0x12] = A;
-		A &= 0xFFFF;
-		
-		if (N == 0)
-			return this.L90EEBC();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L90EEBC()
-	{
-		Y = 0x0005;
-		X = 0x0008;
-	}
-
-	public void L90EEC2()
-	{
-		A = [0x7F051B + X];
-		[0x7F051D + X] = A;
-		X--;
-		X--;
-		Y--;
-		
-		if (Z == 0)
-			return this.L90EEC2();
-
-		A = [0x12];
-		[0x7F051B] = A;
-		A = [0x7F0527];
-		A++;
-		[0x7F0527] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L90EF07()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x7F0527];
-		A <<= 1;
-		X = A;
-		A = 0xFFFF;
-	}
-
-	public void L90EF14()
-	{
-		temp = X - 0x000C;
-		
-		if (N == 0)
-			return this.L90EF21();
-
-		[0x7F051B + X] = A;
-		X++;
-		X++;
-		return this.L90EF14();
-	}
-
-	public void L90EF21()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L90EF24()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x03F8];
-		this.L90EEAE();
-		A = [0x03F6];
-		this.L90EEAE();
-		A = 0xFFFF;
-		[0x03F6] = A;
-		[0x03F8] = A;
-		this.L90EF07();
-		A = [0x0381];
-		
-		if (Z == 0)
-			return this.L90EF6A();
-
-		A = [0x7F0527];
-		temp = A - 0x0003;
-		
-		if (C == 1)
-			return this.L90EF6A();
-
-		A = [0x7F051B];
-		[0x03F6] = A;
-		A = [0x7F051D];
-		[0x03F8] = A;
-		A = 0x0000;
-		[0x7F0527] = A;
-		this.L90EF07();
-	}
-
-	public void L90EF6A()
-	{
-		this.L90955E();
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L91AA56()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0xFFFF;
-		[0x09FC] = A;
-		[0x09FE] = A;
-		[0x09FA] = 0;
-		X = 0x0000;
-	}
-
-	public void L91AA69()
-	{
-		[0x0A01 + X] = 0;
-		X++;
-		X++;
-		temp = X - 0x001E;
-		
-		if (C == 0)
-			return this.L91AA69();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L91AD68()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0xFFFF;
-		[0x0AB5] = A;
-		[0x0AB7] = A;
-		[0x0AFB] = A;
-		X = 0x0000;
-	}
-
-	public void L91AD7B()
-	{
-		[0x0ABB + X] = 0;
-		[0x0ADF + X] = 0;
-		X++;
-		X++;
-		temp = X - 0x0006;
-		
-		if (C == 0)
-			return this.L91AD7B();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L91B06F()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		A = 0xFFFF;
-		[0x0B00] = A;
-		[0x0B02] = A;
-		X = 0x0000;
-	}
-
-	public void L91B081()
-	{
-		[0x0B04 + X] = 0;
-		[0x0B1C + X] = 0;
-		X++;
-		X++;
-		temp = X - 0x000C;
-		
-		if (C == 0)
-			return this.L91B081();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void R948D87()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x040C];
-		C = 0;
-		A += [0x0408] + C;
-		[0x040C] = A;
-		A = [0x040E];
-		A += [0x040A] + C;
-		[0x040E] = A;
-		A = [0x040E];
-		A &= [0x0406];
-		A <<= 1;
-		X = A;
-		A = [0x7FB361 + X];
-		[0x7FB3E1] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void R949B0B()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0x0000;
-		X = [0x0367];
-		
-		if (Z == 1)
-			return this.L949B1E();
-
-	}
-
-	public void L949B17()
-	{
-		C = 0;
-		A += 0x0020 + C;
-		X--;
-		
-		if (Z == 0)
-			return this.L949B17();
-
-	}
-
-	public void L949B1E()
-	{
-		X = A;
-		A = [0x94990B + X];
-		[0x1BA3] = A;
-		A = [0x94990D + X];
-		[0x049E] = A;
-		A = [0x94990F + X];
-		[0x0498] = A;
-		A = [0x949911 + X];
-		[0x0481] = A;
-		A <<= 1;
-		[0x047B] = A;
-		A <<= 1;
-		A <<= 1;
-		A <<= 1;
-		[0x0487] = A;
-		A = [0x949913 + X];
-		[0x041C] = A;
-		A = [0x949915 + X];
-		[0x0428] = A;
-		A = [0x949917 + X];
-		[0x04A0] = A;
-		A = [0x949919 + X];
-		[0x049A] = A;
-		A = [0x94991B + X];
-		[0x0483] = A;
-		A <<= 1;
-		[0x047D] = A;
-		A <<= 1;
-		A <<= 1;
-		A <<= 1;
-		[0x0489] = A;
-		A = [0x94991D + X];
-		[0x041E] = A;
-		A = [0x94991F + X];
-		[0x042A] = A;
-		A = [0x949921 + X];
-		[0x04A2] = A;
-		A = [0x949923 + X];
-		[0x049C] = A;
-		A = [0x949925 + X];
-		[0x0485] = A;
-		A <<= 1;
-		[0x047F] = A;
-		A <<= 1;
-		A <<= 1;
-		A <<= 1;
-		[0x048B] = A;
-		A = [0x949927 + X];
-		[0x0420] = A;
-		A = [0x949929 + X];
-		[0x042C] = A;
-		A = 0xFFFF;
-		[0x7FE4E3] = A;
-		A = [0x0367];
-		A &= 0x00FF;
-		A <<= 1;
-		X = A;
-		Cpu.JSR((0x9BC2 + X));
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void R94B383()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0x0000;
-		[0x7F0000] = A;
-		[0x7F0002] = A;
-		A = 0x0100;
-		[0x7F0004] = A;
-		A = [0x0367];
-		A &= 0x00FF;
-		A <<= 1;
-		X = A;
-		Cpu.JSR((0xB3A7 + X));
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L94E927()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P |= 0x20;
-		P &= ~0x10;
-		Y = 0x0017;
-		X = 0x0000;
-	}
-
-	public void L94E935()
-	{
-		A = [0xE90F + X];
-		[0x706002 + X] = A;
-		X++;
-		Y--;
-		
-		if (N == 0)
-			return this.L94E935();
-
-		P &= ~0x20;
-		this.L94E9F3();
-		A = [0x12];
-		[0x706000] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L94E9F3()
-	{
-		Stack.Push(P);
-		P &= ~0x20;
-		[0x12] = 0;
-		P |= 0x20;
-		Y = 0x0387;
-		X = 0x0000;
-	}
-
-	public void L94EA00()
-	{
-		A = [0x706002 + X];
-		C = 0;
-		A += [0x12] + C;
-		[0x12] = A;
-		A = [0x13];
-		A += 0x00 + C;
-		[0x13] = A;
-		X++;
-		Y--;
-		
-		if (N == 0)
-			return this.L94EA00();
-
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-	public void L90A267()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0x0000;
-		[0x7F052B] = A;
-		[0x7F055B] = A;
-		[0x7F055D] = A;
-		[0x7F055F] = A;
-		A = [0x0371];
-		temp = A - 0x0003;
-		
-		if (Z == 1)
-			return this.L90A29A();
-
-		temp = A - 0x0004;
-		
-		if (Z == 1)
-			return this.L90A29A();
-
-		this.L90A9A8();
-		this.L90A7DE();
-		this.L90A8CF();
-	}
-
-	public void L90A294()
-	{
-		[0x026D]++;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L90A29A()
-	{
-		A = 0x0001;
-		[0x0373] = A;
-		A = [0x036D];
-		A--;
-		A <<= 1;
-		A <<= 1;
-		A <<= 1;
-		A <<= 1;
-		[0x12] = A;
-		A = [0x0365];
-		A <<= 1;
-		A <<= 1;
-		C = 0;
-		A += [0x12] + C;
-		X = A;
-		A = [0x036F];
-		
-		if (Z == 0)
-			return this.L90A2D3();
-
-		A = [0x9C76 + X];
-		[0x0367] = A;
-		A = [0x9C78 + X];
-		[0x14D6] = A;
-		A = [0x036D];
-		A--;
-		A <<= 1;
-		X = A;
-		A = [0xA2EE + X];
-		[0x7F052D] = A;
-		return this.L90A294();
-	}
-
-	public void L90A2D3()
-	{
-		A = [0x9CA6 + X];
-		[0x0367] = A;
-		A = [0x9CA8 + X];
-		[0x14D6] = A;
-		A = [0x036D];
-		A--;
-		A <<= 1;
-		X = A;
-		A = [0xA2F4 + X];
-		[0x7F052D] = A;
-		return this.L90A294();
-	}
-
-	public void L90A7DE()
-	{
-		A = [0x7F0512];
-		
-		if (Z == 0)
-			return this.L90A7F6();
-
-		A = [0x1BC7];
-		
-		if (Z == 0)
-			return this.L90A7F6();
-
-		A = [0x036F];
-		temp = A - 0x0002;
-		
-		if (Z == 1)
-			return this.L90A7F6();
-
-		A = [0x0371];
-		
-		if (Z == 1)
-			return this.L90A7F7();
-
-	}
-
-	public void L90A7F6()
-	{
-		return;
-	}
-
-	public void L90A7F7()
-	{
-		P &= ~0x20;
-		A = 0x0000;
-		[0x706020] = A;
-		A = [0x0381];
-		[0x70605A] = A;
-		A = [0x0365];
-		[0x70605C] = A;
-		A = [0x036D];
-		[0x70605E] = A;
-		A = [0x036F];
-		[0x706060] = A;
-		A = [0x0371];
-		[0x706062] = A;
-		A = [0x03FE];
-		[0x70606C] = A;
-		A = [0x7F052B];
-		[0x70607C] = A;
-		A = [0x7F0527];
-		[0x70607A] = A;
-		A = [0x03F2];
-		[0x706064] = A;
-		A = [0x03F4];
-		[0x706066] = A;
-		A = [0x03F6];
-		[0x706068] = A;
-		A = [0x03F8];
-		[0x70606A] = A;
-		A = [0x7F051B];
-		[0x70606E] = A;
-		A = [0x7F051D];
-		[0x706070] = A;
-		A = [0x7F051F];
-		[0x706072] = A;
-		A = [0x7F0521];
-		[0x706074] = A;
-		A = [0x7F0523];
-		[0x706076] = A;
-		A = [0x7F0525];
-		[0x706078] = A;
-		A = [0x7E3983];
-		[0x70607E] = A;
-		A = [0x7E3985];
-		[0x706080] = A;
-		A = [0x0B36];
-		[0x706082] = A;
-		A = [0x0B38];
-		[0x706084] = A;
-		A = [0x0B3A];
-		[0x706086] = A;
-		A = [0x0B3C];
-		[0x706088] = A;
-		A = [0x7F055B];
-		[0x70608A] = A;
-		A = [0x7F055D];
-		[0x70608C] = A;
-		A = [0x7F055F];
-		[0x70608E] = A;
-		this.L94E927();
-		return;
-	}
-
-	public void L90A8CF()
-	{
-		A = [0x7F0512];
-		
-		if (Z == 0)
-			return this.L90A8E7();
-
-		A = [0x1BC7];
-		
-		if (Z == 0)
-			return this.L90A8E7();
-
-		A = [0x036F];
-		temp = A - 0x0002;
-		
-		if (Z == 1)
-			return this.L90A8E7();
-
-		A = [0x0371];
-		
-		if (Z == 1)
-			return this.L90A8E8();
-
-	}
-
-	public void L90A8E7()
-	{
-		return;
-	}
-
-	public void L90A8E8()
-	{
-		A = 0x0001;
-		[0x706020] = A;
-		this.L94E927();
-		return;
-	}
-
-	public void L90A9A8()
-	{
-		A = [0x0365];
-		A <<= 1;
-		A <<= 1;
-		X = A;
-		A = [0x9C28 + X];
-		[0x0367] = A;
-		A = [0x9C2A + X];
-		[0x14D6] = A;
-		A = [0x0367];
-		temp = A - 0x0009;
-		
-		if (Z == 0)
-			return this.L90A9CE();
-
-		A = [0x7F052B];
-		
-		if (Z == 1)
-			return this.L90A9CE();
-
-		A = 0x0004;
-		[0x0367] = A;
-	}
-
-	public void L90A9CE()
-	{
-		return;
-	}
-
-	public void L94E927()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P |= 0x20;
-		P &= ~0x10;
-		Y = 0x0017;
-		X = 0x0000;
-	}
-
-	public void L94E935()
-	{
-		A = [0xE90F + X];
-		[0x706002 + X] = A;
-		X++;
-		Y--;
-		
-		if (N == 0)
-			return this.L94E935();
-
-		P &= ~0x20;
-		this.L94E9F3();
-		A = [0x12];
-		[0x706000] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L94E9F3()
-	{
-		Stack.Push(P);
-		P &= ~0x20;
-		[0x12] = 0;
-		P |= 0x20;
-		Y = 0x0387;
-		X = 0x0000;
-	}
-
-	public void L94EA00()
-	{
-		A = [0x706002 + X];
-		C = 0;
-		A += [0x12] + C;
-		[0x12] = A;
-		A = [0x13];
-		A += 0x00 + C;
-		[0x13] = A;
-		X++;
-		Y--;
-		
-		if (N == 0)
-			return this.L94EA00();
-
-		P = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-	public void R90A5AD()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0x0001;
-		[0x03FE] = A;
-		A = 0x0000;
-		[0x03F2] = A;
-		[0x03FA] = A;
-		A = 0x0003;
-		[0x03F4] = A;
-		A = 0xFFFF;
-		[0x03F6] = A;
-		[0x03F8] = A;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-	public void R90ACD4()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0x0000;
-		[0x026B] = A;
-		A = [0x0367];
-		temp = A - 0x000E;
-		
-		if (Z == 1)
-			return this.L90ACEC();
-	}
-
-	public void L90ACE6_Done()
-	{
-		[0x026D]++;
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L90ACEC()
-	{
-		A = [0x7F052B];
-		[0x7FE725] = A;
-		return this.L90ACE6_Done();
-	}
-
-
-
-
-
-
-
-	public void R91B06F()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		P &= ~0x30;
-		A = 0xFFFF;
-		[0x0B00] = A;
-		[0x0B02] = A;
-		X = 0x0000;
-	}
-
-	public void L91B081_Loop()
-	{
-		[0x0B04 + X] = 0;
-		[0x0B1C + X] = 0;
-		X++;
-		X++;
-		temp = X - 0x000C;
-
-		if (C == 0)
-			return this.L91B081_Loop();
-
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-	public void R8EAE4F()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		this.R80CC06();
-		this.R839C9C();
-		A = [0x7E6AF6];
-		A &= 0x00FF;
-		A <<= 1;
-		X = A;
-		Cpu.JSR((0xAE75 + X));
-		this.R839DDD();
-		this.R80CDE4();
-		this.R8EAFF1();
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-
-
-
-
-
-
-
-	public void R8EAFF1()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-		A = [0x7E6AF6];
-		temp = A - 0x0002;
-
-		if (C == 0)
-			return this.L8EB009();
-
-		A = [0x7E6AF6];
-		temp = A - 0x0011;
-
-		if (C == 1)
-			return this.L8EB009();
-
-		this.L8EB1FF();
-	}
-
-	public void L8EB009()
-	{
-		A = [0x7E6AEA];
-
-		if (Z == 1)
-			return this.L8EB023();
-
-		A = 0x007C;
-		[0xB0] = A;
-		A = 0x0084;
-		[0xB2] = A;
-		this.L8CC456();
-		this.L8EB09F();
-		this.L8EB172();
-	}
-
-	public void L8EB023()
-	{
-		A = [0x7E6AF6];
-		temp = A - 0x000D;
-
-		if (C == 0)
-			return this.L8EB082();
-
-		A = 0xFFFF;
-		[0xA8] = A;
-		A = 0x0000;
-		[0xAA] = A;
-		A = 0x0078;
-		[0xB0] = A;
-		A = 0x008E;
-		C = 1;
-		A -= 0x000B - !C;
-		[0xB2] = A;
-		A = [0x7E6AF6];
-		temp = A - 0x0010;
-
-		if (C == 1)
-			return this.L8EB054();
-
-		A = 0x01F9;
-		[0xB4] = A;
-		return this.L8EB059();
-	}
-
-	public void L8EB054()
-	{
-		A = 0x0204;
-		[0xB4] = A;
-	}
-
-	public void L8EB059()
-	{
-		this.R828000();
-		P |= 0x20;
-		A = 0x40;
-		temp = A & [0x4A];[0x4A] |= A;
-		P &= ~0x20;
-		P |= 0x20;
-		A = 0x02;
-		[0x4360] = A;
-		A = 0x0D;
-		[0x4361] = A;
-		A = 0x8C;
-		[0x4362] = A;
-		A = 0xB0;
-		[0x4363] = A;
-		A = 0x8E;
-		[0x4364] = A;
-		P &= ~0x20;
-	}
-
-	public void L8EB082()
-	{
-		this.R91B091();
-		this.R90829B();
-		P = Stack.Pop();
-		return;
-	}
-
-	public void L8EB09F()
-	{
-		A = 0x0082;
-		[0xB0] = A;
-		A = 0x0056;
-		[0xB2] = A;
-		A = 0x020A;
-		[0xB4] = A;
-		this.R828000();
-		A = 0x0080;
-		[0xB0] = A;
-		A = 0x00C8;
-		[0xB2] = A;
-		A = 0x0205;
-		[0xB4] = A;
-		this.R828000();
-		A = [0x7E6B12];
-
-		if (Z == 0)
-			return this.L8EB0F4();
-
-		A = [0x7E6B14];
-		A <<= 1;
-		X = A;
-		A = [0xB116 + X];
-		[0x7E6AF0] = A;
-		A = [0xB144 + X];
-		[0x7E6B12] = A;
-		A = [0x7E6B14];
-		A++;
-		[0x7E6B14] = A;
-		temp = A - 0x0017;
-
-		if (C == 0)
-			return this.L8EB0F4();
-
-		A = 0x0000;
-		[0x7E6B14] = A;
-	}
-
-	public void L8EB0F4()
-	{
-		A = 0x0080;
-		[0xB0] = A;
-		A = 0x00C8;
-		[0xB2] = A;
-		A = 0x0205;
-		C = 0;
-		A += [0x7E6AF0] + C;
-		[0xB4] = A;
-		this.R828000();
-		A = [0x7E6B12];
-		A--;
-		[0x7E6B12] = A;
-		return;
-	}
-
-	public void L8EB172()
-	{
-		A = [0x70601A];
-		A &= 0x00FF;
-
-		if (Z == 1)
-			return this.L8EB17C();
-
-		return;
-	}
-
-	public void L8EB17C()
-	{
-		A = [0x7E6B18];
-
-		if (Z == 0)
-			return this.L8EB1C6();
-
-		A = [0x7E6B16];
-		A <<= 1;
-		X = A;
-		A = [0xB1EB + X];
-		[0x7E6B18] = A;
-		A = [0xB1D7 + X];
-		X = A;
-		A = [0x8FD860 + X];
-		[0x7F0633] = A;
-		A = [0x8FD862 + X];
-		[0x7F0635] = A;
-		A = 0x8E00;
-		[0x01] = A;
-		A = 0xB1D0;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		A = [0x7E6B16];
-		A++;
-		[0x7E6B16] = A;
-		temp = A - 0x000A;
-
-		if (C == 0)
-			return this.L8EB1C6();
-
-		A = 0x0000;
-		[0x7E6B16] = A;
-	}
-
-	public void L8EB1C6()
-	{
-		A = [0x7E6B18];
-		A--;
-		[0x7E6B18] = A;
-		return;
-	}
-
-	public void L8EB1FF()
-	{
-		Stack.Push(P);
-		P &= ~0x30;
-		A = [0x7E6B10];
-
-		if (Z == 0)
-			return this.L8EB237();
-
-		A = [0x0265];
-		A &= 0x8000;
-
-		if (Z == 1)
-			return this.L8EB237();
-
-		A = 0x0005;
-		this.L809492();
-		A = [0x7E6B10];
-		A++;
-		[0x7E6B10] = A;
-		P |= 0x20;
-		A = 0x00;
-		[0x0100] = A;
-		[0x2100] = A;
-		P &= ~0x20;
-		this.R9081B1();
-		A = 0x000A;
-		[0x7E6AF6] = A;
-	}
-
-	public void L8EB237()
-	{
-		P = Stack.Pop();
-		return;
-	}
-
-	public void R9081B1()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		this.L80823D();
-		this.L80827B();
-		this.L8082A3();
-		P |= 0x20;
-		A = 0x80;
-		[0x4340] = A;
-		A = 0x32;
-		[0x4341] = A;
-		A = 0x5C;
-		[0x4342] = A;
-		A = 0x82;
-		[0x4343] = A;
-		A = 0x90;
-		[0x4344] = A;
-		P &= ~0x20;
-		P |= 0x20;
-		A = 0x80;
-		[0x4350] = A;
-		A = 0x32;
-		[0x4351] = A;
-		A = 0x5C;
-		[0x4352] = A;
-		A = 0x82;
-		[0x4353] = A;
-		A = 0x90;
-		[0x4354] = A;
-		P &= ~0x20;
-		P |= 0x20;
-		A = 0x80;
-		[0x4360] = A;
-		A = 0x32;
-		[0x4361] = A;
-		A = 0x5C;
-		[0x4362] = A;
-		A = 0x82;
-		[0x4363] = A;
-		A = 0x90;
-		[0x4364] = A;
-		P &= ~0x20;
-		P |= 0x20;
-		A = 0x80;
-		[0x4370] = A;
-		A = 0x32;
-		[0x4371] = A;
-		A = 0x5C;
-		[0x4372] = A;
-		A = 0x82;
-		[0x4373] = A;
-		A = 0x90;
-		[0x4374] = A;
-		P &= ~0x20;
-		P |= 0x20;
-		A = [0x013C];
-		A &= 0x81;
-		[0x013C] = A;
-		[0x420C] = 0;
-		[0x0141] = 0;
-		[0x4A] = 0;
-		[0x434A] = 0;
-		[0x435A] = 0;
-		[0x436A] = 0;
-		[0x437A] = 0;
-		P &= ~0x20;
-		this.L808202();
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void R90829B()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = 0x9000;
-		[0x01] = A;
-		A = 0x82B0;
-		[0x00] = A;
-		this.R8087A4_LoadDmaTransferRecord();
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void R91B091()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x0B00];
-		temp = A - [0x0B02];
-
-		if (Z == 0)
-			return this.L91B0D2();
-
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L91B0C9();
-
-		A = [0x0B04];
-		A |= [0x0B06];
-		A |= [0x0B08];
-		A |= [0x0B0A];
-		A |= [0x0B0C];
-		A |= [0x0B0E];
-
-		if (Z == 0)
-			return this.L91B0BB();
-
-		A = [0x0B34];
-
-		if (Z == 0)
-			return this.L91B0CC();
-
-	}
-
-	public void L91B0BB()
-	{
-		X = 0x000A;
-	}
-
-	public void L91B0BE()
-	{
-		A = [0x0B04 + X];
-
-		if (Z == 1)
-			return this.L91B0C5();
-
-
-		if (N == 0)
-			return this.L91B117();
-
-	}
-
-	public void L91B0C5()
-	{
-		X--;
-		X--;
-
-		if (N == 0)
-			return this.L91B0BE();
-
-	}
-
-	public void L91B0C9()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L91B0CC()
-	{
-		A = 0xFFFF;
-		[0x0B00] = A;
-	}
-
-	public void L91B0D2()
-	{
-		[0x0B0E] = 0;
-		[0x0B26] = 0;
-		A = [0x0B00];
-		[0x0B02] = A;
-		temp = A - 0xFFFF;
-
-		if (Z == 1)
-			return this.L91B0F0();
-
-		[0x12] = A;
-		A <<= 1;
-		C = 0;
-		A += [0x12] + C;
-		X = A;
-		this.L91B104();
-		return this.L91B0BB();
-	}
-
-	public void L91B0F0()
-	{
-		[0x0B04] = 0;
-		[0x0B06] = 0;
-		[0x0B08] = 0;
-		[0x0B0A] = 0;
-		[0x0B0C] = 0;
-		[0x0B0E] = 0;
-		return this.L91B0C9();
-	}
-
-	public void L91B104()
-	{
-		A = [0xB2A5 + X];
-		[0x00] = A;
-		P |= 0x20;
-		A = [0xB2A7 + X];
-		[0x02] = A;
-		Stack.Push(A);
-		B = Stack.Pop();
-		P &= ~0x20;
-		return [[0x0000]]();    //24-Bit Address
-	}
-
-	public void L91B117()
-	{
-		A = [0x0B1C + X];
-
-		if (Z == 1)
-			return this.L91B121();
-
-		[0x0B1C + X]--;
-		return this.L91B0C5();
-	}
-
-	public void L91B121()
-	{
-		A = [0x0B10 + X];
-		[0x00] = A;
-		A = [(0x00)];
-		A &= 0x00FF;
-		temp = A - 0x0081;
-
-		if (Z == 0)
-			return this.L91B133();
-
-		return this.L91B17E();
-	}
-
-	public void L91B133()
-	{
-		temp = A - 0x0083;
-
-		if (Z == 0)
-			return this.L91B13B();
-
-		return this.L91B216();
-	}
-
-	public void L91B13B()
-	{
-		Y = A;
-		A &= 0x00C0;
-		temp = A - 0x00C0;
-
-		if (Z == 0)
-			return this.L91B147();
-
-		return this.L91B221();
-	}
-
-	public void L91B147()
-	{
-		A = Y;
-		A &= 0x00A0;
-		temp = A - 0x00A0;
-
-		if (Z == 0)
-			return this.L91B153();
-
-		return this.L91B23B();
-	}
-
-	public void L91B153()
-	{
-		A = Y;
-		temp = A - 0x0085;
-
-		if (Z == 0)
-			return this.L91B15C();
-
-		return this.L91B29F();
-	}
-
-	public void L91B15C()
-	{
-		temp = A - 0x0086;
-
-		if (Z == 0)
-			return this.L91B164();
-
-		return this.L91B263();
-	}
-
-	public void L91B164()
-	{
-		temp = A - 0x0087;
-
-		if (Z == 0)
-			return this.L91B16C();
-
-		return this.L91B281();
-	}
-
-	public void L91B16C()
-	{
-		temp = A - 0x0082;
-
-		if (Z == 0)
-			return this.L91B174();
-
-		return this.L91B1C8();
-	}
-
-	public void L91B174()
-	{
-		A &= 0x0080;
-
-		if (Z == 0)
-			return this.L91B17C();
-
-		return this.L91B208();
-	}
-
-	public void L91B17C()
-	{
-		return this.L91B17C();
-	}
-
-	public void L91B17E()
-	{
-		Stack.Push(X);
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		A <<= 1;
-		[0x12] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		[0x14] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A <<= 1;
-		[0x16] = A;
-	}
-
-	public void L91B198()
-	{
-		X = [0x16];
-		A = [0x7F0761 + X];
-		Y = A;
-		A = [0x7F1261 + X];
-		X = [0x12];
-		[0x7F1061 + X] = A;
-		A = Y;
-		[0x7F0561 + X] = A;
-		[0x12]++;
-		[0x12]++;
-		[0x16]++;
-		[0x16]++;
-		[0x14]--;
-
-		if (Z == 0)
-			return this.L91B198();
-
-		X = Stack.Pop();
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B1C8()
-	{
-		Stack.Push(X);
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		A <<= 1;
-		[0x12] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A &= 0x00FF;
-		[0x14] = A;
-		Y++;
-		A = [(0x00) + Y];
-		A <<= 1;
-		[0x16] = A;
-	}
-
-	public void L91B1E2()
-	{
-		X = [0x16];
-		A = [0x7F0761 + X];
-		X = [0x12];
-		[0x7F0561 + X] = A;
-		[0x12]++;
-		[0x12]++;
-		[0x16]++;
-		[0x16]++;
-		[0x14]--;
-
-		if (Z == 0)
-			return this.L91B1E2();
-
-		X = Stack.Pop();
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0005 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B208()
-	{
-		A = [(0x00)];
-		A &= 0x00FF;
-		[0x0B1C + X] = A;
-		[0x0B10 + X]++;
-		return this.L91B0C5();
-	}
-
-	public void L91B216()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B221()
-	{
-		A = [(0x00)];
-		A &= 0x001F;
-		A <<= 1;
-		Y = A;
-		[0x00]++;
-		A = [(0x00)];
-		A &= 0x00FF;
-		[0x0B28 + Y] = A;
-		[0x0B10 + X]++;
-		[0x0B10 + X]++;
-		return this.L91B121();
-	}
-
-	public void L91B23B()
-	{
-		A = [(0x00)];
-		A &= 0x001F;
-		A <<= 1;
-		Y = A;
-		A = [0x0B28 + Y];
-		A--;
-		[0x0B28 + Y] = A;
-
-		if (Z == 1)
-			return this.L91B256();
-
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B256()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0003 + C;
-		[0x0B10 + X] = A;
-		return this.L91B121();
-	}
-
-	public void L91B263()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		Y = A;
-		A = [0x0B04 + Y];
-
-		if (Z == 1)
-			return this.L91B274();
-
-		A = 0xFFFF;
-		[0x0B04 + Y] = A;
-	}
-
-	public void L91B274()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0002 + C;
-		[0x0B10 + X] = A;
-		return this.L91B0C5();
-	}
-
-	public void L91B281()
-	{
-		Y = 0x0001;
-		A = [(0x00) + Y];
-		Y = A;
-		A = [0x0B04 + Y];
-
-		if (Z == 1)
-			return this.L91B292();
-
-		A = 0x0001;
-		[0x0B04 + Y] = A;
-	}
-
-	public void L91B292()
-	{
-		A = [0x0B10 + X];
-		C = 0;
-		A += 0x0002 + C;
-		[0x0B10 + X] = A;
-		return this.L91B0C5();
-	}
-
-	public void L91B29F()
-	{
-		[0x0B04 + X] = 0;
-		return this.L91B0C5();
-	}
-
-
-
-
-
-
-
-	public void R94EB88_ReadCartridgeRam()
-	{
-		Stack.Push(B);
-		Stack.Push(P);
-		Stack.Push(K);
-		B = Stack.Pop();
-		A = [0x0371];
-
-		if (Z == 0)
-			return this.L94EBBE();
-
-		A = [0x0367];
-		A <<= 1;
-		A <<= 1;
-		X = A;
-		A = [0x7060B5 + X];
-		A &= 0x00FF;
-		[0x26] = A;
-		A = [0x7060B6 + X];
-		A &= 0x00FF;
-		[0x28] = A;
-		A = [0x7060B7 + X];
-		A &= 0x00FF;
-		[0x2A] = A;
-		A = [0x7060B8 + X];
-		A &= 0x00FF;
-		[0x2C] = A;
-	}
-
-	public void L94EBBB_Done()
-	{
-		P = Stack.Pop();
-		B = Stack.Pop();
-		return;
-	}
-
-	public void L94EBBE()
-	{
-		A = [0x0369];
-		A <<= 1;
-		A <<= 1;
-		C = 0;
-		A += [0x0365] + C;
-		A <<= 1;
-		A <<= 1;
-		X = A;
-		A = [0x7060F5 + X];
-		A &= 0x00FF;
-		[0x26] = A;
-		A = [0x7060F6 + X];
-		A &= 0x00FF;
-		[0x28] = A;
-		A = [0x7060F7 + X];
-		A &= 0x00FF;
-		[0x2A] = A;
-		A = [0x7060F8 + X];
-		A &= 0x00FF;
-		[0x2C] = A;
-		return this.L94EBBB_Done();
-	}
-
-
-
-
-
-
-
-
-	public void L968144_ResetRam()
-	{
-		this.R9681D4();
-		this.R9694A7_ResetRam();
-		A = 0x0000;
-		[0x1B3F] = A;
-		[0x1B75] = A;
-		[0x1B65] = A;
-		[0x1B79] = A;
-		[0x1B7B] = A;
-		[0x1B81] = A;
-		[0x1B2B] = A;
-		[0x1B41] = A;
-		[0x1B25] = A;
-		[0x1B27] = A;
-		[0x1B23] = A;
-		[0x1B29] = A;
-		[0x1B43] = A;
-		[0x1B13] = A;
-		[0x1B15] = A;
-		[0x1B17] = A;
-		[0x1B1B] = A;
-		[0x1B1D] = A;
-		[0x1B19] = A;
-		[0x1B1F] = A;
-		[0x1B21] = A;
-		[0x1B23] = A;
-		[0x1B2D] = A;
-		[0x1B2F] = A;
-		[0x1B31] = A;
-		[0x1B33] = A;
-		[0x1B99] = A;
-		[0x1B9B] = A;
-		[0x1B9D] = A;
-		[0x1B9F] = A;
-		[0x1BA1] = A;
-		A = 0xFFFF;
-		[0x1B45] = A;
-		[0x1B47] = A;
-		[0x1B49] = A;
-		[0x1B4B] = A;
-		[0x1B8F] = A;
-		[0x1B91] = A;
-		[0x1B93] = A;
-		[0x1B95] = A;
-		[0x1B97] = A;
-		A = 0x0120;
-		[0x1BA3] = A;
-		[0x026D]++;
-		return;
-	}
-
-
-
-
-
-
-
-	// Bank 0x96
-	public void R9681D4()
-	{
-		X = 0x00E2;
-	}
-
-	public void L9681D7_Loop()
-	{
-		A = [0x8000 + X];
-		[0x7F0861 + X] = A;
-		X--;
-		X--;
-		
-		if (N == 0)
-			return this.L9681D7_Loop();
-
-		X = 0x001E;
-	}
-
-	public void L9681E5_Loop()
-	{
-		A = [0x80E6 + X];
-		[0x7F0F61 + X] = A;
-		X--;
-		X--;
-		
-		if (N == 0)
-			return this.L9681E5_Loop();
-
-		X = 0x003E;
-	}
-
-	public void L9681F3_Loop()
-	{
-		A = [0x8104 + X];
-		[0x7F0FC1 + X] = A;
-		X--;
-		X--;
-		
-		if (N == 0)
-			return this.L9681F3_Loop();
-
-		return;
-	}
-
-	public void R9694A7_ResetRam()
-	{
-		this.R9698CF_ResetRam();
-		P |= 0x20;
-		A = 0x41;
-		[0x4320] = A;
-		A = 0x26;
-		[0x4321] = A;
-		A = 0xD8;
-		[0x4322] = A;
-		A = 0x61;
-		[0x4323] = A;
-		A = 0x7E;
-		[0x4324] = A;
-		A = 0x7E;
-		[0x4327] = A;
-		P &= ~0x20;
-		return;
-	}
-
-	public void R9698CF_ResetRam()
-	{
-		A = 0x0000;
-		[0x7E61D8] = A;
-		A = 0x0000;
-		[0x7E61F8] = A;
-		P |= 0x20;
-		A = [0x4A];
-		A &= 0xFB;
-		[0x4A] = A;
-		P &= ~0x20;
-		return;
-	}
-
-
-	// 80a0ed
 	public void L808306()
 	{
 		Stack.Push(P);
@@ -19493,6 +155,10 @@ public class SnesRom
 		P &= ~0x30;
 		[0x0152] = 0;
 		Y = 0x0000;
+	}
+
+	public void L808322()
+	{
 		temp = Y - 0x0100;
 
 		if (C == 0)
@@ -19528,10 +194,173 @@ public class SnesRom
 		return [(0x833B + X)]();
 	}
 
+	public byte[] FunctionTable80833B = new byte[]
+	{
+		0x45, 0x83,
+		0x4D, 0x83,
+		0x8B, 0x83,
+		0xD7, 0x83,
+		0x29, 0x84
+	}
+
 	public void L808345()
 	{
 		P |= 0x20;
 		[0x0155] = 0;
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L80834D()
+	{
+		P |= 0x20;
+		A = [0x0156 + Y];
+		[0x4312] = A;
+		A = [0x0157 + Y];
+		[0x4313] = A;
+		A = [0x0158 + Y];
+		[0x4314] = A;
+		A = [0x0159 + Y];
+		[0x4315] = A;
+		A = [0x015A + Y];
+		[0x4316] = A;
+		A = [0x015B + Y];
+		[0x2121] = A;
+		[0x4310] = 0;
+		A = 0x22;
+		[0x4311] = A;
+		A = 0x02;
+		[0x420B] = A;
+		P &= ~0x20;
+		A = Y;
+		C = 0;
+		A += 0x0007 + C;
+		Y = A;
+		return this.L808322();
+	}
+
+	public void L80838B()
+	{
+		P |= 0x20;
+		A = [0x0156 + Y];
+		[0x4312] = A;
+		A = [0x0157 + Y];
+		[0x4313] = A;
+		A = [0x0158 + Y];
+		[0x4314] = A;
+		A = [0x0159 + Y];
+		[0x4315] = A;
+		A = [0x015A + Y];
+		[0x4316] = A;
+		A = [0x015B + Y];
+		[0x2115] = A;
+		A = [0x015C + Y];
+		[0x2116] = A;
+		A = [0x015D + Y];
+		[0x2117] = A;
+		A = 0x01;
+		[0x4310] = A;
+		A = 0x18;
+		[0x4311] = A;
+		A = 0x02;
+		[0x420B] = A;
+		P &= ~0x20;
+		A = Y;
+		C = 0;
+		A += 0x0009 + C;
+		Y = A;
+		return this.L808322();
+	}
+
+	public void L8083D7()
+	{
+		P |= 0x20;
+		A = [0x0156 + Y];
+		[0x4312] = A;
+		A = [0x0157 + Y];
+		[0x4313] = A;
+		A = [0x0158 + Y];
+		[0x4314] = A;
+		A = [0x0159 + Y];
+		[0x4315] = A;
+		A = [0x015A + Y];
+		[0x4316] = A;
+		A = [0x015B + Y];
+		[0x2115] = A;
+		A = [0x015C + Y];
+		[0x2116] = A;
+		A = [0x015D + Y];
+		[0x2117] = A;
+		A = 0x81;
+		[0x4310] = A;
+		A = 0x39;
+		[0x4311] = A;
+		A = [0x2139];
+		A = [0x213A];
+		A = 0x02;
+		[0x420B] = A;
+		P &= ~0x20;
+		A = Y;
+		C = 0;
+		A += 0x0009 + C;
+		Y = A;
+		return this.L808322();
+	}
+
+	public void L808429()
+	{
+		P |= 0x20;
+		A = [0x0156 + Y];
+		[0x4312] = A;
+		A = [0x0157 + Y];
+		[0x4313] = A;
+		A = [0x0158 + Y];
+		[0x4314] = A;
+		A = [0x0159 + Y];
+		[0x4315] = A;
+		A = [0x015A + Y];
+		[0x4316] = A;
+		A = [0x015B + Y];
+		[0x4310] = A;
+		A = [0x015C + Y];
+		[0x4311] = A;
+		A = [0x015D + Y];
+		[0x2115] = A;
+		A = [0x015E + Y];
+		[0x2116] = A;
+		A = [0x015F + Y];
+		[0x2117] = A;
+		A = 0x02;
+		[0x420B] = A;
+		P &= ~0x20;
+		A = Y;
+		C = 0;
+		A += 0x000B + C;
+		Y = A;
+		return this.L808322();
+	}
+
+	public void L80850F()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+	}
+
+	public void L808515()
+	{
+		[0x7E0000 + X] = A;
+		X++;
+		X++;
+		Y--;
+		Y--;
+
+		if (Z == 0)
+			return this.L808515();
+
 		B = Stack.Pop();
 		P = Stack.Pop();
 		return;
@@ -19838,6 +667,75 @@ public class SnesRom
 		return;
 	}
 
+	public void L808744()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		A = 0x8000;
+		[0x01] = A;
+		A = 0x875B;
+		[0x00] = A;
+		this.L8087A4();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public byte[] DmaTransferRecord80875B = new byte[]
+	{
+		// Type 0x02, RAM Address 0x7E2000, Length 0x0800, VRAM Control 0x80, VRAM Address 0x0000
+		0x02, 0x00, 0x20, 0x7E, 0x00, 0x08, 0x80, 0x00, 0x00
+	}
+
+	public void L808764()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		A = 0x8000;
+		[0x01] = A;
+		A = 0x877B;
+		[0x00] = A;
+		this.L8087A4();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public byte[] DmaTransferRecord80877B = new byte[]
+	{
+		// Type 0x02, RAM Address 0x7E2800, Length 0x0800, VRAM Control 0x80, VRAM Address 0x0800
+		0x02, 0x00, 0x28, 0x7E, 0x00, 0x08, 0x80, 0x00, 0x08
+	}
+
+	public void L808784()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		A = 0x8000;
+		[0x01] = A;
+		A = 0x879B;
+		[0x00] = A;
+		this.L8087A4();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public byte[] DmaTransferRecord80879B = new byte[]
+	{
+		// Type 0x02, RAM Address 0x7E3000, Length 0x0800, VRAM Control 0x80, VRAM Address 0x1C00
+		0x02, 0x00, 0x30, 0x7E, 0x00, 0x08, 0x80, 0x00, 0x1C
+	}
+
 	public void L8087A4()
 	{
 		Stack.Push(P);
@@ -19975,6 +873,2589 @@ public class SnesRom
 
 	public void L808852()
 	{
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L808888()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		P |= 0x20;
+		P &= ~0x10;
+		A = [0x40];
+		Stack.Push(A);
+		B = Stack.Pop();
+		[0x47] = 0;
+		Y = 0x0000;
+	}
+
+	public void L808897()
+	{
+		Stack.Push(X);
+		X = [0x3E];
+		A = [0x0000 + X];
+		X++;
+
+		if (Z == 0)
+			return this.L8088A3();
+
+		this.L8089D5();
+	}
+
+	public void L8088A3()
+	{
+		[0x3E] = X;
+		X = Stack.Pop();
+		[0x41] = A;
+		temp = A - 0xFF;
+
+		if (Z == 0)
+			return this.L8088AF();
+
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L8088AF()
+	{
+		A &= 0xE0;
+		temp = A - 0xE0;
+
+		if (Z == 0)
+			return this.L8088D3();
+
+		A = [0x41];
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		A &= 0xE0;
+		Stack.Push(A);
+		A = [0x41];
+		A &= 0x03;
+		A = (A >> 4) | (A << 4);
+		Stack.Push(X);
+		X = [0x3E];
+		A = [0x0000 + X];
+		X++;
+
+		if (Z == 0)
+			return this.L8088CE();
+
+		this.L8089D5();
+	}
+
+	public void L8088CE()
+	{
+		[0x3E] = X;
+		X = Stack.Pop();
+		return this.L8088DB();
+	}
+
+	public void L8088D3()
+	{
+		Stack.Push(A);
+		A = 0x00;
+		A = (A >> 4) | (A << 4);
+		A = [0x41];
+		A &= 0x1F;
+	}
+
+	public void L8088DB()
+	{
+		X = A;
+		X++;
+		A = Stack.Pop();
+		temp = A - 0x00;
+
+		if (N == 0)
+			return this.L8088E5();
+
+		return this.L80896E();
+	}
+
+	public void L8088E5()
+	{
+		temp = A - 0x20;
+
+		if (Z == 1)
+			return this.L808908();
+
+		temp = A - 0x40;
+
+		if (Z == 1)
+			return this.L808920();
+
+		temp = A - 0x60;
+
+		if (Z == 1)
+			return this.L808955();
+
+	}
+
+	public void L8088F1()
+	{
+		Stack.Push(X);
+		X = [0x3E];
+		A = [0x0000 + X];
+		X++;
+
+		if (Z == 0)
+			return this.L8088FD();
+
+		this.L8089D5();
+	}
+
+	public void L8088FD()
+	{
+		[0x3E] = X;
+		X = Stack.Pop();
+		[[0x43] +Y] = A;
+		Y++;
+		X--;
+
+		if (Z == 0)
+			return this.L8088F1();
+
+
+		if (Z == 1)
+			return this.L808897();
+
+	}
+
+	public void L808908()
+	{
+		Stack.Push(X);
+		X = [0x3E];
+		A = [0x0000 + X];
+		X++;
+
+		if (Z == 0)
+			return this.L808914();
+
+		this.L8089D5();
+	}
+
+	public void L808914()
+	{
+		[0x3E] = X;
+		X = Stack.Pop();
+	}
+
+	public void L808917()
+	{
+		[[0x43] +Y] = A;
+		Y++;
+		X--;
+
+		if (Z == 0)
+			return this.L808917();
+
+		return this.L808897();
+	}
+
+	public void L808920()
+	{
+		Stack.Push(X);
+		X = [0x3E];
+		A = [0x0000 + X];
+		X++;
+
+		if (Z == 0)
+			return this.L80892C();
+
+		this.L8089D5();
+	}
+
+	public void L80892C()
+	{
+		[0x3E] = X;
+		X = Stack.Pop();
+		[0x41] = A;
+		Stack.Push(X);
+		X = [0x3E];
+		A = [0x0000 + X];
+		X++;
+
+		if (Z == 0)
+			return this.L80893D();
+
+		this.L8089D5();
+	}
+
+	public void L80893D()
+	{
+		[0x3E] = X;
+		X = Stack.Pop();
+		[0x42] = A;
+	}
+
+	public void L808942()
+	{
+		A = [0x41];
+		[[0x43] +Y] = A;
+		Y++;
+		X--;
+
+		if (Z == 1)
+			return this.L808952();
+
+		A = [0x42];
+		[[0x43] +Y] = A;
+		Y++;
+		X--;
+
+		if (Z == 0)
+			return this.L808942();
+
+	}
+
+	public void L808952()
+	{
+		return this.L808897();
+	}
+
+	public void L808955()
+	{
+		Stack.Push(X);
+		X = [0x3E];
+		A = [0x0000 + X];
+		X++;
+
+		if (Z == 0)
+			return this.L808961();
+
+		this.L8089D5();
+	}
+
+	public void L808961()
+	{
+		[0x3E] = X;
+		X = Stack.Pop();
+	}
+
+	public void L808964()
+	{
+		[[0x43] +Y] = A;
+		A++;
+		Y++;
+		X--;
+
+		if (Z == 0)
+			return this.L808964();
+
+		return this.L808897();
+	}
+
+	public void L80896E()
+	{
+		temp = A - 0xC0;
+
+		if (C == 1)
+			return this.L8089B4();
+
+		A &= 0x20;
+		[0x46] = A;
+		Stack.Push(X);
+		X = [0x3E];
+		A = [0x0000 + X];
+		X++;
+
+		if (Z == 0)
+			return this.L808982();
+
+		this.L8089D5();
+	}
+
+	public void L808982()
+	{
+		[0x3E] = X;
+		X = Stack.Pop();
+		[0x41] = A;
+		Stack.Push(X);
+		X = [0x3E];
+		A = [0x0000 + X];
+		X++;
+
+		if (Z == 0)
+			return this.L808993();
+
+		this.L8089D5();
+	}
+
+	public void L808993()
+	{
+		[0x3E] = X;
+		X = Stack.Pop();
+		[0x42] = A;
+	}
+
+	public void L808998()
+	{
+		P |= 0x20;
+	}
+
+	public void L80899A()
+	{
+		Stack.Push(X);
+		Stack.Push(Y);
+		Y = [0x41];
+		A = [[0x43] + Y];
+		Y++;
+		[0x41] = Y;
+		Y = Stack.Pop();
+		X = [0x46];
+
+		if (Z == 1)
+			return this.L8089AA();
+
+		A ^= 0xFF;
+	}
+
+	public void L8089AA()
+	{
+		[[0x43] +Y] = A;
+		Y++;
+		X = Stack.Pop();
+		X--;
+
+		if (Z == 0)
+			return this.L80899A();
+
+		return this.L808897();
+	}
+
+	public void L8089B4()
+	{
+		A &= 0x20;
+		[0x46] = A;
+		Stack.Push(X);
+		X = [0x3E];
+		A = [0x0000 + X];
+		X++;
+
+		if (Z == 0)
+			return this.L8089C4();
+
+		this.L8089D5();
+	}
+
+	public void L8089C4()
+	{
+		[0x3E] = X;
+		X = Stack.Pop();
+		[0x41] = A;
+		[0x42] = 0;
+		P &= ~0x20;
+		A = Y;
+		C = 1;
+		A -= [0x41] - !C;
+		[0x41] = A;
+		return this.L808998();
+	}
+
+	public void L8089D5()
+	{
+		X = 0x8000;
+		Stack.Push(A);
+		Stack.Push(B);
+		A = Stack.Pop();
+		A++;
+		Stack.Push(A);
+		B = Stack.Pop();
+		A = Stack.Pop();
+		return;
+	}
+
+	public void L808C42_Start()
+	{
+		P |= 0x20;
+		A = 0x80;
+		[0x0100] = A;
+		[0x2100] = A;
+		A = 0x00;
+		[0x7FF7] = A;
+		P |= 0x30;
+		[0x420B] = 0;
+		[0x420C] = 0;
+		[0x2140] = 0;
+		[0x2141] = 0;
+		[0x2142] = 0;
+		[0x2143] = 0;
+		P &= ~0x30;
+		X = 0x1FFF;
+		S = X;
+		Y = 0x0000;
+		Stack.Push(Y);
+		D = Stack.Pop();
+		Stack.Push(K);
+		B = Stack.Pop();
+		return this.L808EE3();
+	}
+
+	public void L808C76()
+	{
+		Stack.Push(P);
+		P |= 0x30;
+		A = 0x01;
+		[0x4200] = A;
+		[0x013C] = A;
+		A = 0x80;
+		[0x4201] = A;
+		[0x4202] = 0;
+		[0x4203] = 0;
+		[0x4204] = 0;
+		[0x4205] = 0;
+		[0x4206] = 0;
+		[0x4207] = 0;
+		[0x013F] = 0;
+		[0x4208] = 0;
+		[0x0140] = 0;
+		[0x4209] = 0;
+		[0x013D] = 0;
+		[0x420A] = 0;
+		[0x013E] = 0;
+		[0x420B] = 0;
+		[0x420C] = 0;
+		[0x0141] = 0;
+		A = 0x01;
+		[0x420D] = A;
+		[0x0142] = A;
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L808CC0()
+	{
+		Stack.Push(P);
+		P |= 0x30;
+		A = 0x8F;
+		[0x2100] = A;
+		[0x0100] = A;
+		A = 0x01;
+		[0x2101] = A;
+		[0x0101] = A;
+		[0x2102] = 0;
+		[0x0102] = 0;
+		A = 0x80;
+		[0x2103] = A;
+		[0x0103] = A;
+		[0x2104] = 0;
+		[0x2104] = 0;
+		A = 0x09;
+		[0x2105] = A;
+		[0x0104] = A;
+		[0x2106] = 0;
+		[0x0105] = 0;
+		A = 0x00;
+		[0x2107] = A;
+		[0x0106] = A;
+		A = 0x08;
+		[0x2108] = A;
+		[0x0107] = A;
+		A = 0x1C;
+		[0x2109] = A;
+		[0x0108] = A;
+		A = 0x00;
+		[0x210A] = 0;
+		[0x0109] = 0;
+		A = 0x06;
+		[0x210B] = A;
+		[0x010A] = A;
+		A = 0x01;
+		[0x210C] = A;
+		[0x010B] = A;
+		[0x210D] = 0;
+		[0x210D] = 0;
+		[0x210E] = 0;
+		[0x210E] = 0;
+		[0x210F] = 0;
+		[0x210F] = 0;
+		[0x2110] = 0;
+		[0x2110] = 0;
+		[0x2111] = 0;
+		[0x2111] = 0;
+		[0x2112] = 0;
+		[0x2112] = 0;
+		[0x2113] = 0;
+		[0x2113] = 0;
+		[0x2114] = 0;
+		[0x2114] = 0;
+		[0x2115] = 0;
+		[0x211A] = 0;
+		[0x010C] = 0;
+		[0x211B] = 0;
+		[0x211C] = 0;
+		[0x211D] = 0;
+		[0x211E] = 0;
+		[0x211F] = 0;
+		[0x2120] = 0;
+		A = 0x00;
+		[0x2123] = A;
+		[0x010D] = A;
+		A = 0x00;
+		[0x2124] = A;
+		[0x010E] = A;
+		[0x2125] = 0;
+		[0x011F] = 0;
+		A = 0x00;
+		[0x2126] = A;
+		[0x0120] = A;
+		A = 0xF8;
+		[0x2127] = A;
+		[0x0121] = A;
+		[0x2128] = 0;
+		[0x0122] = 0;
+		[0x2129] = 0;
+		[0x0123] = 0;
+		[0x212A] = 0;
+		[0x0124] = 0;
+		[0x212B] = 0;
+		[0x0125] = 0;
+		A = 0x11;
+		[0x212C] = A;
+		[0x0126] = A;
+		[0x212E] = A;
+		[0x0128] = A;
+		A = 0x02;
+		[0x212D] = A;
+		[0x0127] = A;
+		[0x212F] = A;
+		[0x0129] = A;
+		A = 0x02;
+		[0x2130] = A;
+		[0x012A] = A;
+		A = 0xA1;
+		[0x2131] = A;
+		[0x012B] = A;
+		A = 0x20;
+		[0x2132] = A;
+		[0x012E] = A;
+		A = 0x40;
+		[0x2132] = A;
+		[0x012D] = A;
+		A = 0x80;
+		[0x2132] = A;
+		[0x012C] = A;
+		A = 0x00;
+		[0x2133] = A;
+		[0x012F] = A;
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L808E19()
+	{
+		P &= ~0x30;
+		A = 0x1C2F;
+		this.L808E3F();
+		A = 0x1C2F;
+		this.L808E52();
+		A = 0x1C2F;
+		this.L808E65();
+		P |= 0x30;
+		this.L808744();
+		this.L808764();
+		this.L808784();
+		return;
+	}
+
+	public void L808E3F()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		X = 0x2000;
+		Y = 0x0800;
+		this.L80850F();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L808E52()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		X = 0x2800;
+		Y = 0x0800;
+		this.L80850F();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L808E65()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		X = 0x3000;
+		Y = 0x0800;
+		this.L80850F();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L808E78()
+	{
+		Stack.Push(P);
+		P &= ~0x30;
+		this.L808EA7();
+		A = [0x0255];
+		temp = A - 0x0005;
+
+		if (C == 0)
+			return this.L808E8E();
+
+		A = 0x0001;
+		[0x0257] = A;
+		return this.L808E91();
+	}
+
+	public void L808E8E()
+	{
+		[0x0257] = 0;
+	}
+
+	public void L808E91()
+	{
+		A = [0x0259];
+		C = 0;
+		A += [0x025D] + C;
+		[0x0261] = A;
+		A = [0x025B];
+		C = 0;
+		A += [0x025F] + C;
+		[0x0263] = A;
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L808EA7()
+	{
+		Stack.Push(P);
+		P |= 0x20;
+		A = [0x213F];
+		temp = A & 0x40;
+
+		if (Z == 1)
+			return this.L808ED9();
+
+		A = [0x00213C];
+		[0x0259] = A;
+		A = [0x00213C];
+		A &= 0x01;
+		[0x025A] = A;
+		A = [0x00213D];
+		[0x025B] = A;
+		A = [0x00213D];
+		A &= 0x01;
+		[0x025C] = A;
+		[0x0255] = 0;
+	}
+
+	public void L808ED4()
+	{
+		[0x0256] = 0;
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L808ED9()
+	{
+		[0x0255]++;
+
+		if (Z == 0)
+			return this.L808ED4();
+
+		[0x0255]--;
+		return this.L808ED4();
+	}
+
+	public void L808EE3()
+	{
+		P |= 0x30;
+		A = 0xA1;
+		[0x7FF5] = A;
+		A = 0x0A;
+		[0x7FF7] = A;
+		P &= ~0x30;
+		X = 0x01FE;
+	}
+
+	public void L808EF4()
+	{
+		[0x00 + X] = 0;
+		[0x0200 + X] = 0;
+		[0x0400 + X] = 0;
+		[0x0600 + X] = 0;
+		[0x0800 + X] = 0;
+		[0x0A00 + X] = 0;
+		[0x0C00 + X] = 0;
+		[0x0E00 + X] = 0;
+		[0x1000 + X] = 0;
+		[0x1200 + X] = 0;
+		[0x1400 + X] = 0;
+		[0x1600 + X] = 0;
+		[0x1800 + X] = 0;
+		[0x1A00 + X] = 0;
+		[0x1C00 + X] = 0;
+		[0x1E00 + X] = 0;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L808EF4();
+
+		return this.L808F49();
+	}
+
+	public void L808F49()
+	{
+		P |= 0x30;
+		[0x4200] = 0;
+		[0x013C] = 0;
+		A = 0x8F;
+		[0x2100] = A;
+		[0x0100] = A;
+		this.L808C76();
+		this.L808CC0();
+		this.L808E19();
+		this.L809D46();
+		this.L809BAB();
+		this.L808215();
+		P |= 0x20;
+		A = 0x54;
+		[0x36] = A;
+		[0x37] = 0;
+		[0x38] = 0;
+		A = 0x6B;
+		[0x39] = A;
+		A = 0x44;
+		[0x3A] = A;
+		[0x3B] = 0;
+		[0x3C] = 0;
+		A = 0x6B;
+		[0x3D] = A;
+		A = 0x01;
+		[0x4B] = A;
+		P &= ~0x30;
+		this.L8CC0E8();
+		this.L808252();
+		P &= ~0x30;
+		this.L80942D();
+		P &= ~0x30;
+		Y = 0x003C;
+	}
+
+	public void L808FA1()
+	{
+		this.L808202();
+		Y--;
+
+		if (Z == 0)
+			return this.L808FA1();
+
+		P |= 0x30;
+		A = 0x7E;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x30;
+		X = 0x0FFE;
+		A = 0x0000;
+	}
+
+	public void L808FB6()
+	{
+		[0x2000 + X] = A;
+		[0x3000 + X] = A;
+		[0x4000 + X] = A;
+		[0x5000 + X] = A;
+		[0x6000 + X] = A;
+		[0x7000 + X] = A;
+		[0x8000 + X] = A;
+		[0x9000 + X] = A;
+		[0xA000 + X] = A;
+		[0xB000 + X] = A;
+		[0xC000 + X] = A;
+		[0xD000 + X] = A;
+		[0xE000 + X] = A;
+		[0xF000 + X] = A;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L808FB6();
+
+		P |= 0x30;
+		A = 0x7F;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x30;
+		X = 0x0FFE;
+		A = 0x0000;
+	}
+
+	public void L808FF2()
+	{
+		[0x0000 + X] = A;
+		[0x1000 + X] = A;
+		[0x2000 + X] = A;
+		[0x3000 + X] = A;
+		[0x4000 + X] = A;
+		[0x5000 + X] = A;
+		[0x6000 + X] = A;
+		[0x7000 + X] = A;
+		[0x8000 + X] = A;
+		[0x9000 + X] = A;
+		[0xA000 + X] = A;
+		[0xB000 + X] = A;
+		[0xC000 + X] = A;
+		[0xD000 + X] = A;
+		[0xE000 + X] = A;
+		[0xF000 + X] = A;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L808FF2();
+
+		Stack.Push(K);
+		B = Stack.Pop();
+		P |= 0x20;
+		A = 0x0F;
+		[0x0100] = A;
+	}
+
+	public void L80902F()
+	{
+		this.L808202();
+		[0x0100]--;
+
+		if (Z == 0)
+			return this.L80902F();
+
+		P &= ~0x20;
+		this.L80823D();
+		A = 0x8000;
+		[0x01] = A;
+		A = 0x904E;
+		[0x00] = A;
+		this.L8087A4();
+		return this.L809059();
+	}
+
+	public byte[] DmaTransferRecord80904E = new byte[]
+	{
+		// Type 0x04, RAM Address 0x809077, Length 0x8000, DMA Control 0x08, DMA Address 0x2119, VRAM Control 0x80, VRAM Address 0x0000
+		0x04, 0x77, 0x90, 0x80, 0x00, 0x80, 0x08, 0x19, 0x80, 0x00, 0x00
+	}
+
+	public void L809059()
+	{
+		A = 0x8000;
+		[0x01] = A;
+		A = 0x9069;
+		[0x00] = A;
+		this.L8087A4();
+		return this.L809074();
+	}
+
+	public byte[] DmaTransferRecord809069 = new byte[]
+	{
+		// Type 0x04, RAM Address 0x809076, Length 0x8000, DMA Control 0x08, DMA Address 0x2118, VRAM Control 0x00, VRAM Address 0x0000
+		0x04, 0x76, 0x90, 0x80, 0x00, 0x80, 0x08, 0x18, 0x00, 0x00, 0x00
+	}
+
+	public void L809074()
+	{
+		return this.L809078();
+	}
+
+	public void L809078()
+	{
+		P &= ~0x30;
+		[0x026D] = 0;
+		[0x0265] = 0;
+		[0x0267] = 0;
+		this.L809559();
+		this.L808202();
+	}
+
+	public void L80908B()
+	{
+		P &= ~0x30;
+		this.L8090A1();
+		this.L808E78();
+		this.L8090CD();
+		this.L8090B8();
+		this.L808202();
+		return this.L80908B();
+	}
+
+	public void L8090A1()
+	{
+		this.L809570();
+		this.L809A94();
+		this.L809B30();
+		this.L809FDF();
+		P &= ~0x30;
+		this.L809D46();
+		return;
+	}
+
+	public void L8090B8()
+	{
+		this.L809BAB();
+		this.L80A005();
+		P &= ~0x30;
+		A = [0x5A];
+		[0x0265] = A;
+		A = [0x52];
+		[0x0267] = A;
+		return;
+	}
+
+	public void L8090CD()
+	{
+		P &= ~0x30;
+		Stack.Push(B);
+		A = [0x026D];
+		A <<= 1;
+		A += [0x026D] + C;
+		X = A;
+		P |= 0x20;
+		A = [0x809107 + X];
+		temp = A - 0x7D;
+
+		if (Z == 1)
+			return this.L8090F6();
+
+		[0x02] = A;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		A = [0x809105 + X];
+		[0x00] = A;
+		this.L809102();
+	}
+
+	public void L8090F2()
+	{
+		P &= ~0x30;
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L8090F6()
+	{
+		P &= ~0x20;
+		A = [0x809105 + X];
+		[0x026D] = A;
+		return this.L8090F2();
+	}
+
+	public void L809102()
+	{
+		return [[0x0000]]();    //24-Bit Address
+	}
+
+	public byte[] FunctionPointerTable809105 = new byte[]
+	{
+		0x0C, 0x9F, 0x80,
+		0xDE, 0x9C, 0x90,
+		0x97, 0x9D, 0x90,
+		0x1C, 0x9F, 0x80,
+		0xF9, 0x9C, 0x90,
+		0x4F, 0xAE, 0x8E,
+		0x6E, 0xCB, 0x8E,
+		0xBE, 0x98, 0x8E,
+		0x67, 0xA2, 0x90,
+		0x5F, 0xD1, 0x90,
+		0xD4, 0xAC, 0x90,
+		0x2D, 0x9F, 0x80,
+		0x44, 0x81, 0x96,
+		0xA1, 0x9D, 0x90,
+		0x82, 0x9D, 0x90,
+		0x10, 0x80, 0x8B,
+		0x00, 0xC7, 0x94,
+		0xE5, 0x9E, 0x90,
+		0xE6, 0xA0, 0x80,
+		0xED, 0xA0, 0x80,
+		0x64, 0x8C, 0x91,
+		0x82, 0xA7, 0x90,
+		0x2F, 0xC2, 0x8C,
+		0x3E, 0xC2, 0x8C,
+		0x64, 0xC2, 0x8C,
+		0x46, 0x9E, 0x90,
+		0x40, 0x9F, 0x80,
+		0xD6, 0xC9, 0x8C,
+		0x56, 0xCA, 0x8C,
+		0x08, 0x9F, 0x90,
+		0x53, 0xD2, 0x8C,
+		0x7E, 0xD2, 0x8C,
+		0xC2, 0x8E, 0x91,
+		0xDD, 0xA0, 0x90,
+		0xAE, 0xD2, 0x8C,
+		0x4F, 0xA1, 0x90,
+		0x1F, 0xC9, 0x8C,
+		0x45, 0xC9, 0x8C,
+		0x24, 0xA3, 0x90,
+		0x53, 0xD2, 0x8C,
+		0x7E, 0xD2, 0x8C,
+		0xAE, 0xD2, 0x8C,
+		0xBC, 0x00, 0x7D,
+		0x53, 0xD2, 0x8C,
+		0x7E, 0xD2, 0x8C,
+		0xAE, 0xD2, 0x8C
+	}
+
+	public void L80942D()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		A = 0x0001;
+		[0x0322] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		A = [0x00];
+		Stack.Push(A);
+		A = [0x01];
+		Stack.Push(A);
+		A = 0xB900;
+		[0x01] = A;
+		Y = 0x8000;
+		[0x00] = 0;
+		this.L8098E6();
+		P |= 0x30;
+		A = 0xFE;
+	}
+
+	public void L809452_Loop()
+	{
+		// Wait For Idle
+		[0x2142] = A;
+		temp = A - [0x2142];
+
+		if (Z == 0)
+			return this.L809452_Loop();
+
+		P &= ~0x30;
+		X = 0x005E;
+	}
+
+	public void L80945F()
+	{
+		[0x02D7 + X] = 0;
+		X--;
+		X--;
+
+		if (N == 1)
+			return this.L809468();
+
+		return this.L80945F();
+	}
+
+	public void L809468()
+	{
+		P &= ~0x30;
+		A = Stack.Pop();
+		[0x01] = A;
+		A = Stack.Pop();
+		[0x00] = A;
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = 0x0000;
+		[0x0322] = A;
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L809492()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		Stack.Push(X);
+		X = A;
+		A = [0x02F7];
+		A &= 0x0001;
+
+		if (Z == 0)
+			return this.L8094B6();
+
+		Stack.Push(X);
+		X = 0x0000;
+	}
+
+	public void L8094A6()
+	{
+		A = [0x02D7 + X];
+
+		if (Z == 1)
+			return this.L8094B2();
+
+		X++;
+		X++;
+		temp = X - 0x0006;
+
+		if (Z == 0)
+			return this.L8094A6();
+
+	}
+
+	public void L8094B2()
+	{
+		A = Stack.Pop();
+		[0x02D7 + X] = A;
+	}
+
+	public void L8094B6()
+	{
+		X = Stack.Pop();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L8094BA()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		Stack.Push(X);
+		X = A;
+		A = [0x02F7];
+		A &= 0x0001;
+
+		if (Z == 0)
+			return this.L8094DE();
+
+		Stack.Push(X);
+		X = 0x0000;
+	}
+
+	public void L8094CE()
+	{
+		A = [0x02DF + X];
+
+		if (Z == 1)
+			return this.L8094DA();
+
+		X++;
+		X++;
+		temp = X - 0x0006;
+
+		if (Z == 0)
+			return this.L8094CE();
+
+	}
+
+	public void L8094DA()
+	{
+		A = Stack.Pop();
+		[0x02DF + X] = A;
+	}
+
+	public void L8094DE()
+	{
+		X = Stack.Pop();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L8094E2()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		Stack.Push(X);
+		X = A;
+		temp = A - 0x00F0;
+
+		if (C == 1)
+			return this.L809541();
+
+		temp = A - 0x0000;
+
+		if (Z == 1)
+			return this.L809555();
+
+		Stack.Push(Y);
+		X = [0x00];
+		Stack.Push(X);
+		X = [0x01];
+		Stack.Push(X);
+		X = A;
+		A = [0x030B];
+
+		if (Z == 0)
+			return this.L80950E();
+
+		this.L808229();
+		this.L8097B2();
+		this.L808215();
+		P &= ~0x30;
+	}
+
+	public void L80950E()
+	{
+		X = Stack.Pop();
+		[0x01] = X;
+		X = Stack.Pop();
+		[0x00] = X;
+		Y = Stack.Pop();
+		return this.L809555();
+	}
+
+	public void L809517()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		Stack.Push(X);
+		X = A;
+		A &= 0x00FF;
+		temp = A - 0x00F0;
+
+		if (C == 1)
+			return this.L809555();
+
+		temp = A - 0x00E0;
+
+		if (C == 0)
+			return this.L809555();
+
+		temp = A - 0x00E5;
+
+		if (C == 0)
+			return this.L809534();
+
+		[0x02F9] = X;
+	}
+
+	public void L809534()
+	{
+		A = [0x030B];
+
+		if (Z == 0)
+			return this.L809555();
+
+		A = [0x02F7];
+		A &= 0x0002;
+
+		if (Z == 0)
+			return this.L809555();
+
+	}
+
+	public void L809541()
+	{
+		Stack.Push(X);
+		X = 0x0000;
+	}
+
+	public void L809545()
+	{
+		A = [0x02D7 + X];
+
+		if (Z == 1)
+			return this.L809551();
+
+		X++;
+		X++;
+		temp = X - 0x0006;
+
+		if (Z == 0)
+			return this.L809545();
+
+	}
+
+	public void L809551()
+	{
+		A = Stack.Pop();
+		[0x02D7 + X] = A;
+	}
+
+	public void L809555()
+	{
+		X = Stack.Pop();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L809559()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x20;
+		Stack.Push(A);
+		A = 0xFFFF;
+		[0x02EB] = A;
+		[0x02EF] = A;
+		[0x02F3] = A;
+		A = Stack.Pop();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L809570()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		Stack.Push(A);
+		Stack.Push(X);
+		Stack.Push(Y);
+		A = 0xBA00;
+		[0x01] = A;
+		A = 0x80C0;
+		[0x00] = A;
+		X = 0x0000;
+	}
+
+	public void L809586()
+	{
+		A = [0x02EB + X];
+
+		if (N == 0)
+			return this.L8095A2();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L8095AA();
+
+		Stack.Push(A);
+		A = Stack.Pop();
+		A &= 0x00FF;
+		A <<= 1;
+		Y = X;
+		X = A;
+		A = [0xBA80C0 + X];
+		[0x02EB + Y] = A;
+		X = Y;
+		return this.L8095A7();
+	}
+
+	public void L8095A2()
+	{
+		[0x02ED + X]--;
+
+		if (Z == 0)
+			return this.L8095AA();
+
+	}
+
+	public void L8095A7()
+	{
+		this.L8095BB();
+	}
+
+	public void L8095AA()
+	{
+		temp = X - 0x0005;
+
+		if (C == 1)
+			return this.L8095B5();
+
+		X++;
+		X++;
+		X++;
+		X++;
+		return this.L809586();
+	}
+
+	public void L8095B5()
+	{
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = Stack.Pop();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L8095BB()
+	{
+		Stack.Push(X);
+		A = [0x02EB + X];
+		Y = A;
+	}
+
+	public void L8095C0()
+	{
+		this.L80968B();
+		X = A;
+
+		if (Z == 0)
+			return this.L8095CB();
+
+		A--;
+		Y = A;
+		return this.L809682();
+	}
+
+	public void L8095CB()
+	{
+		this.L80968B();
+		temp = X - 0x2000;
+
+		if (C == 0)
+			return this.L80962F();
+
+		temp = X - 0x3000;
+
+		if (C == 0)
+			return this.L809635();
+
+		temp = X - 0x4000;
+
+		if (C == 0)
+			return this.L80963B();
+
+		temp = X - 0x5000;
+
+		if (C == 0)
+			return this.L809641();
+
+		temp = X - 0x6000;
+
+		if (C == 0)
+			return this.L809647();
+
+		temp = X - 0x7000;
+
+		if (C == 0)
+			return this.L809625();
+
+		temp = X - 0x8000;
+
+		if (C == 0)
+			return this.L809666();
+
+		temp = X - 0x9000;
+
+		if (C == 0)
+			return this.L80961A();
+
+		temp = X - 0xA000;
+
+		if (C == 0)
+			return this.L80960F();
+
+		temp = X - 0xB000;
+
+		if (C == 0)
+			return this.L80964A();
+
+		temp = X - 0xC000;
+
+		if (C == 0)
+			return this.L80964F();
+
+		temp = X - 0xD000;
+
+		if (C == 0)
+			return this.L80965A();
+
+		temp = X - 0xE000;
+
+		if (C == 0)
+			return this.L809660();
+
+	}
+
+	public void L80960F()
+	{
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L809620();
+
+		A = 0x8000;
+		temp = A & [0x031A];[0x031A] |= A;
+	}
+
+	public void L80961A()
+	{
+		A = [0x0318];
+		this.L8096FB();
+	}
+
+	public void L809620()
+	{
+		A |= [0x031A];
+		return this.L809635();
+	}
+
+	public void L809625()
+	{
+		A = [0x02F9];
+		this.L809517();
+		return this.L809679();
+	}
+
+	public void L80962F()
+	{
+		this.L809492();
+		return this.L809679();
+	}
+
+	public void L809635()
+	{
+		this.L8094BA();
+		return this.L809679();
+	}
+
+	public void L80963B()
+	{
+		this.L809517();
+		return this.L809679();
+	}
+
+	public void L809641()
+	{
+		this.L8094E2();
+		return this.L809679();
+	}
+
+	public void L809647()
+	{
+		Y = A;
+		return this.L809679();
+	}
+
+	public void L80964A()
+	{
+		this.L809690();
+		return this.L809679();
+	}
+
+	public void L80964F()
+	{
+		this.L809690();
+		A = [0x030B];
+
+		if (Z == 0)
+			return this.L809672();
+
+		return this.L8095C0();
+	}
+
+	public void L80965A()
+	{
+		this.L809711();
+		return this.L8095C0();
+	}
+
+	public void L809660()
+	{
+		this.L809715();
+		return this.L8095C0();
+	}
+
+	public void L809666()
+	{
+		A = X;
+		A &= 0x00FF;
+		A &= [0x02FB];
+
+		if (Z == 0)
+			return this.L809672();
+
+		return this.L8095C0();
+	}
+
+	public void L809672()
+	{
+		Y--;
+		Y--;
+		Y--;
+		Y--;
+		X = 0x0001;
+	}
+
+	public void L809679()
+	{
+		A = X;
+		A &= 0x0FFF;
+
+		if (Z == 0)
+			return this.L809682();
+
+		return this.L8095C0();
+	}
+
+	public void L809682()
+	{
+		X = Stack.Pop();
+		[0x02ED + X] = A;
+		A = Y;
+		[0x02EB + X] = A;
+		return;
+	}
+
+	public void L80968B()
+	{
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		return;
+	}
+
+	public void L809690()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		Stack.Push(X);
+		X = A;
+		Stack.Push(Y);
+		X = [0x00];
+		Stack.Push(X);
+		X = [0x01];
+		Stack.Push(X);
+		X = A;
+		A = [0x030B];
+
+		if (Z == 0)
+			return this.L8096AB();
+
+		A = 0x0001;
+		[0x030B] = A;
+	}
+
+	public void L8096AB()
+	{
+		this.L8097B2();
+		A = [0x02E7];
+		[0x2140] = A;
+		A = [0x02D7];
+		[0x02E7] = A;
+		A = [0x02D9];
+		[0x02D7] = A;
+		A = [0x02DB];
+		[0x02D9] = A;
+		A = [0x02DD];
+		[0x02DB] = A;
+		[0x02DD] = 0;
+		A = [0x02E9];
+		[0x2142] = A;
+		A = [0x02DF];
+		[0x02E9] = A;
+		A = [0x02E1];
+		[0x02DF] = A;
+		A = [0x02E3];
+		[0x02E1] = A;
+		A = [0x02E5];
+		[0x02E3] = A;
+		[0x02E5] = 0;
+		X = Stack.Pop();
+		[0x01] = X;
+		X = Stack.Pop();
+		[0x00] = X;
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L8096FB()
+	{
+		A &= 0x00FF;
+		[0x031C] = A;
+		A = (A >> 4) | (A << 4);
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		C = 1;
+		A -= [0x031C] - !C;
+		C = 0;
+		A += 0x0100 + C;
+		A &= 0x1F00;
+		return;
+	}
+
+	public void L809711()
+	{
+		[0x0402] = A;
+		return;
+	}
+
+	public void L809715()
+	{
+		temp = A - 0xFFF1;
+
+		if (Z == 0)
+			return this.L80971F();
+
+		this.L80973C();
+		return this.L80973B();
+	}
+
+	public void L80971F()
+	{
+		Stack.Push(A);
+		A &= 0xFF00;
+
+		if (Z == 0)
+			return this.L809731();
+
+		A = Stack.Pop();
+		A &= 0x00FF;
+		A ^= 0xFFFF;
+		A &= [0x02F7];
+		return this.L809738();
+	}
+
+	public void L809731()
+	{
+		A = Stack.Pop();
+		A &= 0x00FF;
+		A |= [0x02F7];
+	}
+
+	public void L809738()
+	{
+		[0x02F7] = A;
+	}
+
+	public void L80973B()
+	{
+		return;
+	}
+
+	public void L80973C()
+	{
+		Stack.Push(X);
+		A = [0x036D];
+		A &= 0x0003;
+		[0x031C] = A;
+		A = [0x0381];
+		A &= 0x0001;
+
+		if (Z == 1)
+			return this.L80975A();
+
+		A = 0x0010;
+	}
+
+	public void L809751()
+	{
+		C = 0;
+		A += [0x031C] + C;
+		[0x031C] = A;
+		return this.L80976D();
+	}
+
+	public void L80975A()
+	{
+		A = 0x000E;
+		[0x0367] = A;
+		this.L94EB88();
+		A = [0x2C];
+
+		if (Z == 1)
+			return this.L80976D();
+
+		A = 0x0008;
+		return this.L809751();
+	}
+
+	public void L80976D()
+	{
+		A = [0x150C];
+		A &= 0x0010;
+
+		if (Z == 1)
+			return this.L80977F();
+
+		A = 0x0004;
+		C = 0;
+		A += [0x031C] + C;
+		[0x031C] = A;
+	}
+
+	public void L80977F()
+	{
+		A = [0x031C];
+		temp = A - 0x0018;
+
+		if (C == 0)
+			return this.L80978A();
+
+		A = 0x0000;
+	}
+
+	public void L80978A()
+	{
+		X = A;
+		A = [0x80979A + X];
+		A &= 0x00FF;
+		A |= 0x8000;
+		[0x02F3] = A;
+		X = Stack.Pop();
+		return;
+	}
+
+	public byte[] Table80979A = new byte[]
+	{
+		0x71, 0x77, 0x7D, 0x7E,
+		0x72, 0x78, 0x82, 0x86,
+		0x73, 0x79, 0x80, 0x87,
+		0x74, 0x7A, 0x81, 0x88,
+		0x75, 0x7B, 0x84, 0x7F,
+		0x76, 0x7C, 0x83, 0x85
+	}
+
+	public void L8097B2()
+	{
+		P &= ~0x30;
+		[0x0303] = 0;
+		A = [0x030B];
+
+		if (Z == 1)
+			return this.L809801();
+
+		[0x0322] = A;
+		Y = 0x0040;
+		[0x0303] = Y;
+		temp = A - 0x0001;
+
+		if (Z == 0)
+			return this.L8097D2();
+
+		[0x030B]++;
+		A = 0x00FC;
+		return this.L809804();
+	}
+
+	public void L8097D2()
+	{
+		A = [0x030D];
+		Y = 0x1234;
+	}
+
+	public void L8097D8()
+	{
+		temp = Y - [0x2140];
+
+		if (Z == 0)
+			return this.L8097D8();
+
+		[0x2140] = A;
+		Y = 0x007F;
+		[0x2142] = Y;
+	}
+
+	public void L8097E6()
+	{
+		temp = A - [0x2140];
+
+		if (Z == 0)
+			return this.L8097E6();
+
+		A = [0x030F];
+		[0x00] = A;
+		A = [0x0310];
+		[0x01] = A;
+		A = 0x007F;
+		X = [0x0307];
+		Y = [0x0309];
+		return this.L80988B();
+	}
+
+	public void L809801()
+	{
+		A = 0x00FE;
+	}
+
+	public void L809804()
+	{
+		[0x2140] = A;
+		[0x2142] = 0;
+		A = X;
+		A--;
+		A <<= 1;
+		X = A;
+		A = [0xBA8010 + X];
+		[0x02FD] = A;
+		X = 0x0000;
+		return this.L809898();
+	}
+
+	public void L80981B()
+	{
+		[0x2142] = X;
+		X = A;
+		A = [0xBA8201 + X];
+		C = 0;
+		A += 0xB900 + C;
+		[0x01] = A;
+		[0x00] = 0;
+		A = [0xBA8203 + X];
+		A++;
+		A >>= 1;
+		[0x02FF] = A;
+		A = [0xBA8205 + X];
+		Y = 0x1234;
+	}
+
+	public void L80983B()
+	{
+		temp = Y - [0x2140];
+
+		if (Z == 0)
+			return this.L80983B();
+
+		[0x2140] = A;
+		[0x030D] = A;
+		Y = 0x007F;
+		[0x2142] = Y;
+	}
+
+	public void L80984C()
+	{
+		temp = A - [0x2140];
+
+		if (Z == 0)
+			return this.L80984C();
+
+		A = [0xBA8200 + X];
+		Y = A;
+		[0x0301] = 0;
+		A = [[0x00] + Y];
+		X = A;
+		A = 0x007F;
+	}
+
+	public void L80985F()
+	{
+		temp = A - [0x2142];
+
+		if (Z == 0)
+			return this.L80985F();
+
+		[0x2140] = X;
+		A = [0x0301];
+		[0x2142] = A;
+		Y++;
+		Y++;
+		Stack.Push(A);
+		A = [[0x00] + Y];
+		X = A;
+		[0x0301]++;
+		A = 0xFF80;
+		temp = A & [0x0301];[0x0301] &= ~A;
+		A = Stack.Pop();
+		[0x030D]++;
+		[0x030D]++;
+		[0x0303]--;
+
+		if (Z == 0)
+			return this.L80988B();
+
+		return this.L8098D1();
+	}
+
+	public void L80988B()
+	{
+		[0x02FF]--;
+
+		if (Z == 0)
+			return this.L80985F();
+
+		X = 0x7FFF;
+	}
+
+	public void L809893()
+	{
+		temp = A - [0x2142];
+
+		if (Z == 0)
+			return this.L809893();
+
+	}
+
+	public void L809898()
+	{
+		Y = [0x02FD];
+		A = 0xBA00;
+		[0x01] = A;
+		[0x00] = 0;
+		A = [[0x00] + Y];
+
+		if (Z == 1)
+			return this.L8098AE();
+
+		Y++;
+		Y++;
+		[0x02FD] = Y;
+		return this.L80981B();
+	}
+
+	public void L8098AE()
+	{
+		[0x030B] = 0;
+		[0x0305] = 0;
+		A = 0x00FF;
+	}
+
+	public void L8098B7()
+	{
+		[0x2142] = A;
+	}
+
+	public void L8098BA()
+	{
+		A = [0x2140];
+
+		if (Z == 0)
+			return this.L8098BA();
+
+		A = [0x2142];
+
+		if (Z == 0)
+			return this.L8098BA();
+
+		[0x2142] = A;
+		[0x2140] = A;
+		A = 0x0000;
+		[0x0322] = A;
+		return;
+	}
+
+	public void L8098D1()
+	{
+		[0x0307] = X;
+		[0x0309] = Y;
+		A = [0x00];
+		[0x030F] = A;
+		A = [0x01];
+		[0x0310] = A;
+		A = 0xFFFF;
+		return this.L8098B7();
+	}
+
+	public void L8098E6()
+	{
+		Stack.Push(P);
+		P &= ~0x30;
+		A = 0xBBAA;
+		return this.L8098F4();
+	}
+
+	public void L8098EE()
+	{
+		X = 0x00FD;
+		[0x2140] = X;
+	}
+
+	public void L8098F4()
+	{
+		temp = A - [0x2140];
+
+		if (Z == 0)
+			return this.L8098EE();
+
+		P |= 0x20;
+		A = 0xCC;
+		return this.L809925();
+	}
+
+	public void L8098FF()
+	{
+		A = [[0x00] + Y];
+		Y++;
+		A = (A >> 4) | (A << 4);
+		A = 0x00;
+		return this.L809912();
+	}
+
+	public void L809907()
+	{
+		A = (A >> 4) | (A << 4);
+		A = [[0x00] + Y];
+		Y++;
+		A = (A >> 4) | (A << 4);
+	}
+
+	public void L80990C()
+	{
+		temp = A - [0x2140];
+
+		if (Z == 0)
+			return this.L80990C();
+
+		A++;
+	}
+
+	public void L809912()
+	{
+		P &= ~0x20;
+		[0x2140] = A;
+		P |= 0x20;
+		X--;
+
+		if (Z == 0)
+			return this.L809907();
+
+	}
+
+	public void L80991C()
+	{
+		temp = A - [0x2140];
+
+		if (Z == 0)
+			return this.L80991C();
+
+	}
+
+	public void L809921()
+	{
+		A += 0x03 + C;
+
+		if (Z == 1)
+			return this.L809921();
+
+	}
+
+	public void L809925()
+	{
+		Stack.Push(A);
+		P &= ~0x20;
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		X = A;
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		[0x2142] = A;
+		P |= 0x20;
+		temp = X - 0x0001;
+		A = 0x00;
+		Cpu.ROL();
+		[0x2141] = A;
+		A += 0x7F + C;
+		A = Stack.Pop();
+		[0x2140] = A;
+	}
+
+	public void L809945()
+	{
+		temp = A - [0x2140];
+
+		if (Z == 0)
+			return this.L809945();
+
+
+		if (V == 1)
+			return this.L8098FF();
+
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L809977()
+	{
+		temp = A - 0x0000;
+
+		if (N == 1)
+			return this.L80998C();
+
+		temp = A - 0x0100;
+
+		if (N == 0)
+			return this.L809990();
+
+		Stack.Push(X);
+		X = A;
+		A = [0x809993 + X];
+		A &= 0x1F00;
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L80998C()
+	{
+		A = 0x0100;
+		return;
+	}
+
+	public void L809990()
+	{
+		A = 0x1F00;
+		return;
+	}
+
+	public void L809A94()
+	{
+		Stack.Push(P);
+		P |= 0x20;
+		A = [0x030B];
+
+		if (Z == 0)
+			return this.L809ADF();
+
+		A = [0x0100];
+		temp = A & 0x80;
+
+		if (Z == 0)
+			return this.L809ADF();
+
+		A ^= 0xFF;
+		temp = A & 0x0F;
+
+		if (Z == 0)
+			return this.L809ADF();
+
+		A = [0x026B];
+
+		if (Z == 1)
+			return this.L809ADF();
+
+		A = [0x0269];
+		A++;
+
+		if (Z == 1)
+			return this.L809ADF();
+
+		A--;
+
+		if (Z == 0)
+			return this.L809AE1();
+
+		A = [0x53];
+		temp = A & 0x40;
+
+		if (Z == 1)
+			return this.L809ADF();
+
+		A = [0x0266];
+		temp = A & 0x80;
+
+		if (Z == 1)
+			return this.L809ADF();
+
+		A = 0x3C;
+		[0x0269] = A;
+		A = [0x0268];
+		A &= 0x7F;
+		[0x0268] = A;
+		A = [0x0266];
+		A &= 0x7F;
+		[0x0266] = A;
+		A = [0x63];
+		A &= 0x7F;
+		[0x63] = A;
+	}
+
+	public void L809ADF()
+	{
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L809AE1()
+	{
+		[0x0269]--;
+		A = [0x53];
+		temp = A & 0x40;
+
+		if (Z == 1)
+			return this.L809AF5();
+
+		A = [0x0266];
+		temp = A & 0x80;
+
+		if (Z == 1)
+			return this.L809ADF();
+
+		this.L809B58();
+	}
+
+	public void L809AF5()
+	{
+		A = [0x0266];
+		temp = A & 0x90;
+
+		if (Z == 1)
+			return this.L809ADF();
+
+		[0x0269] = 0;
+		return this.L809ADF();
+	}
+
+	public void L809B30()
+	{
+		Stack.Push(P);
+		P &= ~0x30;
+		A = [0x030B];
+
+		if (Z == 0)
+			return this.L809B56();
+
+		A = [0x50];
+		temp = A - 0x4080;
+
+		if (Z == 0)
+			return this.L809B56();
+
+		A = [0x58];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L809B56();
+
+		[0x0255] = 0;
+		[0x0257] = 0;
+		A = 0x00FF;
+		temp = A & [0x52];[0x52] |= A;
+		A = 0x8000;
+		temp = A & [0x5A];[0x5A] |= A;
+	}
+
+	public void L809B56()
+	{
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L809B58()
+	{
+		Stack.Push(P);
+		P &= ~0x30;
+		this.L80823D();
+		P |= 0x20;
+		A = 0x81;
+		[0x4200] = A;
+		[0x013C] = A;
+		P &= ~0x20;
+		this.L80827B();
+		this.L8082A3();
+		P |= 0x20;
+		[0x49] = 0;
+		[0x4A] = 0;
+		[0x0141] = 0;
+		[0x0154] = 0;
+		P &= ~0x20;
+		[0x0152] = 0;
+		this.L808202();
+		[0x026B] = 0;
+		[0x14CE] = 0;
+		[0x14CC] = 0;
+		A = 0x0002;
+		[0x026D] = A;
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L809BAB()
+	{
+		Stack.Push(P);
+		P &= ~0x20;
+		A = [0xA6];
+		A >>= 1;
+		[0x00] = A;
+		A >>= 1;
+		C = 0;
+		A += [0x00] + C;
+		C = 0;
+		A += 0x9BC4 + C;
+		[0x00] = A;
+		P |= 0x20;
+		A = 0xEF;
+		return [(0x0000)]();
+	}
+
+	public byte[] FunctionTable809BC4 = new byte[]
+	{
+		0x8D, 0x01, 0x78,
+		0x8D, 0x05, 0x78,
+		0x8D, 0x09, 0x78,
+		0x8D, 0x0D, 0x78,
+		0x8D, 0x11, 0x78,
+		0x8D, 0x15, 0x78,
+		0x8D, 0x19, 0x78,
+		0x8D, 0x1D, 0x78,
+		0x8D, 0x21, 0x78,
+		0x8D, 0x25, 0x78,
+		0x8D, 0x29, 0x78,
+		0x8D, 0x2D, 0x78,
+		0x8D, 0x31, 0x78,
+		0x8D, 0x35, 0x78,
+		0x8D, 0x39, 0x78,
+		0x8D, 0x3D, 0x78,
+		0x8D, 0x41, 0x78,
+		0x8D, 0x45, 0x78,
+		0x8D, 0x49, 0x78,
+		0x8D, 0x4D, 0x78,
+		0x8D, 0x51, 0x78,
+		0x8D, 0x55, 0x78,
+		0x8D, 0x59, 0x78,
+		0x8D, 0x5D, 0x78,
+		0x8D, 0x61, 0x78,
+		0x8D, 0x65, 0x78,
+		0x8D, 0x69, 0x78,
+		0x8D, 0x6D, 0x78,
+		0x8D, 0x71, 0x78,
+		0x8D, 0x75, 0x78,
+		0x8D, 0x79, 0x78,
+		0x8D, 0x7D, 0x78,
+		0x8D, 0x81, 0x78,
+		0x8D, 0x85, 0x78,
+		0x8D, 0x89, 0x78,
+		0x8D, 0x8D, 0x78,
+		0x8D, 0x91, 0x78,
+		0x8D, 0x95, 0x78,
+		0x8D, 0x99, 0x78,
+		0x8D, 0x9D, 0x78,
+		0x8D, 0xA1, 0x78,
+		0x8D, 0xA5, 0x78,
+		0x8D, 0xA9, 0x78,
+		0x8D, 0xAD, 0x78,
+		0x8D, 0xB1, 0x78,
+		0x8D, 0xB5, 0x78,
+		0x8D, 0xB9, 0x78,
+		0x8D, 0xBD, 0x78,
+		0x8D, 0xC1, 0x78,
+		0x8D, 0xC5, 0x78,
+		0x8D, 0xC9, 0x78,
+		0x8D, 0xCD, 0x78,
+		0x8D, 0xD1, 0x78,
+		0x8D, 0xD5, 0x78,
+		0x8D, 0xD9, 0x78,
+		0x8D, 0xDD, 0x78,
+		0x8D, 0xE1, 0x78,
+		0x8D, 0xE5, 0x78,
+		0x8D, 0xE9, 0x78,
+		0x8D, 0xED, 0x78,
+		0x8D, 0xF1, 0x78,
+		0x8D, 0xF5, 0x78,
+		0x8D, 0xF9, 0x78,
+		0x8D, 0xFD, 0x78,
+		0x8D, 0x01, 0x78,
+		0x8D, 0x05, 0x79,
+		0x8D, 0x09, 0x79,
+		0x8D, 0x0D, 0x79,
+		0x8D, 0x11, 0x79,
+		0x8D, 0x15, 0x79,
+		0x8D, 0x19, 0x79,
+		0x8D, 0x1D, 0x79,
+		0x8D, 0x21, 0x79,
+		0x8D, 0x25, 0x79,
+		0x8D, 0x29, 0x79,
+		0x8D, 0x2D, 0x79,
+		0x8D, 0x31, 0x79,
+		0x8D, 0x35, 0x79,
+		0x8D, 0x39, 0x79,
+		0x8D, 0x3D, 0x79,
+		0x8D, 0x41, 0x79,
+		0x8D, 0x45, 0x79,
+		0x8D, 0x49, 0x79,
+		0x8D, 0x4D, 0x79,
+		0x8D, 0x51, 0x79,
+		0x8D, 0x55, 0x79,
+		0x8D, 0x59, 0x79,
+		0x8D, 0x5D, 0x79,
+		0x8D, 0x61, 0x79,
+		0x8D, 0x65, 0x79,
+		0x8D, 0x69, 0x79,
+		0x8D, 0x6D, 0x79,
+		0x8D, 0x71, 0x79,
+		0x8D, 0x75, 0x79,
+		0x8D, 0x79, 0x79,
+		0x8D, 0x7D, 0x79,
+		0x8D, 0x81, 0x79,
+		0x8D, 0x85, 0x79,
+		0x8D, 0x89, 0x79,
+		0x8D, 0x8D, 0x79,
+		0x8D, 0x91, 0x79,
+		0x8D, 0x95, 0x79,
+		0x8D, 0x99, 0x79,
+		0x8D, 0x9D, 0x79,
+		0x8D, 0xA1, 0x79,
+		0x8D, 0xA5, 0x79,
+		0x8D, 0xA9, 0x79,
+		0x8D, 0xAD, 0x79,
+		0x8D, 0xB1, 0x79,
+		0x8D, 0xB5, 0x79,
+		0x8D, 0xB9, 0x79,
+		0x8D, 0xBD, 0x79,
+		0x8D, 0xC1, 0x79,
+		0x8D, 0xC5, 0x79,
+		0x8D, 0xC9, 0x79,
+		0x8D, 0xCD, 0x79,
+		0x8D, 0xD1, 0x79,
+		0x8D, 0xD5, 0x79,
+		0x8D, 0xD9, 0x79,
+		0x8D, 0xDD, 0x79,
+		0x8D, 0xE1, 0x79,
+		0x8D, 0xE5, 0x79,
+		0x8D, 0xE9, 0x79,
+		0x8D, 0xED, 0x79,
+		0x8D, 0xF1, 0x79,
+		0x8D, 0xF5, 0x79,
+		0x8D, 0xF9, 0x79,
+		0x8D, 0xFD, 0x79,
+		0x28, 0x6B
+	};
+
+	public void L809D46()
+	{
+		Stack.Push(P);
+		P &= ~0x30;
+		[0x7A00] = 0;
+		[0x7A02] = 0;
+		[0x7A04] = 0;
+		[0x7A06] = 0;
+		[0x7A08] = 0;
+		[0x7A0A] = 0;
+		[0x7A0C] = 0;
+		[0x7A0E] = 0;
+		[0x7A10] = 0;
+		[0x7A12] = 0;
+		[0x7A14] = 0;
+		[0x7A16] = 0;
+		[0x7A18] = 0;
+		[0x7A1A] = 0;
+		[0x7A1C] = 0;
+		[0x7A1E] = 0;
+		[0xA6] = 0;
 		P = Stack.Pop();
 		return;
 	}
@@ -20133,6 +3614,283 @@ public class SnesRom
 		return;
 	}
 
+	public void L809F0C()
+	{
+		P &= ~0x30;
+		this.L80823D();
+		this.L80A1E2();
+		P &= ~0x30;
+		[0x026D]++;
+		return;
+	}
+
+	public void L809F1C()
+	{
+		this.L839443();
+		A = 0x0000;
+		[0x1B0F] = A;
+		[0x035D] = 0;
+		[0x026D]++;
+		return;
+	}
+
+	public void L809F2D()
+	{
+		P &= ~0x30;
+		this.L80823D();
+		[0x026F] = 0;
+		this.L80A237();
+		P &= ~0x30;
+		[0x026D]++;
+		return;
+	}
+
+	public void L809F40()
+	{
+		A = 0x0001;
+	}
+
+	public void L809F43()
+	{
+		A--;
+
+		if (Z == 0)
+			return this.L809F43();
+
+		this.L81865D();
+		A = 0x0001;
+		[0x14CE] = A;
+		P &= ~0x30;
+		A = 0x3C00;
+		temp = A & [0xB8];[0xB8] &= ~A;
+		this.L80A1B7();
+		this.L968269();
+		this.L90825D();
+		A = 0x0000;
+		[0x1510] = A;
+		this.L968278();
+		this.L8CC0E4();
+		this.L809F7A();
+		this.L90828C();
+		return;
+	}
+
+	public void L809F7A()
+	{
+		this.L81EB18();
+		this.L81E7A7();
+		this.L80D927();
+		this.L81ECAB();
+		this.L80DC2A();
+		this.L81E9F4();
+		this.L838EE1();
+		this.L81E870();
+		this.L81EA54();
+		this.L80B5E6();
+		this.L80CC06();
+		this.L839C9C();
+		this.L83955A();
+		this.L81E934();
+		this.L8397F7();
+		this.L839DDD();
+		this.L80CDE4();
+		this.L81E994();
+		this.L8289A7();
+		this.L80D7A7();
+		this.L80D7F3();
+		this.L81E807();
+		this.L838000();
+		this.L80D852();
+		this.L8D8002();
+		return;
+	}
+
+	public void L809FDF()
+	{
+		Stack.Push(P);
+		P &= ~0x30;
+		A = [0x14CE];
+
+		if (Z == 1)
+			return this.L80A003();
+
+		A = [0x0265];
+		temp = A & 0x1000;
+
+		if (Z == 1)
+			return this.L80A003();
+
+		A = [0x14CC];
+
+		if (Z == 0)
+			return this.L80A003();
+
+		[0x0265] = 0;
+		A = [0x026D];
+		[0x14CA] = A;
+		A = 0x001B;
+		[0x026D] = A;
+	}
+
+	public void L80A003()
+	{
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L80A005()
+	{
+		A = [0x58];
+		temp = A & 0x1000;
+
+		if (Z == 0)
+			return this.L80A00F();
+
+		return this.L80A093();
+	}
+
+	public void L80A00F()
+	{
+		A = [0x026D];
+		temp = A - 0x001A;
+
+		if (Z == 0)
+			return this.L80A020();
+
+		A = [0x0371];
+		A--;
+
+		if (Z == 1)
+			return this.L80A022();
+
+		A--;
+
+		if (Z == 1)
+			return this.L80A022();
+
+	}
+
+	public void L80A020()
+	{
+		return this.L80A093();
+	}
+
+	public void L80A022()
+	{
+		P |= 0x20;
+		A = [0x4A];
+		Stack.Push(A);
+		P &= ~0x20;
+		this.L808202();
+		P |= 0x20;
+		A = Stack.Pop();
+		[0x4A] = A;
+		P &= ~0x20;
+		A = [0x026D];
+		temp = A - 0x001A;
+
+		if (Z == 0)
+			return this.L80A05C();
+
+		this.L909993();
+		this.L80A094();
+		A = 0x8000;
+		[0x01] = A;
+		A = 0xA053;
+		[0x00] = A;
+		this.L8087A4();
+		return this.L80A05C();
+	}
+
+	public byte[] DmaTransferRecord80A053 = new byte[]
+	{
+		// Type 0x02, RAM Address 0x7E3000, Length 0x0780, VRAM Control 0x80, VRAM Address 0x1000
+		0x02, 0x00, 0x30, 0x7E, 0x80, 0x07, 0x80, 0x00, 0x10
+	}
+
+	public void L80A05C()
+	{
+		P |= 0x20;
+		A = [0x4A];
+		Stack.Push(A);
+		P &= ~0x20;
+		this.L808202();
+		P |= 0x20;
+		A = Stack.Pop();
+		[0x4A] = A;
+		P &= ~0x20;
+		A = [0x58];
+		temp = A & 0x1000;
+
+		if (Z == 0)
+			return this.L80A07E();
+
+		A = [0x5A];
+		temp = A & 0x1000;
+
+		if (Z == 0)
+			return this.L80A07E();
+
+		return this.L80A05C();
+	}
+
+	public void L80A07E()
+	{
+		this.L80A0C6();
+		P |= 0x20;
+		A = [0x4A];
+		Stack.Push(A);
+		P &= ~0x20;
+		this.L808202();
+		P |= 0x20;
+		A = Stack.Pop();
+		[0x4A] = A;
+		P &= ~0x20;
+	}
+
+	public void L80A093()
+	{
+		return;
+	}
+
+	public void L80A094()
+	{
+		A = 0x2199;
+		[0x7E3318] = A;
+		A = 0x2194;
+		[0x7E331A] = A;
+		A = 0x2195;
+		[0x7E331C] = A;
+		A = 0x2196;
+		[0x7E331E] = A;
+		A = 0x2197;
+		[0x7E3320] = A;
+		A = 0x2198;
+		[0x7E3322] = A;
+		A = 0x2199;
+		[0x7E3324] = A;
+		return;
+	}
+
+	public void L80A0C6()
+	{
+		A = 0x0080;
+		[0x7E3318] = A;
+		[0x7E331A] = A;
+		[0x7E331C] = A;
+		[0x7E331E] = A;
+		[0x7E3320] = A;
+		[0x7E3322] = A;
+		[0x7E3324] = A;
+		return;
+	}
+
+	public void L80A0E6()
+	{
+		[0x026D]++;
+		return this.L81E739();
+	}
+
 	public void L80A0ED()
 	{
 		this.L908453();
@@ -20206,6 +3964,1497 @@ public class SnesRom
 
 	public void L80A1E1()
 	{
+		return;
+	}
+
+	public void L80A1E2()
+	{
+		P &= ~0x30;
+		A = 0x0000;
+		[0x0B36] = A;
+		A = 0x0000;
+		[0x0B38] = A;
+		A = 0x0000;
+		[0x0B3A] = A;
+		A = 0x0000;
+		[0x14D6] = A;
+		A = 0x0000;
+		[0x0381] = A;
+		A = 0x0001;
+		[0x7E3983] = A;
+		A = 0x0000;
+		[0x7E3985] = A;
+		A = 0x0000;
+		[0x7E5BF3] = A;
+		[0x1B0E] = A;
+		A = 0xFFDD;
+		[0x025D] = A;
+		A = 0xFFE4;
+		[0x025F] = A;
+		A = 0x0000;
+		[0x150C] = A;
+		A = 0x0002;
+		[0x4E] = A;
+		A = 0x001B;
+		[0x4C] = A;
+		return;
+	}
+
+	public void L80A237()
+	{
+		P &= ~0x30;
+		this.L80A2B5();
+		this.L80A256();
+		this.L839416();
+		this.L8391CD();
+		this.L819E82();
+		this.L81EAB4();
+		this.L80A27F();
+		return;
+	}
+
+	public void L80A256()
+	{
+		X = 0x005C;
+		A = 0xFFFF;
+	}
+
+	public void L80A25C()
+	{
+		[0x117C + X] = A;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L80A25C();
+
+		X = 0x001E;
+	}
+
+	public void L80A266()
+	{
+		A = 0x0000;
+		[0x1A81 + X] = A;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L80A266();
+
+		X = 0x001E;
+	}
+
+	public void L80A273()
+	{
+		A = 0x0000;
+		[0x7E3963 + X] = A;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L80A273();
+
+		return;
+	}
+
+	public void L80A27F()
+	{
+		P |= 0x20;
+		P &= ~0x10;
+		X = 0x8000;
+		[0x3E] = X;
+		A = 0x9D;
+		[0x40] = A;
+		X = 0x6B38;
+		[0x43] = X;
+		A = 0x7E;
+		[0x45] = A;
+		this.L808888();
+		P &= ~0x30;
+		A = 0x8000;
+		[0x01] = A;
+		A = 0xA2AB;
+		[0x00] = A;
+		this.L8087A4();
+		return this.L80A2B4();
+	}
+
+	public void L80A2B4()
+	{
+		return;
+	}
+
+	public void L80A2B5()
+	{
+		Stack.Push(P);
+		P |= 0x20;
+		A = 0x8F;
+		[0x0100] = A;
+		A = 0x01;
+		[0x0101] = A;
+		A = 0x09;
+		[0x0104] = A;
+		A = 0x00;
+		[0x0105] = A;
+		A = 0x01;
+		[0x0106] = A;
+		A = 0x09;
+		[0x0107] = A;
+		A = 0x10;
+		[0x0108] = A;
+		A = 0x00;
+		[0x0109] = A;
+		A = 0x44;
+		[0x010A] = A;
+		A = 0x01;
+		[0x010B] = A;
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L80B5E6()
+	{
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		this.L80B6E7();
+		this.L80B5F3();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L80B5F3()
+	{
+		A = [0x1968];
+		A |= [0x1866];
+
+		if (N == 1)
+			return this.L80B615();
+
+		A = [0x7E5BC3];
+		C = 0;
+		A += 0x0100 + C;
+		temp = A - 0x0200;
+
+		if (C == 1)
+			return this.L80B633();
+
+		A = [0x7E5BC5];
+		C = 0;
+		A += 0x00D8 + C;
+		temp = A - 0x01B0;
+
+		if (C == 1)
+			return this.L80B633();
+
+	}
+
+	public void L80B615()
+	{
+		A = 0x0000;
+		[0x7E5BEB] = A;
+		A = [0x7E5BED];
+		A++;
+		[0x7E5BED] = A;
+		temp = A - 0x0003;
+
+		if (C == 0)
+			return this.L80B631();
+
+		A = 0x0003;
+		[0x7E5BED] = A;
+	}
+
+	public void L80B631()
+	{
+		return this.L80B651();
+	}
+
+	public void L80B633()
+	{
+		A = [0x7E5BEB];
+		A++;
+		[0x7E5BEB] = A;
+		temp = A - 0x0003;
+
+		if (C == 0)
+			return this.L80B648();
+
+		A = 0x0003;
+		[0x7E5BEB] = A;
+	}
+
+	public void L80B648()
+	{
+		A = 0x0000;
+		[0x7E5BED] = A;
+		return this.L80B651();
+	}
+
+	public void L80B651()
+	{
+		A = [0x7E5BEB];
+
+		if (Z == 1)
+			return this.L80B65C();
+
+		A <<= 1;
+		X = A;
+		return [(0xB668 + X)]();
+	}
+
+	public void L80B65C()
+	{
+		A = [0x7E5BED];
+
+		if (Z == 1)
+			return this.L80B667();
+
+		A <<= 1;
+		X = A;
+		return [(0xB670 + X)]();
+	}
+
+	public void L80B667()
+	{
+		return;
+	}
+
+	public void L80B678()
+	{
+		A = 0x8000;
+		[0x01] = A;
+		A = 0xB688;
+		[0x00] = A;
+		this.L8087A4();
+		return this.L80B691();
+	}
+
+	public void L80B691()
+	{
+		return;
+	}
+
+	public void L80B692()
+	{
+		A = 0x8000;
+		[0x01] = A;
+		A = 0xB6A2;
+		[0x00] = A;
+		this.L8087A4();
+		return this.L80B6AB();
+	}
+
+	public void L80B6AB()
+	{
+		return;
+	}
+
+	public void L80B6AC()
+	{
+		A = 0x8000;
+		[0x01] = A;
+		A = 0xB6BC;
+		[0x00] = A;
+		this.L8087A4();
+		return this.L80B6C5();
+	}
+
+	public void L80B6C5()
+	{
+		return;
+	}
+
+	public void L80B6C6()
+	{
+		A = 0x8000;
+		[0x01] = A;
+		A = 0xB6D6;
+		[0x00] = A;
+		this.L8087A4();
+		return this.L80B6DF();
+	}
+
+	public void L80B6DF()
+	{
+		return;
+	}
+
+	public void L80B6E0()
+	{
+		this.L80B7DA();
+		this.L80B86E();
+		return;
+	}
+
+	public void L80B6E7()
+	{
+		A = [0x7E5BC3];
+
+		if (N == 0)
+			return this.L80B6F1();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L80B6F1()
+	{
+		temp = A - 0x00B0;
+
+		if (C == 1)
+			return this.L80B6F9();
+
+		return this.L80B760();
+	}
+
+	public void L80B6F9()
+	{
+		temp = A - 0x01B0;
+
+		if (C == 0)
+			return this.L80B717();
+
+		temp = A - 0x02B0;
+
+		if (C == 0)
+			return this.L80B712();
+
+		temp = A - 0x03B0;
+
+		if (C == 0)
+			return this.L80B70D();
+
+		A = 0x0020;
+		return this.L80B71C();
+	}
+
+	public void L80B70D()
+	{
+		A = 0x0010;
+		return this.L80B71C();
+	}
+
+	public void L80B712()
+	{
+		A = 0x0008;
+		return this.L80B71C();
+	}
+
+	public void L80B717()
+	{
+		A = 0x0004;
+		return this.L80B71C();
+	}
+
+	public void L80B71C()
+	{
+		temp = A & [0x014C];
+
+		if (Z == 0)
+			return this.L80B760();
+
+		A--;
+		A &= [0x014C];
+
+		if (Z == 0)
+			return this.L80B735();
+
+		A = [0x14D8];
+		this.L809977();
+		A |= 0x0035;
+		this.L8094BA();
+	}
+
+	public void L80B735()
+	{
+		A = 0x0060;
+		[0xB2] = A;
+		A = [0x7E5BC3];
+
+		if (N == 0)
+			return this.L80B750();
+
+		A = 0x0010;
+		[0xB0] = A;
+		A = 0x00A1;
+		[0xB4] = A;
+		this.L828000();
+		return this.L80B760();
+	}
+
+	public void L80B750()
+	{
+		A = 0x00F0;
+		[0xB0] = A;
+		A = 0x00A0;
+		[0xB4] = A;
+		this.L828000();
+		return this.L80B760();
+	}
+
+	public void L80B760()
+	{
+		A = [0x7E5BC5];
+
+		if (N == 0)
+			return this.L80B76A();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L80B76A()
+	{
+		temp = A - 0x0088;
+
+		if (C == 1)
+			return this.L80B772();
+
+		return this.L80B7D9();
+	}
+
+	public void L80B772()
+	{
+		temp = A - 0x0188;
+
+		if (C == 0)
+			return this.L80B790();
+
+		temp = A - 0x0288;
+
+		if (C == 0)
+			return this.L80B78B();
+
+		temp = A - 0x0388;
+
+		if (C == 0)
+			return this.L80B786();
+
+		A = 0x0020;
+		return this.L80B795();
+	}
+
+	public void L80B786()
+	{
+		A = 0x0010;
+		return this.L80B795();
+	}
+
+	public void L80B78B()
+	{
+		A = 0x0008;
+		return this.L80B795();
+	}
+
+	public void L80B790()
+	{
+		A = 0x0004;
+		return this.L80B795();
+	}
+
+	public void L80B795()
+	{
+		temp = A & [0x014C];
+
+		if (Z == 0)
+			return this.L80B7D9();
+
+		A--;
+		A &= [0x014C];
+
+		if (Z == 0)
+			return this.L80B7AE();
+
+		A = [0x14D8];
+		this.L809977();
+		A |= 0x0035;
+		this.L8094BA();
+	}
+
+	public void L80B7AE()
+	{
+		A = 0x0080;
+		[0xB0] = A;
+		A = [0x7E5BC5];
+
+		if (N == 0)
+			return this.L80B7C9();
+
+		A = 0x0030;
+		[0xB2] = A;
+		A = 0x00A2;
+		[0xB4] = A;
+		this.L828000();
+		return this.L80B7D9();
+	}
+
+	public void L80B7C9()
+	{
+		A = 0x0098;
+		[0xB2] = A;
+		A = 0x00A3;
+		[0xB4] = A;
+		this.L828000();
+		return this.L80B7D9();
+	}
+
+	public void L80B7D9()
+	{
+		return;
+	}
+
+	public void L80B7DA()
+	{
+		A = [0x7E5BC3];
+
+		if (N == 0)
+			return this.L80B7E4();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L80B7E4()
+	{
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		[0xB0] = A;
+		A = [0x7E5BC3];
+
+		if (N == 0)
+			return this.L80B7F7();
+
+		A = [0xB0];
+		A ^= 0xFFFF;
+		A++;
+		[0xB0] = A;
+	}
+
+	public void L80B7F7()
+	{
+		A = [0xB0];
+		C = 0;
+		A += 0x0080 + C;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0010 + C;
+		temp = A - 0x0120;
+
+		if (C == 1)
+			return this.L80B85C();
+
+		A = [0x7E5BC5];
+
+		if (N == 0)
+			return this.L80B812();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L80B812()
+	{
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		[0xB2] = A;
+		A = [0x7E5BC5];
+
+		if (N == 0)
+			return this.L80B825();
+
+		A = [0xB2];
+		A ^= 0xFFFF;
+		A++;
+		[0xB2] = A;
+	}
+
+	public void L80B825()
+	{
+		X = [0x14D6];
+		A = [0xB85D + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L80B835();
+
+		A &= 0x007F;
+		return this.L80B838();
+	}
+
+	public void L80B835()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L80B838()
+	{
+		C = 0;
+		A += [0xB2] + C;
+		C = 0;
+		A += 0x0060 + C;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0010 + C;
+		temp = A - 0x00C8;
+
+		if (C == 1)
+			return this.L80B85C();
+
+		A = [0x014C];
+		A &= 0x0004;
+		A >>= 1;
+		A >>= 1;
+		C = 0;
+		A += 0x009E + C;
+		[0xB4] = A;
+		this.L828000();
+	}
+
+	public void L80B85C()
+	{
+		return;
+	}
+
+	public void L80B86E()
+	{
+		A = [0x14D6];
+		A <<= 1;
+		X = A;
+		return [(0xB876 + X)]();
+	}
+
+	public void L80C88D()
+	{
+		A = [0x0B9C + Y];
+		C = 0;
+		A += [0x0E8C + Y] + C;
+		[0x1004 + Y] = A;
+		A = [0x0C58 + Y];
+		C = 0;
+		A += [0x0EEA + Y] + C;
+		[0x1062 + Y] = A;
+		return;
+	}
+
+	public void L80C8A2()
+	{
+		A = [0x0B9C + Y];
+		C = 0;
+		A += [0x0E8C + Y] + C;
+		[0x1004 + Y] = A;
+		A = [0x0C58 + Y];
+		C = 0;
+		A += [0x0EEA + Y] + C;
+		[0x1062 + Y] = A;
+		A = [0x1004 + Y];
+		C = 0;
+		A += [0x0F48 + Y] + C;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0020 + C;
+		temp = A - 0x0140;
+
+		if (C == 1)
+			return this.L80C90A();
+
+		A = [0x1062 + Y];
+		C = 0;
+		A += [0x0FA6 + Y] + C;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0020 + C;
+		temp = A - 0x00E8;
+
+		if (C == 1)
+			return this.L80C90A();
+
+		A = [0x12F4 + Y];
+		[0xA8] = A;
+		A = [0x1352 + Y];
+		[0xAA] = A;
+		A = [0x1296 + Y];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L80C90A();
+
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L80C8FC();
+
+		[0xB4] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L8280C2();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L80C8FC()
+	{
+		A &= 0x7FFF;
+		[0xB4] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L8286B6();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L80C90A()
+	{
+		return;
+	}
+
+	public void L80C90B()
+	{
+		A = [0x117C];
+
+		if (N == 0)
+			return this.L80C915();
+
+		Y = 0x0000;
+		C = 0;
+		return;
+	}
+
+	public void L80C915()
+	{
+		A = [0x117E];
+
+		if (N == 0)
+			return this.L80C91F();
+
+		Y = 0x0002;
+		C = 0;
+		return;
+	}
+
+	public void L80C91F()
+	{
+		A = [0x1180];
+
+		if (N == 0)
+			return this.L80C929();
+
+		Y = 0x0004;
+		C = 0;
+		return;
+	}
+
+	public void L80C929()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L80C92B()
+	{
+		A = [0x1182];
+
+		if (N == 0)
+			return this.L80C935();
+
+		Y = 0x0006;
+		C = 0;
+		return;
+	}
+
+	public void L80C935()
+	{
+		A = [0x1184];
+
+		if (N == 0)
+			return this.L80C93F();
+
+		Y = 0x0008;
+		C = 0;
+		return;
+	}
+
+	public void L80C93F()
+	{
+		A = [0x1186];
+
+		if (N == 0)
+			return this.L80C949();
+
+		Y = 0x000A;
+		C = 0;
+		return;
+	}
+
+	public void L80C949()
+	{
+		A = [0x1188];
+
+		if (N == 0)
+			return this.L80C953();
+
+		Y = 0x000C;
+		C = 0;
+		return;
+	}
+
+	public void L80C953()
+	{
+		A = [0x118A];
+
+		if (N == 0)
+			return this.L80C95D();
+
+		Y = 0x000E;
+		C = 0;
+		return;
+	}
+
+	public void L80C95D()
+	{
+		A = [0x118C];
+
+		if (N == 0)
+			return this.L80C967();
+
+		Y = 0x0010;
+		C = 0;
+		return;
+	}
+
+	public void L80C967()
+	{
+		A = [0x118E];
+
+		if (N == 0)
+			return this.L80C971();
+
+		Y = 0x0012;
+		C = 0;
+		return;
+	}
+
+	public void L80C971()
+	{
+		A = [0x1190];
+
+		if (N == 0)
+			return this.L80C97B();
+
+		Y = 0x0014;
+		C = 0;
+		return;
+	}
+
+	public void L80C97B()
+	{
+		A = [0x1192];
+
+		if (N == 0)
+			return this.L80C985();
+
+		Y = 0x0016;
+		C = 0;
+		return;
+	}
+
+	public void L80C985()
+	{
+		A = [0x1194];
+
+		if (N == 0)
+			return this.L80C98F();
+
+		Y = 0x0018;
+		C = 0;
+		return;
+	}
+
+	public void L80C98F()
+	{
+		A = [0x1196];
+
+		if (N == 0)
+			return this.L80C999();
+
+		Y = 0x001A;
+		C = 0;
+		return;
+	}
+
+	public void L80C999()
+	{
+		A = [0x1198];
+
+		if (N == 0)
+			return this.L80C9A3();
+
+		Y = 0x001C;
+		C = 0;
+		return;
+	}
+
+	public void L80C9A3()
+	{
+		A = [0x119A];
+
+		if (N == 0)
+			return this.L80C9AD();
+
+		Y = 0x001E;
+		C = 0;
+		return;
+	}
+
+	public void L80C9AD()
+	{
+		A = [0x119C];
+
+		if (N == 0)
+			return this.L80C9B7();
+
+		Y = 0x0020;
+		C = 0;
+		return;
+	}
+
+	public void L80C9B7()
+	{
+		A = [0x119E];
+
+		if (N == 0)
+			return this.L80C9C1();
+
+		Y = 0x0022;
+		C = 0;
+		return;
+	}
+
+	public void L80C9C1()
+	{
+		A = [0x11A0];
+
+		if (N == 0)
+			return this.L80C9CB();
+
+		Y = 0x0024;
+		C = 0;
+		return;
+	}
+
+	public void L80C9CB()
+	{
+		A = [0x11A2];
+
+		if (N == 0)
+			return this.L80C9D5();
+
+		Y = 0x0026;
+		C = 0;
+		return;
+	}
+
+	public void L80C9D5()
+	{
+		A = [0x11A4];
+
+		if (N == 0)
+			return this.L80C9DF();
+
+		Y = 0x0028;
+		C = 0;
+		return;
+	}
+
+	public void L80C9DF()
+	{
+		A = [0x11A6];
+
+		if (N == 0)
+			return this.L80C9E9();
+
+		Y = 0x002A;
+		C = 0;
+		return;
+	}
+
+	public void L80C9E9()
+	{
+		A = [0x11A8];
+
+		if (N == 0)
+			return this.L80C9F3();
+
+		Y = 0x002C;
+		C = 0;
+		return;
+	}
+
+	public void L80C9F3()
+	{
+		A = [0x11AA];
+
+		if (N == 0)
+			return this.L80C9FD();
+
+		Y = 0x002E;
+		C = 0;
+		return;
+	}
+
+	public void L80C9FD()
+	{
+		A = [0x11AC];
+
+		if (N == 0)
+			return this.L80CA07();
+
+		Y = 0x0030;
+		C = 0;
+		return;
+	}
+
+	public void L80CA07()
+	{
+		A = [0x11AE];
+
+		if (N == 0)
+			return this.L80CA11();
+
+		Y = 0x0032;
+		C = 0;
+		return;
+	}
+
+	public void L80CA11()
+	{
+		A = [0x11B0];
+
+		if (N == 0)
+			return this.L80CA1B();
+
+		Y = 0x0034;
+		C = 0;
+		return;
+	}
+
+	public void L80CA1B()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L80CA1D()
+	{
+		A = [0x11B2];
+
+		if (N == 0)
+			return this.L80CA27();
+
+		Y = 0x0036;
+		C = 0;
+		return;
+	}
+
+	public void L80CA27()
+	{
+		A = [0x11B4];
+
+		if (N == 0)
+			return this.L80CA31();
+
+		Y = 0x0038;
+		C = 0;
+		return;
+	}
+
+	public void L80CA31()
+	{
+		A = [0x11B6];
+
+		if (N == 0)
+			return this.L80CA3B();
+
+		Y = 0x003A;
+		C = 0;
+		return;
+	}
+
+	public void L80CA3B()
+	{
+		A = [0x11B8];
+
+		if (N == 0)
+			return this.L80CA45();
+
+		Y = 0x003C;
+		C = 0;
+		return;
+	}
+
+	public void L80CA45()
+	{
+		A = [0x11BA];
+
+		if (N == 0)
+			return this.L80CA4F();
+
+		Y = 0x003E;
+		C = 0;
+		return;
+	}
+
+	public void L80CA4F()
+	{
+		A = [0x11BC];
+
+		if (N == 0)
+			return this.L80CA59();
+
+		Y = 0x0040;
+		C = 0;
+		return;
+	}
+
+	public void L80CA59()
+	{
+		A = [0x11BE];
+
+		if (N == 0)
+			return this.L80CA63();
+
+		Y = 0x0042;
+		C = 0;
+		return;
+	}
+
+	public void L80CA63()
+	{
+		A = [0x11C0];
+
+		if (N == 0)
+			return this.L80CA6D();
+
+		Y = 0x0044;
+		C = 0;
+		return;
+	}
+
+	public void L80CA6D()
+	{
+		A = [0x11C2];
+
+		if (N == 0)
+			return this.L80CA77();
+
+		Y = 0x0046;
+		C = 0;
+		return;
+	}
+
+	public void L80CA77()
+	{
+		A = [0x11C4];
+
+		if (N == 0)
+			return this.L80CA81();
+
+		Y = 0x0048;
+		C = 0;
+		return;
+	}
+
+	public void L80CA81()
+	{
+		A = [0x11C6];
+
+		if (N == 0)
+			return this.L80CA8B();
+
+		Y = 0x004A;
+		C = 0;
+		return;
+	}
+
+	public void L80CA8B()
+	{
+		A = [0x11C8];
+
+		if (N == 0)
+			return this.L80CA95();
+
+		Y = 0x004C;
+		C = 0;
+		return;
+	}
+
+	public void L80CA95()
+	{
+		A = [0x11CA];
+
+		if (N == 0)
+			return this.L80CA9F();
+
+		Y = 0x004E;
+		C = 0;
+		return;
+	}
+
+	public void L80CA9F()
+	{
+		A = [0x11CC];
+
+		if (N == 0)
+			return this.L80CAA9();
+
+		Y = 0x0050;
+		C = 0;
+		return;
+	}
+
+	public void L80CAA9()
+	{
+		A = [0x11CE];
+
+		if (N == 0)
+			return this.L80CAB3();
+
+		Y = 0x0052;
+		C = 0;
+		return;
+	}
+
+	public void L80CAB3()
+	{
+		A = [0x11D0];
+
+		if (N == 0)
+			return this.L80CABD();
+
+		Y = 0x0054;
+		C = 0;
+		return;
+	}
+
+	public void L80CABD()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L80CABF()
+	{
+		A = [0x11D2];
+
+		if (N == 0)
+			return this.L80CAC9();
+
+		Y = 0x0056;
+		C = 0;
+		return;
+	}
+
+	public void L80CAC9()
+	{
+		A = [0x11D4];
+
+		if (N == 0)
+			return this.L80CAD3();
+
+		Y = 0x0058;
+		C = 0;
+		return;
+	}
+
+	public void L80CAD3()
+	{
+		A = [0x11D6];
+
+		if (N == 0)
+			return this.L80CADD();
+
+		Y = 0x005A;
+		C = 0;
+		return;
+	}
+
+	public void L80CADD()
+	{
+		A = [0x11D8];
+
+		if (N == 0)
+			return this.L80CAE7();
+
+		Y = 0x005C;
+		C = 0;
+		return;
+	}
+
+	public void L80CAE7()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L80CAE9()
+	{
+		Stack.Push(A);
+		Stack.Push(X);
+		[0x117C + Y] = A;
+		A <<= 1;
+		X = A;
+		A = [0x7E43C3 + X];
+		[0x1238 + Y] = A;
+		A = [0x7E49C3 + X];
+		[0x10C0 + Y] = A;
+		A = [0x7E4CC3 + X];
+		[0x111E + Y] = A;
+		A = 0x0000;
+		[0x0B9C + Y] = A;
+		[0x0C58 + Y] = A;
+		[0x0CB6 + Y] = A;
+		[0x0F48 + Y] = A;
+		[0x0FA6 + Y] = A;
+		[0x0E8C + Y] = A;
+		[0x0EEA + Y] = A;
+		[0x1352 + Y] = A;
+		[0x11DA + Y] = A;
+		[0x140E + Y] = A;
+		[0x146C + Y] = A;
+		A = 0xFFFF;
+		[0x12F4 + Y] = A;
+		[0x1296 + Y] = A;
+		A = [0x1976];
+		temp = A & 0x2000;
+
+		if (Z == 0)
+			return this.L80CB48();
+
+		A = [0x197C];
+		[0x0D14 + Y] = A;
+		A = [0x197E];
+		[0x0D72 + Y] = A;
+		return this.L80CB51();
+	}
+
+	public void L80CB48()
+	{
+		A = 0x0000;
+		[0x0D14 + Y] = A;
+		[0x0D72 + Y] = A;
+	}
+
+	public void L80CB51()
+	{
+		A = [0x1976];
+		temp = A & 0x1000;
+
+		if (Z == 0)
+			return this.L80CB67();
+
+		A = [0x1988];
+		[0x0DD0 + Y] = A;
+		A = [0x198A];
+		[0x0E2E + Y] = A;
+		return this.L80CB70();
+	}
+
+	public void L80CB67()
+	{
+		A = 0x0000;
+		[0x0DD0 + Y] = A;
+		[0x0E2E + Y] = A;
+	}
+
+	public void L80CB70()
+	{
+		X = Stack.Pop();
+		A = Stack.Pop();
+		return;
+	}
+
+	public void L80CB73()
+	{
+		Stack.Push(A);
+		Stack.Push(X);
+		[0x117C + Y] = A;
+		A <<= 1;
+		X = A;
+		A = [0x7E43C3 + X];
+		[0x1238 + Y] = A;
+		A = [0x7E49C3 + X];
+		[0x10C0 + Y] = A;
+		A = [0x7E4CC3 + X];
+		[0x111E + Y] = A;
+		A = 0x0000;
+		[0x0B9C + Y] = A;
+		[0x0C58 + Y] = A;
+		[0x0F48 + Y] = A;
+		[0x0FA6 + Y] = A;
+		[0x0E8C + Y] = A;
+		[0x0EEA + Y] = A;
+		[0x11DA + Y] = A;
+		[0x140E + Y] = A;
+		[0x146C + Y] = A;
+		A = 0xFFFF;
+		[0x1296 + Y] = A;
+		A = 0x0100;
+		[0x0CB6 + Y] = A;
+		A = 0xF1FF;
+		[0x12F4 + Y] = A;
+		A = 0x0400;
+		[0x1352 + Y] = A;
+		A = [0x1976];
+		temp = A & 0x2000;
+
+		if (Z == 0)
+			return this.L80CBDB();
+
+		A = [0x14DE];
+		[0x0D14 + Y] = A;
+		A = [0x14E0];
+		[0x0D72 + Y] = A;
+		return this.L80CBE4();
+	}
+
+	public void L80CBDB()
+	{
+		A = 0x0000;
+		[0x0D14 + Y] = A;
+		[0x0D72 + Y] = A;
+	}
+
+	public void L80CBE4()
+	{
+		A = [0x1976];
+		temp = A & 0x1000;
+
+		if (Z == 0)
+			return this.L80CBFA();
+
+		A = [0x14EC];
+		[0x0DD0 + Y] = A;
+		A = [0x14EE];
+		[0x0E2E + Y] = A;
+		return this.L80CC03();
+	}
+
+	public void L80CBFA()
+	{
+		A = 0x0000;
+		[0x0DD0 + Y] = A;
+		[0x0E2E + Y] = A;
+	}
+
+	public void L80CC03()
+	{
+		X = Stack.Pop();
+		A = Stack.Pop();
 		return;
 	}
 
@@ -20770,6 +6019,1183 @@ public class SnesRom
 		return [[0x0000]]();    //24-Bit Address
 	}
 
+	public void L80CE38()
+	{
+		C = 1;
+		A = [0x0B3E + Y];
+		A -= [0x197C] - !C;
+		[0x0B3E + Y] = A;
+		A = [0x0B9C + Y];
+		A -= [0x197E] - !C;
+		[0x0B9C + Y] = A;
+		C = 1;
+		A = [0x0BFA + Y];
+		A -= [0x1988] - !C;
+		[0x0BFA + Y] = A;
+		A = [0x0C58 + Y];
+		A -= [0x198A] - !C;
+		[0x0C58 + Y] = A;
+		return;
+	}
+
+	public void L80CE5F()
+	{
+		C = 0;
+		A = [0x0B3E + Y];
+		A += [0x0D14 + Y] + C;
+		[0x0B3E + Y] = A;
+		A = [0x0B9C + Y];
+		A += [0x0D72 + Y] + C;
+		[0x0B9C + Y] = A;
+		C = 0;
+		A = [0x0BFA + Y];
+		A += [0x0DD0 + Y] + C;
+		[0x0BFA + Y] = A;
+		A = [0x0C58 + Y];
+		A += [0x0E2E + Y] + C;
+		[0x0C58 + Y] = A;
+		return;
+	}
+
+	public byte[] FunctionPointerTable80CE86 = new byte[]
+	{
+		0x00, 0x80, 0x97,
+		0x40, 0x80, 0x97,
+		0x2B, 0x80, 0x97,
+		0x40, 0x80, 0x97,
+		0x55, 0x80, 0x97,
+		0x6D, 0x80, 0x97,
+		0x6D, 0x80, 0x97,
+		0x6D, 0x80, 0x97,
+		0x82, 0x80, 0x97,
+		0xA0, 0x80, 0x97,
+		0xAF, 0x80, 0x97,
+		0xBE, 0x80, 0x97,
+		0xCD, 0x80, 0x97,
+		0x8E, 0x80, 0x97,
+		0xF1, 0x80, 0x97,
+		0x88, 0xDC, 0x96,
+		0x8F, 0xDC, 0x96,
+		0x96, 0xDC, 0x96,
+		0x9D, 0xDC, 0x96,
+		0xA4, 0xDC, 0x96,
+		0xAB, 0xDC, 0x96,
+		0xB2, 0xDC, 0x96,
+		0xB9, 0xDC, 0x96,
+		0xBD, 0xDC, 0x96,
+		0xDC, 0x80, 0x97,
+		0x96, 0xDC, 0x96,
+		0x9D, 0xDC, 0x96,
+		0xA4, 0xDC, 0x96,
+		0xAB, 0xDC, 0x96,
+		0xB2, 0xDC, 0x96,
+		0xB9, 0xDC, 0x96,
+		0xBD, 0xDC, 0x96,
+		0x88, 0xDC, 0x96,
+		0x8F, 0xDC, 0x96,
+		0xC4, 0xDC, 0x96,
+		0xCB, 0xDC, 0x96,
+		0xD2, 0xDC, 0x96,
+		0xD9, 0xDC, 0x96,
+		0xE0, 0xDC, 0x96,
+		0xE7, 0xDC, 0x96,
+		0xEE, 0xDC, 0x96,
+		0xEE, 0xDC, 0x96,
+		0xF5, 0xDC, 0x96,
+		0xF5, 0xDC, 0x96,
+		0xF9, 0xDC, 0x96,
+		0xFD, 0xDC, 0x96,
+		0xFD, 0xDC, 0x96,
+		0xFD, 0xDC, 0x96,
+		0x06, 0xDD, 0x96,
+		0xC4, 0xDC, 0x96,
+		0xCB, 0xDC, 0x96,
+		0xD2, 0xDC, 0x96,
+		0xD9, 0xDC, 0x96,
+		0xE0, 0xDC, 0x96,
+		0xE7, 0xDC, 0x96,
+		0xEE, 0xDC, 0x96,
+		0xEE, 0xDC, 0x96,
+		0xF5, 0xDC, 0x96,
+		0xF5, 0xDC, 0x96,
+		0xF9, 0xDC, 0x96,
+		0xFD, 0xDC, 0x96,
+		0xFD, 0xDC, 0x96,
+		0xFD, 0xDC, 0x96,
+		0x06, 0xDD, 0x96,
+		0xEC, 0xEA, 0x96,
+		0x03, 0xEB, 0x96,
+		0x1A, 0xEB, 0x96,
+		0x26, 0xEB, 0x96,
+		0x32, 0xEB, 0x96,
+		0x3E, 0xEB, 0x96,
+		0x00, 0x81, 0x97,
+		0x18, 0xAC, 0x97,
+		0x02, 0xAE, 0x97,
+		0x61, 0xAF, 0x97,
+		0x90, 0xB0, 0x97,
+		0x22, 0xB2, 0x97,
+		0x79, 0xB3, 0x97,
+		0xD0, 0xB4, 0x97,
+		0xC1, 0xB5, 0x97,
+		0x84, 0xB6, 0x97,
+		0xD7, 0xFC, 0x96,
+		0x4B, 0xEB, 0x96,
+		0x62, 0xEB, 0x96,
+		0x79, 0xEB, 0x96,
+		0xE9, 0xEE, 0x96,
+		0xF5, 0xEE, 0x96,
+		0xA4, 0xEF, 0x96,
+		0xA3, 0xEB, 0x96,
+		0xBA, 0xEB, 0x96,
+		0xD1, 0xEB, 0x96,
+		0xD1, 0xEB, 0x96,
+		0xE8, 0xEB, 0x96,
+		0xFF, 0xEB, 0x96,
+		0xFF, 0xEB, 0x96,
+		0x16, 0xEC, 0x96,
+		0xCF, 0xEC, 0x96,
+		0x16, 0xEC, 0x96,
+		0xCF, 0xEC, 0x96,
+		0xAC, 0xED, 0x96,
+		0x90, 0xEB, 0x96,
+		0x6A, 0xF7, 0x96,
+		0xB3, 0xF7, 0x96,
+		0x2E, 0xF8, 0x96,
+		0xF9, 0xF8, 0x96,
+		0x1A, 0xB2, 0x9C,
+		0xB5, 0xA8, 0x97,
+		0xA9, 0xAE, 0x8E,
+		0xD0, 0xAE, 0x8E,
+		0xD5, 0xB6, 0x97,
+		0xFF, 0xB7, 0x97
+		0x13, 0xB9, 0x97,
+		0xEB, 0xB9, 0x97,
+		0xE2, 0xBA, 0x97,
+		0x79, 0xBB, 0x97,
+		0xD1, 0xB7, 0x97,
+		0xAD, 0xB7, 0x97,
+		0x27, 0xB1, 0x83,
+		0x38, 0xB1, 0x83,
+		0x49, 0xB1, 0x83,
+		0x49, 0xB1, 0x83,
+		0x49, 0xB1, 0x83,
+		0x49, 0xB1, 0x83,
+		0x49, 0xB1, 0x83,
+		0x49, 0xB1, 0x83,
+		0x02, 0xC3, 0x83,
+		0x02, 0xC3, 0x83,
+		0x02, 0xC3, 0x83,
+		0x02, 0xC3, 0x83,
+		0x02, 0xC3, 0x83,
+		0x02, 0xC3, 0x83,
+		0xE1, 0xC2, 0x83,
+		0xE1, 0xC2, 0x83,
+		0xE1, 0xC2, 0x83,
+		0xE1, 0xC2, 0x83,
+		0xC4, 0xC2, 0x83,
+		0xC4, 0xC2, 0x83,
+		0xC4, 0xC2, 0x83,
+		0xC4, 0xC2, 0x83,
+		0x1F, 0xC3, 0x83,
+		0x38, 0xC3, 0x83,
+		0x19, 0x95, 0x99,
+		0x3A, 0x95, 0x99,
+		0x5B, 0x95, 0x99,
+		0x78, 0x95, 0x99,
+		0x95, 0x95, 0x99,
+		0xB2, 0x95, 0x99,
+		0x33, 0x97, 0x99,
+		0x50, 0x97, 0x99,
+		0x6D, 0x97, 0x99,
+		0x8A, 0x97, 0x99,
+		0x47, 0x99, 0x99,
+		0x47, 0x99, 0x99,
+		0x47, 0x99, 0x99,
+		0x47, 0x99, 0x99,
+		0x47, 0x99, 0x99,
+		0x47, 0x99, 0x99,
+		0xC6, 0x99, 0x99,
+		0xEB, 0xCC, 0x87,
+		0x20, 0xCD, 0x87,
+		0x11, 0xCE, 0x87,
+		0x46, 0xCE, 0x87,
+		0x95, 0xD2, 0x87,
+		0xCA, 0xD2, 0x87,
+		0x2F, 0xD2, 0x87,
+		0x64, 0xD2, 0x87,
+		0xCB, 0xD0, 0x87,
+		0xE8, 0xD0, 0x87,
+		0x05, 0xD1, 0x87,
+		0x3A, 0xD1, 0x87,
+		0xF7, 0xCF, 0x87,
+		0x14, 0xD0, 0x87,
+		0x31, 0xD0, 0x87,
+		0x4E, 0xD0, 0x87,
+		0xCE, 0xCC, 0x87,
+		0x94, 0xCC, 0x87,
+		0xB1, 0xCC, 0x87,
+		0x77, 0xCC, 0x87,
+		0x55, 0xCB, 0x87,
+		0xE6, 0xCB, 0x87,
+		0x5A, 0xD0, 0x86,
+		0x93, 0xD1, 0x86,
+		0x5A, 0xD0, 0x86,
+		0x93, 0xD1, 0x86,
+		0xD0, 0xD1, 0x86,
+		0x0D, 0xD2, 0x86,
+		0x1F, 0xD3, 0x86,
+		0x46, 0xD2, 0x86,
+		0x1F, 0xD3, 0x86,
+		0x46, 0xD2, 0x86,
+		0x89, 0xD3, 0x86,
+		0x54, 0xD3, 0x86,
+		0xC2, 0xD3, 0x86,
+		0x9B, 0xD4, 0x86,
+		0xC2, 0xD3, 0x86,
+		0x9B, 0xD4, 0x86,
+		0xD0, 0xD4, 0x86,
+		0x01, 0xD5, 0x86,
+		0xD0, 0xD4, 0x86,
+		0x01, 0xD5, 0x86,
+		0x36, 0xD5, 0x86,
+		0x4F, 0xD5, 0x86,
+		0x68, 0xD5, 0x86,
+		0x89, 0xD5, 0x86,
+		0xAA, 0xD5, 0x86,
+		0x02, 0x97, 0x8C,
+		0x3D, 0x97, 0x8C,
+		0x7C, 0x99, 0x8C,
+		0xBE, 0x99, 0x8C,
+		0x6D, 0x98, 0x8C,
+		0x6D, 0x98, 0x8C,
+		0x9D, 0x99, 0x8C,
+		0xA7, 0x97, 0x8C,
+		0xDF, 0x99, 0x8C,
+		0xDF, 0x99, 0x8C,
+		0xC7, 0xA9, 0x9A,
+		0xF8, 0xA9, 0x9A,
+		0x95, 0x95, 0x99,
+		0x5B, 0x95, 0x99,
+		0x33, 0xAB, 0x9A,
+		0x68, 0xAB, 0x9A,
+		0x19, 0xAC, 0x9A,
+		0x4E, 0xAC, 0x9A,
+		0xFF, 0xAC, 0x9A,
+		0xC2, 0xAE, 0x9A,
+		0xFF, 0xAC, 0x9A,
+		0xC2, 0xAE, 0x9A,
+		0x1B, 0xB1, 0x9A,
+		0x50, 0xB1, 0x9A,
+		0x78, 0x95, 0x99,
+		0xB2, 0x95, 0x99,
+		0x43, 0xB2, 0x9A,
+		0x78, 0xB2, 0x9A,
+		0x43, 0xB2, 0x9A,
+		0x78, 0xB2, 0x9A,
+		0x20, 0xB5, 0x9A,
+		0x29, 0xB3, 0x9A,
+		0x20, 0xB5, 0x9A,
+		0x29, 0xB3, 0x9A,
+		0x1D, 0xB6, 0x9A,
+		0xF9, 0xB7, 0x9A,
+		0x6E, 0xB9, 0x9A,
+		0x1D, 0xB6, 0x9A,
+		0xF9, 0xB7, 0x9A,
+		0x6E, 0xB9, 0x9A,
+		0xE3, 0xBA, 0x9A,
+		0x97, 0xBB, 0x9A,
+		0xCC, 0xBC, 0x9A,
+		0x05, 0xBD, 0x9A,
+		0x3E, 0xBD, 0x9A,
+		0x73, 0xBD, 0x9A,
+		0x8C, 0xBD, 0x9A,
+		0xAD, 0xBD, 0x9A,
+		0xE6, 0xB7, 0x89,
+		0x98, 0x95, 0x89,
+		0xA3, 0xB6, 0x89,
+		0xDE, 0xB6, 0x89,
+		0xA6, 0xB8, 0x89,
+		0x50, 0xBA, 0x89,
+		0x71, 0xDA, 0x9B,
+		0xAA, 0xDA, 0x9B,
+		0x71, 0xDA, 0x9B,
+		0xAA, 0xDA, 0x9B,
+		0x07, 0xDC, 0x9B,
+		0x30, 0xDC, 0x9B,
+		0x59, 0xDC, 0x9B,
+		0x59, 0xDC, 0x9B,
+		0x2F, 0xDD, 0x9B,
+		0x58, 0xDD, 0x9B,
+		0x85, 0xDD, 0x9B,
+		0xE4, 0xDD, 0x9B,
+		0x00, 0x00, 0x00,
+		0x8A, 0xAA, 0x9C,
+		0xAB, 0xAA, 0x9C,
+		0xCC, 0xAA, 0x9C,
+		0xED, 0xAA, 0x9C,
+		0xDE, 0xAB, 0x9C,
+		0xB2, 0xAC, 0x9C,
+		0xED, 0xAA, 0x9C,
+		0xDE, 0xAB, 0x9C,
+		0xB2, 0xAC, 0x9C,
+		0x45, 0xAD, 0x9C,
+		0xC4, 0xAD, 0x9C,
+		0xA7, 0xB4, 0x9C,
+		0x5C, 0xB5, 0x9C,
+		0xFC, 0x93, 0x84,
+		0xFC, 0x93, 0x84,
+		0x96, 0x94, 0x84,
+		0x79, 0x94, 0x84,
+		0xFC, 0x93, 0x84,
+		0xFC, 0x93, 0x84,
+		0x47, 0x94, 0x84,
+		0x47, 0x94, 0x84,
+		0xFC, 0x93, 0x84,
+		0xFC, 0x93, 0x84,
+		0x60, 0x94, 0x84,
+		0x60, 0x94, 0x84,
+		0xB3, 0x94, 0x84,
+		0xB3, 0x94, 0x84,
+		0xFC, 0x93, 0x84,
+		0xFC, 0x93, 0x84,
+		0x15, 0x94, 0x84,
+		0x2E, 0x94, 0x84,
+		0xB3, 0x94, 0x84,
+		0xB3, 0x94, 0x84,
+		0xB3, 0x94, 0x84,
+		0xFA, 0xCC, 0x8D,
+		0x74, 0xCD, 0x8D,
+		0x31, 0xE6, 0x8D,
+		0xB0, 0xE6, 0x8D,
+		0x40, 0xA1, 0x9B,
+		0x40, 0xA1, 0x9B,
+		0x31, 0xA2, 0x9B,
+		0x6C, 0xA2, 0x9B,
+		0xA7, 0xA2, 0x9B,
+		0xA7, 0xA2, 0x9B,
+		0x30, 0xEF, 0x84,
+		0x49, 0xEF, 0x84,
+		0x30, 0xEF, 0x84,
+		0x49, 0xEF, 0x84,
+		0x62, 0xEF, 0x84,
+		0xDB, 0x80, 0x86,
+		0xF0, 0x80, 0x86,
+		0x59, 0x81, 0x86,
+		0xF0, 0x80, 0x86,
+		0x1A, 0x81, 0x86,
+		0x1A, 0x81, 0x86,
+		0x44, 0x81, 0x86,
+		0x44, 0x81, 0x86,
+		0x6E, 0x81, 0x86,
+		0x6E, 0x81, 0x86,
+		0x87, 0x81, 0x86,
+		0x87, 0x81, 0x86,
+		0x2F, 0x81, 0x86,
+		0x2F, 0x81, 0x86
+		0x05, 0x81, 0x86,
+		0x05, 0x81, 0x86,
+		0xA0, 0x81, 0x86
+	}
+
+	public void L80D279()
+	{
+		Stack.Push(B);
+		Stack.Push(Y);
+		Stack.Push(X);
+		Stack.Push(K);
+		B = Stack.Pop();
+		X = [0x14];
+		A = [0x1238 + X];
+		A &= 0x0007;
+		A <<= 1;
+		X = A;
+		return [(0xD28F + X)]();
+	}
+
+	public void L80D29F()
+	{
+		X = [0x12];
+		A = [0x1238 + X];
+		A &= 0x0007;
+		A <<= 1;
+		X = A;
+		return [(0xD2AC + X)]();
+	}
+
+	public void L80D2BC()
+	{
+		X = [0x12];
+		A = [0x1238 + X];
+		A &= 0x0007;
+		A <<= 1;
+		X = A;
+		return [(0xD2C9 + X)]();
+	}
+
+	public void L80D2D9()
+	{
+		X = [0x12];
+		A = [0x1238 + X];
+		A &= 0x0007;
+		A <<= 1;
+		X = A;
+		return [(0xD2E6 + X)]();
+	}
+
+	public void L80D2F6()
+	{
+		return this.L80D319();
+	}
+
+	public void L80D319()
+	{
+		this.L80D3A0();
+		return;
+	}
+
+	public void L80D3A0()
+	{
+		X = [0x12];
+		A = 0xFFFF;
+		[0x10C0 + X] = A;
+		[0x111E + X] = A;
+		return;
+	}
+
+	public void L80D3AC()
+	{
+		this.L80D738();
+		this.L80D4DC();
+		this.L80D8B6();
+		X = [0x18];
+		Y = [0x1766 + X];
+		A = [0x1726 + Y];
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L80D41A();
+
+		temp = A & 0x1000;
+
+		if (Z == 0)
+			return this.L80D41A();
+
+		temp = A & 0x0008;
+
+		if (Z == 0)
+			return this.L80D41A();
+
+		this.L80D490();
+
+		if (Z == 1)
+			return this.L80D3DB();
+
+		A--;
+
+		if (Z == 1)
+			return this.L80D41A();
+
+		A--;
+
+		if (Z == 0)
+			return this.L80D3DB();
+
+		return this.L80D47B();
+	}
+
+	public void L80D3DB()
+	{
+		A = [0x1726 + Y];
+		temp = A & 0x0004;
+
+		if (Z == 0)
+			return this.L80D454();
+
+		temp = A & 0x0400;
+
+		if (Z == 0)
+			return this.L80D41B();
+
+		A = [0x1B79];
+
+		if (Z == 0)
+			return this.L80D41B();
+
+	}
+
+	public void L80D3ED()
+	{
+		X = [0x12];
+		A = [0x117C + X];
+		A <<= 1;
+		X = A;
+		A = [0x150C];
+		temp = A & 0x0801;
+
+		if (Z == 0)
+			return this.L80D411();
+
+		C = 1;
+		A = [0x1826 + Y];
+		A -= [0x7E3DC3 + X] - !C;
+		[0x1826 + Y] = A;
+		A = [0x1866 + Y];
+		A -= [0x7E40C3 + X] - !C;
+		[0x1866 + Y] = A;
+	}
+
+	public void L80D411()
+	{
+		A = [0x1726 + Y];
+		A |= 0x0008;
+		[0x1726 + Y] = A;
+	}
+
+	public void L80D41A()
+	{
+		return;
+	}
+
+	public void L80D41B()
+	{
+		X = [0x18];
+
+		if (Z == 1)
+			return this.L80D3ED();
+
+		A = [0x1766 + X];
+
+		if (Z == 1)
+			return this.L80D3ED();
+
+		X = A;
+		A = [0x1726 + X];
+		temp = A & 0x0020;
+
+		if (Z == 0)
+			return this.L80D3ED();
+
+		X = [0x12];
+		A = [0x1238 + X];
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L80D3ED();
+
+		A &= 0x0007;
+		temp = A - 0x0002;
+
+		if (N == 1)
+			return this.L80D3ED();
+
+		A = [0x150C];
+		temp = A & 0x0801;
+
+		if (Z == 0)
+			return this.L80D453();
+
+		A = 0xFFFF;
+		[0x1826 + Y] = A;
+		A = 0xFFFF;
+		[0x1866 + Y] = A;
+	}
+
+	public void L80D453()
+	{
+		return;
+	}
+
+	public void L80D454()
+	{
+		X = [0x12];
+		A = [0x1238 + X];
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L80D411();
+
+		A &= 0x0007;
+		temp = A - 0x0004;
+
+		if (N == 1)
+			return this.L80D411();
+
+		A = [0x150C];
+		temp = A & 0x0801;
+
+		if (Z == 0)
+			return this.L80D47A();
+
+		A = 0xFFFF;
+		[0x1826 + Y] = A;
+		A = 0xFFFF;
+		[0x1866 + Y] = A;
+	}
+
+	public void L80D47A()
+	{
+		return;
+	}
+
+	public void L80D47B()
+	{
+		A = [0x150C];
+		temp = A & 0x0801;
+
+		if (Z == 0)
+			return this.L80D47A();
+
+		A = 0xFFFF;
+		[0x1826 + Y] = A;
+		A = 0xFFFF;
+		[0x1866 + Y] = A;
+		return;
+	}
+
+	public void L80D490()
+	{
+		Stack.Push(X);
+		Stack.Push(Y);
+		Y = A;
+		X = [0x12];
+		A = [0x1238 + X];
+		temp = A & 0x0080;
+
+		if (Z == 1)
+			return this.L80D4A5();
+
+		A = Y;
+		temp = A & 0x0020;
+
+		if (Z == 1)
+			return this.L80D4CE();
+
+		return this.L80D4C2();
+	}
+
+	public void L80D4A5()
+	{
+		A = Y;
+		temp = A & 0x2000;
+
+		if (Z == 1)
+			return this.L80D4C2();
+
+		A = [0x1B79];
+
+		if (Z == 1)
+			return this.L80D4C0();
+
+		A = [0x1238 + X];
+		A &= 0x0007;
+		X = A;
+		A = [0x80D4D4 + X];
+		A &= 0x00FF;
+
+		if (Z == 0)
+			return this.L80D4C2();
+
+	}
+
+	public void L80D4C0()
+	{
+		return this.L80D4C8();
+	}
+
+	public void L80D4C2()
+	{
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = 0x0000;
+		return;
+	}
+
+	public void L80D4C8()
+	{
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = 0x0001;
+		return;
+	}
+
+	public void L80D4CE()
+	{
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = 0x0002;
+		return;
+	}
+
+	public void L80D4DC()
+	{
+		X = [0x18];
+		Y = [0x1766 + X];
+		A = [0x1726 + Y];
+		[0x1512] = A;
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L80D513();
+
+		this.L80D490();
+		A--;
+
+		if (Z == 1)
+			return this.L80D513();
+
+		X = [0x12];
+		A = [0x1238 + X];
+		A &= 0x0007;
+		temp = A - 0x0001;
+
+		if (C == 0)
+			return this.L80D513();
+
+		X = [0x12];
+		A = [0x1238 + X];
+		A &= 0x0007;
+		X = A;
+		A = [0x80D522 + X];
+		A &= 0x00FF;
+		this.L81F437();
+	}
+
+	public void L80D513()
+	{
+		A = [0x1510];
+		temp = A & 0x4000;
+
+		if (Z == 0)
+			return this.L80D521();
+
+		A = [0x1512];
+		[0x1510] = A;
+	}
+
+	public void L80D521()
+	{
+		return;
+	}
+
+	public void L80D52A()
+	{
+		X = [0x18];
+		Y = [0x1766 + X];
+		A = [0x1866 + Y];
+
+		if (N == 1)
+			return this.L80D566();
+
+		A = [0x1726 + Y];
+		this.L80D490();
+		A--;
+
+		if (Z == 1)
+			return this.L80D566();
+
+		X = [0x12];
+		A = [0x117C + X];
+		A <<= 1;
+		X = A;
+		A = [0x1926 + Y];
+		temp = A - [0x7E46C3 + X];
+
+		if (C == 1)
+			return this.L80D566();
+
+		A = [0x1926 + Y];
+		A >>= 1;
+
+		if (C == 1)
+			return this.L80D55C();
+
+		A = [0x7E46C3 + X];
+		A &= 0xFFFE;
+		return this.L80D563();
+	}
+
+	public void L80D55C()
+	{
+		A = [0x7E46C3 + X];
+		A |= 0x0001;
+	}
+
+	public void L80D563()
+	{
+		[0x1926 + Y] = A;
+	}
+
+	public void L80D566()
+	{
+		return;
+	}
+
+	public void L80D567()
+	{
+		Y = [0x18];
+		X = [0x1766 + Y];
+		A = [0x1726 + X];
+		temp = A & 0x8000;
+
+		if (Z == 1)
+			return this.L80D577();
+
+		return this.L80D6C9();
+	}
+
+	public void L80D577()
+	{
+		temp = A & 0x1000;
+
+		if (Z == 1)
+			return this.L80D57F();
+
+		return this.L80D6C9();
+	}
+
+	public void L80D57F()
+	{
+		this.L80D490();
+		A--;
+
+		if (Z == 0)
+			return this.L80D588();
+
+		return this.L80D6C9();
+	}
+
+	public void L80D588()
+	{
+		X = [0x12];
+		A = [0x117C + X];
+		A <<= 1;
+		X = A;
+		A = [0x7E3DC3 + X];
+		[0x1AA5] = A;
+		[0x1AB9] = A;
+		A = [0x7E40C3 + X];
+		[0x1AA7] = A;
+		[0x1ABB] = A;
+		A = [0x1AB9];
+		A <<= 1;
+		[0x1ABD] = A;
+		A = [0x1ABB];
+		Cpu.ROL();
+		[0x1ABF] = A;
+		[0x1AA7] >>= 1;
+		Cpu.ROR(0x1AA5);
+		A = [0x1AA5];
+		[0x1AB5] = A;
+		A = [0x1AA7];
+		[0x1AB7] = A;
+		[0x1AA7] >>= 1;
+		Cpu.ROR(0x1AA5);
+		A = [0x1AA5];
+		[0x1AB1] = A;
+		A = [0x1AA7];
+		[0x1AB3] = A;
+		[0x1AA7] >>= 1;
+		Cpu.ROR(0x1AA5);
+		A = [0x1AA5];
+		[0x1AAD] = A;
+		A = [0x1AA7];
+		[0x1AAF] = A;
+		[0x1AA7] >>= 1;
+		Cpu.ROR(0x1AA5);
+		A = [0x1AA5];
+		[0x1AA9] = A;
+		A = [0x1AA7];
+		[0x1AAB] = A;
+		[0x1AA7] >>= 1;
+		Cpu.ROR(0x1AA5);
+		[0x22] = 0;
+		[0x24] = 0;
+		Y = [0x18];
+		X = [0x1766 + Y];
+		A = [0x7E3CF3 + X];
+		temp = A & 0x0001;
+
+		if (Z == 1)
+			return this.L80D620();
+
+		C = 0;
+		A = [0x22];
+		A += [0x1AA5] + C;
+		[0x22] = A;
+		A = [0x24];
+		A += [0x1AA7] + C;
+		[0x24] = A;
+	}
+
+	public void L80D620()
+	{
+		A = [0x7E3CF3 + X];
+		temp = A & 0x0002;
+
+		if (Z == 1)
+			return this.L80D638();
+
+		C = 0;
+		A = [0x22];
+		A += [0x1AA9] + C;
+		[0x22] = A;
+		A = [0x24];
+		A += [0x1AAB] + C;
+		[0x24] = A;
+	}
+
+	public void L80D638()
+	{
+		A = [0x7E3CF3 + X];
+		temp = A & 0x0004;
+
+		if (Z == 1)
+			return this.L80D650();
+
+		C = 0;
+		A = [0x22];
+		A += [0x1AAD] + C;
+		[0x22] = A;
+		A = [0x24];
+		A += [0x1AAF] + C;
+		[0x24] = A;
+	}
+
+	public void L80D650()
+	{
+		A = [0x7E3CF3 + X];
+		temp = A & 0x0008;
+
+		if (Z == 1)
+			return this.L80D668();
+
+		C = 0;
+		A = [0x22];
+		A += [0x1AB1] + C;
+		[0x22] = A;
+		A = [0x24];
+		A += [0x1AB3] + C;
+		[0x24] = A;
+	}
+
+	public void L80D668()
+	{
+		A = [0x7E3CF3 + X];
+		temp = A & 0x0010;
+
+		if (Z == 1)
+			return this.L80D680();
+
+		C = 0;
+		A = [0x22];
+		A += [0x1AB5] + C;
+		[0x22] = A;
+		A = [0x24];
+		A += [0x1AB7] + C;
+		[0x24] = A;
+	}
+
+	public void L80D680()
+	{
+		A = [0x7E3CF3 + X];
+		temp = A & 0x0020;
+
+		if (Z == 1)
+			return this.L80D698();
+
+		C = 0;
+		A = [0x22];
+		A += [0x1AB9] + C;
+		[0x22] = A;
+		A = [0x24];
+		A += [0x1ABB] + C;
+		[0x24] = A;
+	}
+
+	public void L80D698()
+	{
+		A = [0x7E3CF3 + X];
+		temp = A & 0x0040;
+
+		if (Z == 1)
+			return this.L80D6B0();
+
+		C = 0;
+		A = [0x22];
+		A += [0x1ABD] + C;
+		[0x22] = A;
+		A = [0x24];
+		A += [0x1ABF] + C;
+		[0x24] = A;
+	}
+
+	public void L80D6B0()
+	{
+		A = [0x150C];
+		temp = A & 0x0801;
+
+		if (Z == 0)
+			return this.L80D6C9();
+
+		C = 1;
+		A = [0x1826];
+		A -= [0x22] - !C;
+		[0x1826] = A;
+		A = [0x1866];
+		A -= [0x24] - !C;
+		[0x1866] = A;
+	}
+
+	public void L80D6C9()
+	{
+		return;
+	}
+
+	public void L80D6CA()
+	{
+		Y = [0x14];
+		A = [0x117C + Y];
+		A <<= 1;
+		X = A;
+		A = [0x150C];
+		temp = A & 0x1002;
+
+		if (Z == 0)
+			return this.L80D6EE();
+
+		C = 1;
+		A = [0x1966];
+		A -= [0x7E3DC3 + X] - !C;
+		[0x1966] = A;
+		A = [0x1968];
+		A -= [0x7E40C3 + X] - !C;
+		[0x1968] = A;
+	}
+
+	public void L80D6EE()
+	{
+		this.L80D6F3();
+		return;
+	}
+
+	public void L80D6F3()
+	{
+		X = [0x14];
+		A = [0x117C + X];
+		A <<= 1;
+		X = A;
+		C = 0;
+		A = [0x196A];
+		A += [0x7E55C3 + X] + C;
+		[0x196A] = A;
+		A = [0x196C];
+		A += [0x7E58C3 + X] + C;
+		[0x196C] = A;
+		C = 1;
+		A = [0x196A];
+		A -= [0x196E] - !C;
+		[0x88] = A;
+		A = [0x196C];
+		A -= [0x1970] - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L80D728();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L80D728()
+	{
+
+		if (N == 1)
+			return this.L80D737();
+
+		A = 0x0000;
+		[0x196A] = A;
+		[0x196C] = A;
+		this.L968A39();
+	}
+
+	public void L80D737()
+	{
+		return;
+	}
+
+	public void L80D738()
+	{
+		X = [0x18];
+		Y = [0x1766 + X];
+		A = [0x1726 + Y];
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L80D7A6();
+
+		temp = A & 0x0008;
+
+		if (Z == 0)
+			return this.L80D7A6();
+
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L80D7A6();
+
+		this.L80D490();
+		A--;
+
+		if (Z == 1)
+			return this.L80D7A6();
+
+		X = [0x12];
+		A = [0x117C + X];
+		A <<= 1;
+		X = A;
+		C = 0;
+		A = [0x7E39E7];
+		A += [0x7E55C3 + X] + C;
+		[0x7E39E7] = A;
+		A = [0x7E39E9];
+		A += [0x7E58C3 + X] + C;
+		[0x7E39E9] = A;
+		C = 1;
+		A = [0x7E39E7];
+		A -= [0x7E39EB] - !C;
+		[0x88] = A;
+		A = [0x7E39E9];
+		A -= [0x7E39ED] - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L80D792();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L80D792()
+	{
+
+		if (N == 1)
+			return this.L80D7A6();
+
+		A = 0x0000;
+		[0x7E39E7] = A;
+		[0x7E39E9] = A;
+		A = 0x0001;
+		this.L81F437();
+	}
+
+	public void L80D7A6()
+	{
+		return;
+	}
+
 	public void L80D7A7()
 	{
 		C = 1;
@@ -20946,6 +7372,101 @@ public class SnesRom
 		temp = A & [0x1760];[0x1760] &= ~A;
 		temp = A & [0x1762];[0x1762] &= ~A;
 		temp = A & [0x1764];[0x1764] &= ~A;
+		return;
+	}
+
+	public void L80D8B6()
+	{
+		A = [0x1512];
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L80D926();
+
+		this.L80D490();
+		A--;
+
+		if (Z == 1)
+			return this.L80D926();
+
+		A = [0x150E];
+
+		if (Z == 1)
+			return this.L80D8D2();
+
+		A--;
+
+		if (Z == 1)
+			return this.L80D8E9();
+
+		A--;
+
+		if (Z == 1)
+			return this.L80D900();
+
+		A--;
+
+		if (Z == 1)
+			return this.L80D917();
+
+	}
+
+	public void L80D8D2()
+	{
+		A = [0x14D6];
+		temp = A - 0x0010;
+
+		if (Z == 1)
+			return this.L80D917();
+
+		A = [0x14D8];
+		this.L809977();
+		A |= 0x0079;
+		this.L8094BA();
+		return;
+	}
+
+	public void L80D8E9()
+	{
+		A = [0x1512];
+		temp = A & 0x4000;
+
+		if (Z == 0)
+			return this.L80D917();
+
+		A = [0x14D8];
+		this.L809977();
+		A |= 0x007A;
+		this.L8094BA();
+		return;
+	}
+
+	public void L80D900()
+	{
+		A = [0x1512];
+		temp = A & 0x4000;
+
+		if (Z == 0)
+			return this.L80D917();
+
+		A = [0x14D8];
+		this.L809977();
+		A |= 0x007B;
+		this.L8094BA();
+		return;
+	}
+
+	public void L80D917()
+	{
+		A = [0x14D8];
+		this.L809977();
+		A |= 0x007C;
+		this.L8094BA();
+		return;
+	}
+
+	public void L80D926()
+	{
 		return;
 	}
 
@@ -22844,6 +9365,11 @@ public class SnesRom
 		return;
 	}
 
+	public void L80E4E1()
+	{
+		Cpu.Break();
+	}
+
 	public void L80E4E3()
 	{
 		A = [0x14EA];
@@ -23169,6 +9695,43 @@ public class SnesRom
 	public void L80E67E()
 	{
 		C = 1;
+		return;
+	}
+
+	public void L80E680()
+	{
+		A = 0x000F;
+		[0x7E5BCF] = A;
+		A = 0x0000;
+		[0x7E5BD1] = A;
+		A = 0x000F;
+		[0x7E5BD3] = A;
+		A = 0x0000;
+		[0x7E5BD5] = A;
+		A = 0x0008;
+		[0x7E5BD7] = A;
+		A = 0x0000;
+		[0x7E5BD9] = A;
+		A = 0x0000;
+		[0x7E5BC7] = A;
+		A = 0x0000;
+		[0x7E5BC9] = A;
+		A = [0x14D6];
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x80F233 + X];
+		[0x7E5BE3] = A;
+		A = [0x80F235 + X];
+		[0x7E5BE5] = A;
+		A = [0x80F237 + X];
+		[0x7E5BE7] = A;
+		A = [0x80F239 + X];
+		[0x7E5BE9] = A;
+		A = 0x0000;
+		[0x7E5BCB] = A;
+		[0x7E5BCD] = A;
 		return;
 	}
 
@@ -24185,12 +10748,16 @@ public class SnesRom
 		A &= 0x00FF;
 		A <<= 1;
 		X = A;
-		Cpu.JSR((0xEE5B + X));
+		return [(0xEE5B + X)]();
 	}
 
 	public void L80EE59()
 	{
 		B = Stack.Pop();
+	}
+
+	public void L80EE5A()
+	{
 		return;
 	}
 
@@ -24215,7 +10782,7 @@ public class SnesRom
 		A = [0x1AED];
 		A <<= 1;
 		X = A;
-		Cpu.JSR((0xEE85 + X));
+		return [(0xEE85 + X)]();
 	}
 
 	public void L80EE83()
@@ -24795,6 +11362,2267 @@ public class SnesRom
 		return;
 	}
 
+	public void L80F159()
+	{
+		Stack.Push(P);
+		Stack.Push(X);
+		P &= ~0x30;
+		[0x12] = 0;
+		[0x14] = 0;
+		[0x22] = 0;
+		A = 0x0080;
+		[0x24] = A;
+	}
+
+	public void L80F168()
+	{
+		A = [0x12];
+		[0x16] = A;
+		A = [0x14];
+		[0x18] = A;
+		A = [0x16];
+		[0x26] = A;
+		A = [0x18];
+		[0x28] = A;
+		A = [0x12];
+		[0x2A] = A;
+		A = [0x14];
+		[0x2C] = A;
+		this.L809D7D();
+		A = [0x30];
+		[0x16] = A;
+		A = [0x32];
+		[0x18] = A;
+		A = [0x16];
+		[0x2A] = A;
+		A = [0x18];
+		[0x2C] = A;
+		A = [0x7E39A3];
+		[0x2E] = A;
+		A = [0x7E39A5];
+		[0x30] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L8086DC();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2A];
+		[0x16] = A;
+		A = [0x2C];
+		[0x18] = A;
+		A = [0x16];
+		A >>= 1;
+		A ^= 0xFFFF;
+		A++;
+		X = [0x22];
+		[0x7F0412 + X] = A;
+		A = [0x12];
+		[0x16] = A;
+		A = [0x14];
+		[0x18] = A;
+		A = [0x16];
+		[0x26] = A;
+		A = [0x18];
+		[0x28] = A;
+		A = [0x12];
+		[0x2A] = A;
+		A = [0x14];
+		[0x2C] = A;
+		this.L809D7D();
+		A = [0x30];
+		[0x16] = A;
+		A = [0x32];
+		[0x18] = A;
+		A = [0x16];
+		[0x2A] = A;
+		A = [0x18];
+		[0x2C] = A;
+		A = [0x7E39CB];
+		[0x2E] = A;
+		A = [0x7E39CD];
+		[0x30] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L8086DC();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2A];
+		[0x16] = A;
+		A = [0x2C];
+		[0x18] = A;
+		A = [0x16];
+		A >>= 1;
+		A ^= 0xFFFF;
+		A++;
+		X = [0x22];
+		[0x7F0412 + X] = A;
+		C = 0;
+		A = [0x12];
+		A += 0x4000 + C;
+		[0x12] = A;
+		A = [0x14];
+		A += 0x0000 + C;
+		[0x14] = A;
+		A = [0x22];
+		C = 0;
+		A += 0x0002 + C;
+		[0x22] = A;
+		[0x24]--;
+
+		if (Z == 1)
+			return this.L80F230();
+
+		return this.L80F168();
+	}
+
+	public void L80F230()
+	{
+		X = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L818001()
+	{
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L81800F();
+		A = [0x1ACF];
+		[0x1AD1] = A;
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L81800F()
+	{
+		A = [0x1ACF];
+
+		if (Z == 1)
+			return this.L818049();
+
+		temp = A - [0x1AD1];
+
+		if (Z == 1)
+			return this.L818042();
+
+		A <<= 1;
+		X = A;
+		A = [0x804A + X];
+		[0x1ACB] = A;
+		[0x1ACD] = 0;
+		A = 0x4000;
+		temp = A & [0x1AC3];[0x1AC3] |= A;
+		A = 0x8000;
+		temp = A & [0x1AC3];[0x1AC3] &= ~A;
+		A = 0xFFFF;
+		[0x1AC9] = A;
+		A = [0x1AC1];
+		A &= 0xFFFC;
+		A |= 0x0000;
+		[0x1AC1] = A;
+	}
+
+	public void L818042()
+	{
+		this.L818066();
+		this.L81816E();
+	}
+
+	public void L818049()
+	{
+		return;
+	}
+
+	public void L818066()
+	{
+		A = [0x1AC3];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L818092();
+
+		A = [0x1AC1];
+		temp = A & 0x0008;
+
+		if (Z == 1)
+			return this.L818079();
+
+		[0x1ACD]++;
+	}
+
+	public void L818079()
+	{
+		A = [0x1ACD];
+
+		if (Z == 0)
+			return this.L81808B();
+
+	}
+
+	public void L81807E()
+	{
+		this.L818093();
+
+		if (C == 1)
+			return this.L818086();
+
+		this.L8180C7();
+	}
+
+	public void L818086()
+	{
+		A = [0x1ACD];
+
+		if (Z == 1)
+			return this.L81807E();
+
+	}
+
+	public void L81808B()
+	{
+		A = [0x1ACD];
+		A--;
+		[0x1ACD] = A;
+	}
+
+	public void L818092()
+	{
+		return;
+	}
+
+	public void L818093()
+	{
+		X = [0x1ACB];
+		A = [0x0000 + X];
+		A &= 0x00FF;
+		temp = A - 0x0040;
+
+		if (Z == 0)
+			return this.L8180A6();
+
+		this.L8180A8();
+		C = 1;
+		return;
+	}
+
+	public void L8180A6()
+	{
+		C = 0;
+		return;
+	}
+
+	public void L8180A8()
+	{
+		X = [0x1ACB];
+		A = [0x0002 + X];
+		[0x01] = A;
+		A = [0x0001 + X];
+		[0x00] = A;
+		A = [0x1ACB];
+		C = 0;
+		A += 0x0004 + C;
+		[0x1ACB] = A;
+		this.L8180C4();
+		return;
+	}
+
+	public void L8180C4()
+	{
+		return [[0x0000]]();    //24-Bit Address
+	}
+
+	public void L8180C7()
+	{
+		A = [0x1AC1];
+		A &= 0x0003;
+		temp = A - 0x0000;
+
+		if (Z == 1)
+			return this.L8180DE();
+
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L81811E();
+
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L818146();
+
+	}
+
+	public void L8180DC()
+	{
+		return this.L8180DC();
+	}
+
+	public void L8180DE()
+	{
+		X = [0x1ACB];
+		A = [0x0000 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L8180EE();
+
+		A &= 0x007F;
+		return this.L8180F1();
+	}
+
+	public void L8180EE()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L8180F1()
+	{
+		C = 0;
+		A += [0x1AC5] + C;
+		[0x1AC5] = A;
+		A = [0x0001 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L818105();
+
+		A &= 0x007F;
+		return this.L818108();
+	}
+
+	public void L818105()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L818108()
+	{
+		C = 0;
+		A += [0x1AC7] + C;
+		[0x1AC7] = A;
+		A = [0x1ACB];
+		A++;
+		A++;
+		[0x1ACB] = A;
+		A = 0x0001;
+		[0x1ACD] = A;
+		return;
+	}
+
+	public void L81811E()
+	{
+		X = [0x1ACB];
+		A = [0x0000 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L81812E();
+
+		A &= 0x007F;
+		return this.L818131();
+	}
+
+	public void L81812E()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L818131()
+	{
+		C = 0;
+		A += [0x1AC5] + C;
+		[0x1AC5] = A;
+		A = [0x1ACB];
+		A++;
+		[0x1ACB] = A;
+		A = 0x0001;
+		[0x1ACD] = A;
+		return;
+	}
+
+	public void L818146()
+	{
+		X = [0x1ACB];
+		A = [0x0000 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L818156();
+
+		A &= 0x007F;
+		return this.L818159();
+	}
+
+	public void L818156()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L818159()
+	{
+		C = 0;
+		A += [0x1AC7] + C;
+		[0x1AC7] = A;
+		A = [0x1ACB];
+		A++;
+		[0x1ACB] = A;
+		A = 0x0001;
+		[0x1ACD] = A;
+		return;
+	}
+
+	public void L81816E()
+	{
+		A = [0xA4];
+		Stack.Push(A);
+		A = [0xA3];
+		Stack.Push(A);
+		A = [0x1AC1];
+		temp = A & 0x0004;
+
+		if (Z == 1)
+			return this.L81817F();
+
+		return this.L818211();
+	}
+
+	public void L81817F()
+	{
+		A = [0x1AC5];
+		C = 0;
+		A += 0x0050 + C;
+		temp = A - 0x01A0;
+
+		if (C == 0)
+			return this.L81818E();
+
+		return this.L818211();
+	}
+
+	public void L81818E()
+	{
+		A = [0x1AC7];
+		C = 0;
+		A += 0x0050 + C;
+		temp = A - 0x0148;
+
+		if (C == 1)
+			return this.L818211();
+
+		A = [0x1AC9];
+		A++;
+
+		if (Z == 1)
+			return this.L818211();
+
+		this.L818218();
+		A = [0x1AC5];
+		[0xB0] = A;
+		A = [0x1AC7];
+		[0xB2] = A;
+		A = [0x1AC9];
+		[0xB4] = A;
+		A = 0x8000;
+		[0xA4] = A;
+		A = 0xBD58;
+		[0xA3] = A;
+		A = 0xC1FF;
+		[0xA8] = A;
+		A = [0x1AC9];
+		A &= 0x7FFF;
+		temp = A - 0x0014;
+
+		if (Z == 0)
+			return this.L8181D1();
+
+		A = 0x3E00;
+		return this.L8181D6();
+	}
+
+	public void L8181D1()
+	{
+		A = 0x3C00;
+		return this.L8181D6();
+	}
+
+	public void L8181D6()
+	{
+		[0xAA] = A;
+		P |= 0x20;
+		A = [0x0101];
+		A &= 0xE7;
+		[0x0101] = A;
+		P &= ~0x20;
+		A = [0xB4];
+
+		if (N == 1)
+			return this.L818206();
+
+		A = [0x014C];
+		A >>= 1;
+		A >>= 1;
+
+		if (C == 0)
+			return this.L8181F4();
+
+		A = 0x3C00;
+		return this.L8181F9();
+	}
+
+	public void L8181F4()
+	{
+		A = 0x3000;
+		return this.L8181F9();
+	}
+
+	public void L8181F9()
+	{
+		[0xAA] = A;
+		A = 0xC1FF;
+		[0xA8] = A;
+		this.L8280C2();
+		return this.L818211();
+	}
+
+	public void L818206()
+	{
+		A &= 0xFFFF;
+		[0xB4] = A;
+		this.L82876C();
+		return this.L818211();
+	}
+
+	public void L818211()
+	{
+		A = Stack.Pop();
+		[0xA3] = A;
+		A = Stack.Pop();
+		[0xA4] = A;
+		return;
+	}
+
+	public void L818218()
+	{
+		A = [0xA4];
+		Stack.Push(A);
+		A = [0xA3];
+		Stack.Push(A);
+		A = 0x8000;
+		[0xA4] = A;
+		A = 0xBD58;
+		[0xA3] = A;
+		A = 0xC1FF;
+		[0xA8] = A;
+		A = 0x3E00;
+		[0xAA] = A;
+		A = [0x1AD3];
+
+		if (Z == 1)
+			return this.L818295();
+
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L818246();
+
+		temp = A - 0x0002;
+
+		if (Z == 0)
+			return this.L818244();
+
+		return this.L8182A4();
+	}
+
+	public void L818244()
+	{
+		return this.L818295();
+	}
+
+	public void L818246()
+	{
+		A = 0x0003;
+		[0x12] = A;
+	}
+
+	public void L81824B()
+	{
+		A = [0x014C];
+		A ^= 0xFFFF;
+		A >>= 1;
+		C = 0;
+		A += [0x12] + C;
+		A &= 0x0007;
+		C = 0;
+		A += 0x000B + C;
+		[0xB4] = A;
+		X = [0x12];
+		A = [0x81829C + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L81826E();
+
+		A &= 0x007F;
+		return this.L818271();
+	}
+
+	public void L81826E()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L818271()
+	{
+		C = 0;
+		A += [0x1AC5] + C;
+		[0xB0] = A;
+		A = [0x82A0 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L818284();
+
+		A &= 0x007F;
+		return this.L818287();
+	}
+
+	public void L818284()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L818287()
+	{
+		C = 0;
+		A += [0x1AD5] + C;
+		[0xB2] = A;
+		this.L82876C();
+		[0x12]--;
+
+		if (N == 0)
+			return this.L81824B();
+
+	}
+
+	public void L818295()
+	{
+		A = Stack.Pop();
+		[0xA3] = A;
+		A = Stack.Pop();
+		[0xA4] = A;
+		return;
+	}
+
+	public void L8182A4()
+	{
+		A = [0x1AC5];
+		[0xB0] = A;
+		A = [0x1AC7];
+		[0xB2] = A;
+		A = 0x0013;
+		[0xB4] = A;
+		this.L82876C();
+		return this.L818295();
+	}
+
+	public void L81865D()
+	{
+		return;
+	}
+
+	public void L819E82()
+	{
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L819EA5();
+		this.L819EA6();
+		this.L819F28();
+		this.L819F97();
+		this.L81A0A5();
+		this.L81A14A();
+		this.L81A306();
+		this.L81A544();
+		this.L81A7D6();
+		this.L81A886();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L819EA5()
+	{
+		return;
+	}
+
+	public void L819EA6()
+	{
+		X = 0x003E;
+	}
+
+	public void L819EA9()
+	{
+		A = 0xFFFF;
+		[0x001826 + X] = A;
+		A = 0xFFFF;
+		[0x001866 + X] = A;
+		A = 0xFFFF;
+		[0x7E39F3 + X] = A;
+		A = 0xFFFF;
+		[0x7E3A33 + X] = A;
+		A = 0x0000;
+		[0x001926 + X] = A;
+		A = 0x0000;
+		[0x7E3A73 + X] = A;
+		A = 0x0000;
+		[0x7E3AB3 + X] = A;
+		A = 0x0000;
+		[0x7E3AF3 + X] = A;
+		A = 0x8000;
+		[0x7E3B33 + X] = A;
+		A = 0x0000;
+		[0x7E3B73 + X] = A;
+		A = 0x8000;
+		[0x7E3BB3 + X] = A;
+		A = 0x0000;
+		[0x7E3BF3 + X] = A;
+		A = 0x8000;
+		[0x7E3C33 + X] = A;
+		A = 0x0000;
+		[0x7E3C73 + X] = A;
+		A = 0x0000;
+		[0x7E3CB3 + X] = A;
+		A = 0x0000;
+		[0x7E3CF3 + X] = A;
+		A = 0xFFFF;
+		[0x7E3D33 + X] = A;
+		X--;
+		X--;
+
+		if (N == 1)
+			return this.L819F27();
+
+		return this.L819EA9();
+	}
+
+	public void L819F27()
+	{
+		return;
+	}
+
+	public void L819F28()
+	{
+		this.L81AB0D();
+		A = [0x0B3A];
+		A <<= 1;
+		C = 0;
+		A += [0x00] + C;
+		[0x00] = A;
+		A = 0x0000;
+		[0x1966] = A;
+		A = [[0x00]];
+		[0x1968] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0010 + C;
+		[0x00] = A;
+		A = [0x0B3A];
+		A <<= 1;
+		[0x1AA3] = A;
+		A = [0x00];
+		C = 1;
+		A -= [0x1AA3] - !C;
+		[0x00] = A;
+		A = 0x0000;
+		[0x196A] = A;
+		A = 0x0000;
+		[0x196C] = A;
+		A = [[0x00]];
+		[0x196E] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x1970] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x1972] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x1974] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		return;
+	}
+
+	public void L819F97()
+	{
+		this.L81AB40();
+		A = [[0x00]];
+		[0x1AA1] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		Y = [0x1AA1];
+		X = 0x0000;
+		A = [0x0B38];
+		A <<= 1;
+		C = 0;
+		A += [0x00] + C;
+		[0x00] = A;
+	}
+
+	public void L819FB6()
+	{
+		A = [[0x00]];
+		[0x7E3A33 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0010 + C;
+		[0x00] = A;
+		A = 0x0000;
+		[0x7E39F3 + X] = A;
+		X++;
+		X++;
+		Y--;
+
+		if (Z == 1)
+			return this.L819FD3();
+
+		return this.L819FB6();
+	}
+
+	public void L819FD3()
+	{
+		A = [0x0B38];
+		A <<= 1;
+		[0x1AA3] = A;
+		A = [0x00];
+		C = 1;
+		A -= [0x1AA3] - !C;
+		[0x00] = A;
+		Y = [0x1AA1];
+		X = 0x0000;
+	}
+
+	public void L819FE8()
+	{
+		A = [[0x00]];
+		[0x7E3AB3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3B33 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3BB3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3C33 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3CB3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = 0x0000;
+		[0x7E3A73 + X] = A;
+		[0x7E3AF3 + X] = A;
+		[0x7E3B73 + X] = A;
+		[0x7E3BF3 + X] = A;
+		[0x7E3C73 + X] = A;
+		X++;
+		X++;
+		Y--;
+
+		if (Z == 1)
+			return this.L81A04D();
+
+		return this.L819FE8();
+	}
+
+	public void L81A04D()
+	{
+		Y = [0x1AA1];
+		X = 0x0000;
+	}
+
+	public void L81A053()
+	{
+		A = [[0x00]];
+		A <<= 1;
+		[0x001766 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		A <<= 1;
+		[0x0017A6 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3CF3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		A <<= 1;
+		[0x7E3D33 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x001726 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		X++;
+		X++;
+		Y--;
+
+		if (Z == 1)
+			return this.L81A0A4();
+
+		return this.L81A053();
+	}
+
+	public void L81A0A4()
+	{
+		return;
+	}
+
+	public void L81A0A5()
+	{
+		this.L81AB23();
+		Y = 0x0040;
+		X = 0x0000;
+	}
+
+	public void L81A0AE()
+	{
+		A = 0x0000;
+		[0x7E49C3 + X] = A;
+		A = [[0x00]];
+		[0x7E4CC3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = 0x0000;
+		[0x7E4FC3 + X] = A;
+		A = [[0x00]];
+		[0x7E52C3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = 0x0000;
+		[0x7E55C3 + X] = A;
+		A = [[0x00]];
+		[0x7E58C3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E46C3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [0x7E46C3 + X];
+		C = 0;
+		A += 0x0001 + C;
+		[0x7E46C3 + X] = A;
+		A = [[0x00]];
+		[0x7E43C3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		X++;
+		X++;
+		Y--;
+
+		if (Z == 1)
+			return this.L81A11D();
+
+		return this.L81A0AE();
+	}
+
+	public void L81A11D()
+	{
+		A = [0x14D6];
+		A <<= 1;
+		C = 0;
+		A += [0x00] + C;
+		[0x00] = A;
+		Y = 0x0040;
+		X = 0x0000;
+	}
+
+	public void L81A12C()
+	{
+		A = 0x0000;
+		[0x7E3DC3 + X] = A;
+		A = [[0x00]];
+		[0x7E40C3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0022 + C;
+		[0x00] = A;
+		X++;
+		X++;
+		Y--;
+
+		if (Z == 1)
+			return this.L81A149();
+
+		return this.L81A12C();
+	}
+
+	public void L81A149()
+	{
+		return;
+	}
+
+	public void L81A14A()
+	{
+		Y = 0x00F8;
+		X = 0x0000;
+		this.L81A1B4();
+		X = 0x0002;
+		this.L81A1B4();
+		X = 0x0004;
+		this.L81A1B4();
+		X = 0x0006;
+		this.L81A1B4();
+		X = 0x0008;
+		this.L81A1B4();
+		X = 0x000A;
+		this.L81A1B4();
+		X = 0x000C;
+		this.L81A1B4();
+		X = 0x000E;
+		this.L81A1B4();
+		X = 0x0010;
+		this.L81A1B4();
+		X = 0x0012;
+		this.L81A1B4();
+		X = 0x0014;
+		this.L81A1B4();
+		X = 0x0016;
+		this.L81A1B4();
+		X = 0x0018;
+		this.L81A1B4();
+		X = 0x001A;
+		this.L81A1B4();
+		X = 0x001C;
+		this.L81A1B4();
+		X = 0x001E;
+		this.L81A1B4();
+		X = 0x0020;
+		this.L81A1B4();
+		return;
+	}
+
+	public void L81A1B4()
+	{
+		Stack.Push(Y);
+		A = [0x81A2E4 + X];
+		[0x01] = A;
+		A = [0x81A2C2 + X];
+		[0x00] = A;
+		A = [[0x00]];
+		[0x1AA1] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [0x1AA1];
+		[0x1AA3] = A;
+	}
+
+	public void L81A1D4()
+	{
+		A = [0x0381];
+
+		if (Z == 1)
+			return this.L81A1DF();
+
+		A--;
+
+		if (Z == 1)
+			return this.L81A202();
+
+		A--;
+
+		if (Z == 1)
+			return this.L81A225();
+
+	}
+
+	public void L81A1DF()
+	{
+		A = [0x00];
+		C = 0;
+		A += 0x0000 + C;
+		[0x00] = A;
+		Stack.Push(X);
+		X = Y;
+		A = 0x0000;
+		[0x7E3DC3 + X] = A;
+		A = [[0x00]];
+		[0x7E40C3 + X] = A;
+		X = Stack.Pop();
+		A = [0x00];
+		C = 0;
+		A += 0x0006 + C;
+		[0x00] = A;
+		return this.L81A248();
+	}
+
+	public void L81A202()
+	{
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		Stack.Push(X);
+		X = Y;
+		A = 0x0000;
+		[0x7E3DC3 + X] = A;
+		A = [[0x00]];
+		[0x7E40C3 + X] = A;
+		X = Stack.Pop();
+		A = [0x00];
+		C = 0;
+		A += 0x0004 + C;
+		[0x00] = A;
+		return this.L81A248();
+	}
+
+	public void L81A225()
+	{
+		A = [0x00];
+		C = 0;
+		A += 0x0004 + C;
+		[0x00] = A;
+		Stack.Push(X);
+		X = Y;
+		A = 0x0000;
+		[0x7E3DC3 + X] = A;
+		A = [[0x00]];
+		[0x7E40C3 + X] = A;
+		X = Stack.Pop();
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		return this.L81A248();
+	}
+
+	public void L81A248()
+	{
+		Y++;
+		Y++;
+		[0x1AA1]--;
+
+		if (Z == 1)
+			return this.L81A252();
+
+		return this.L81A1D4();
+	}
+
+	public void L81A252()
+	{
+		Y = Stack.Pop();
+		A = [0x1AA3];
+		[0x1AA1] = A;
+	}
+
+	public void L81A259()
+	{
+		Stack.Push(X);
+		X = Y;
+		A = 0x0000;
+		[0x7E49C3 + X] = A;
+		A = [[0x00]];
+		[0x7E4CC3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = 0x0000;
+		[0x7E4FC3 + X] = A;
+		A = [[0x00]];
+		[0x7E52C3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = 0x0000;
+		[0x7E55C3 + X] = A;
+		A = [[0x00]];
+		[0x7E58C3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E46C3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E43C3 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		X = Stack.Pop();
+		Y++;
+		Y++;
+		[0x1AA1]--;
+
+		if (Z == 1)
+			return this.L81A2C1();
+
+		return this.L81A259();
+	}
+
+	public void L81A2C1()
+	{
+		return;
+	}
+
+	public void L81A306()
+	{
+		this.L81AAF7();
+		A = [[0x00]];
+		[0x7E3997] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3999] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E399B] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E399D] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E399F] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39A1] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39A3] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39A5] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39A7] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39A9] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		C = 0;
+		A = [0x7E3997];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E39AB] = A;
+		A = [0x7E3999];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E39AD] = A;
+		C = 0;
+		A = [0x7E399B];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E39AF] = A;
+		A = [0x7E399D];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E39B1] = A;
+		C = 0;
+		A = [0x7E399F];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E39B3] = A;
+		A = [0x7E39A1];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E39B5] = A;
+		C = 0;
+		A = [0x7E39A3];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E39B7] = A;
+		A = [0x7E39A5];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E39B9] = A;
+		C = 0;
+		A = [0x7E39A7];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E39BB] = A;
+		A = [0x7E39A9];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E39BD] = A;
+		A = [[0x00]];
+		[0x7E39BF] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39C1] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39C3] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39C5] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39C7] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39C9] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39CB] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39CD] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39CF] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39D1] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		C = 0;
+		A = [0x7E39BF];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E39D3] = A;
+		A = [0x7E39C1];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E39D5] = A;
+		C = 0;
+		A = [0x7E39C3];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E39D7] = A;
+		A = [0x7E39C5];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E39D9] = A;
+		C = 0;
+		A = [0x7E39C7];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E39DB] = A;
+		A = [0x7E39C9];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E39DD] = A;
+		C = 0;
+		A = [0x7E39CB];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E39DF] = A;
+		A = [0x7E39CD];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E39E1] = A;
+		C = 0;
+		A = [0x7E39CF];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E39E3] = A;
+		A = [0x7E39D1];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E39E5] = A;
+		return;
+	}
+
+	public void L81A544()
+	{
+		this.L81AB70();
+		A = [[0x00]];
+		[0x7E3D73] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D75] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D77] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D79] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D7B] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D7D] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D7F] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D81] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D83] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D85] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D9B] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D9D] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3D9F] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3DA1] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3DA3] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3DA5] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3DA7] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3DA9] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3DAB] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E3DAD] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x001500] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x001506] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39EB] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39ED] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39EF] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		A = [[0x00]];
+		[0x7E39F1] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0002 + C;
+		[0x00] = A;
+		C = 0;
+		A = [0x7E3D73];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E3D87] = A;
+		A = [0x7E3D75];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E3D89] = A;
+		C = 0;
+		A = [0x7E3D77];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E3D8B] = A;
+		A = [0x7E3D79];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E3D8D] = A;
+		C = 0;
+		A = [0x7E3D7B];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E3D8F] = A;
+		A = [0x7E3D7D];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E3D91] = A;
+		C = 0;
+		A = [0x7E3D7F];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E3D93] = A;
+		A = [0x7E3D81];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E3D95] = A;
+		C = 0;
+		A = [0x7E3D83];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E3D97] = A;
+		A = [0x7E3D85];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E3D99] = A;
+		C = 0;
+		A = [0x7E3D9B];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E3DAF] = A;
+		A = [0x7E3D9D];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E3DB1] = A;
+		C = 0;
+		A = [0x7E3D9F];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E3DB3] = A;
+		A = [0x7E3DA1];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E3DB5] = A;
+		C = 0;
+		A = [0x7E3DA3];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E3DB7] = A;
+		A = [0x7E3DA5];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E3DB9] = A;
+		C = 0;
+		A = [0x7E3DA7];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E3DBB] = A;
+		A = [0x7E3DA9];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E3DBD] = A;
+		C = 0;
+		A = [0x7E3DAB];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x7E3DBF] = A;
+		A = [0x7E3DAD];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x7E3DC1] = A;
+		return;
+	}
+
+	public void L81A7D6()
+	{
+		A = 0x0000;
+		[0x1AA1] = A;
+		A = 0x0080;
+		[0x1AA3] = A;
+		A = [0x1AA1];
+		[0x2A] = A;
+		A = [0x1AA3];
+		[0x2C] = A;
+		A = [0x1968];
+		[0x2E] = A;
+		A = 0x0000;
+		[0x30] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L8086DC();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2A];
+		[0x1AA1] = A;
+		A = [0x2C];
+		[0x1AA3] = A;
+		A = [0x1966];
+		Stack.Push(A);
+		A = [0x1968];
+		[0x1966] = A;
+		A = Stack.Pop();
+		[0x1968] = A;
+		A = [0x1966];
+		[0x26] = A;
+		A = [0x1968];
+		[0x28] = A;
+		A = [0x1AA1];
+		[0x2A] = A;
+		A = [0x1AA3];
+		[0x2C] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L80860D();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2E];
+		[0x1966] = A;
+		A = [0x30];
+		[0x1968] = A;
+		X = 0x00F8;
+	}
+
+	public void L81A83F()
+	{
+		A = [0x7E3DC3 + X];
+		Stack.Push(A);
+		A = [0x7E40C3 + X];
+		[0x7E3DC3 + X] = A;
+		A = Stack.Pop();
+		[0x7E40C3 + X] = A;
+		A = [0x7E3DC3 + X];
+		[0x26] = A;
+		A = [0x7E40C3 + X];
+		[0x28] = A;
+		A = [0x1AA1];
+		[0x2A] = A;
+		A = [0x1AA3];
+		[0x2C] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L80860D();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2E];
+		[0x7E3DC3 + X] = A;
+		A = [0x30];
+		[0x7E40C3 + X] = A;
+		X++;
+		X++;
+		temp = X - 0x02A2;
+
+		if (Z == 1)
+			return this.L81A885();
+
+		return this.L81A83F();
+	}
+
+	public void L81A885()
+	{
+		return;
+	}
+
+	public void L81A886()
+	{
+		A = 0x0000;
+		[0x1AA1] = A;
+		A = 0x0080;
+		[0x1AA3] = A;
+		A = [0x1AA1];
+		[0x2A] = A;
+		A = [0x1AA3];
+		[0x2C] = A;
+		A = [0x7E3A33];
+		[0x2E] = A;
+		A = 0x0000;
+		[0x30] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L8086DC();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2A];
+		[0x1AA1] = A;
+		A = [0x2C];
+		[0x1AA3] = A;
+		Y = 0x0020;
+		X = 0x0000;
+	}
+
+	public void L81A8BF()
+	{
+		A = [0x7E3A33 + X];
+
+		if (N == 1)
+			return this.L81A901();
+
+		A = [0x7E39F3 + X];
+		Stack.Push(A);
+		A = [0x7E3A33 + X];
+		[0x7E39F3 + X] = A;
+		A = Stack.Pop();
+		[0x7E3A33 + X] = A;
+		A = [0x7E39F3 + X];
+		[0x26] = A;
+		A = [0x7E3A33 + X];
+		[0x28] = A;
+		A = [0x1AA1];
+		[0x2A] = A;
+		A = [0x1AA3];
+		[0x2C] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L80860D();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2E];
+		[0x7E39F3 + X] = A;
+		A = [0x30];
+		[0x7E3A33 + X] = A;
+	}
+
+	public void L81A901()
+	{
+		A = [0x7E39F3 + X];
+		[0x001826 + X] = A;
+		A = [0x7E3A33 + X];
+		[0x001866 + X] = A;
+		A = [0x7E39F3 + X];
+		[0x0018A6 + X] = A;
+		A = [0x7E3A33 + X];
+		[0x0018E6 + X] = A;
+		A = [0x7E3A73 + X];
+		Stack.Push(A);
+		A = [0x7E3AB3 + X];
+		[0x7E3A73 + X] = A;
+		A = Stack.Pop();
+		[0x7E3AB3 + X] = A;
+		A = [0x7E3A73 + X];
+		[0x26] = A;
+		A = [0x7E3AB3 + X];
+		[0x28] = A;
+		A = [0x1AA1];
+		[0x2A] = A;
+		A = [0x1AA3];
+		[0x2C] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L80860D();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2E];
+		[0x7E3A73 + X] = A;
+		A = [0x30];
+		[0x7E3AB3 + X] = A;
+		A = [0x7E3B33 + X];
+
+		if (N == 1)
+			return this.L81A9A2();
+
+		A = [0x7E3AF3 + X];
+		Stack.Push(A);
+		A = [0x7E3B33 + X];
+		[0x7E3AF3 + X] = A;
+		A = Stack.Pop();
+		[0x7E3B33 + X] = A;
+		A = [0x7E3AF3 + X];
+		[0x26] = A;
+		A = [0x7E3B33 + X];
+		[0x28] = A;
+		A = [0x1AA1];
+		[0x2A] = A;
+		A = [0x1AA3];
+		[0x2C] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L80860D();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2E];
+		[0x7E3AF3 + X] = A;
+		A = [0x30];
+		[0x7E3B33 + X] = A;
+		return this.L81A9AF();
+	}
+
+	public void L81A9A2()
+	{
+		temp = A - 0x8000;
+
+		if (Z == 1)
+			return this.L81A9AF();
+
+		A = [0x7E3B33 + X];
+		[0x7E3AF3 + X] = A;
+	}
+
+	public void L81A9AF()
+	{
+		A = [0x7E3BB3 + X];
+
+		if (N == 1)
+			return this.L81A9F4();
+
+		A = [0x7E3B73 + X];
+		Stack.Push(A);
+		A = [0x7E3BB3 + X];
+		[0x7E3B73 + X] = A;
+		A = Stack.Pop();
+		[0x7E3BB3 + X] = A;
+		A = [0x7E3B73 + X];
+		[0x26] = A;
+		A = [0x7E3BB3 + X];
+		[0x28] = A;
+		A = [0x1AA1];
+		[0x2A] = A;
+		A = [0x1AA3];
+		[0x2C] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L80860D();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2E];
+		[0x7E3B73 + X] = A;
+		A = [0x30];
+		[0x7E3BB3 + X] = A;
+		return this.L81AA01();
+	}
+
+	public void L81A9F4()
+	{
+		temp = A - 0x8000;
+
+		if (Z == 1)
+			return this.L81AA01();
+
+		A = [0x7E3BB3 + X];
+		[0x7E3B73 + X] = A;
+	}
+
+	public void L81AA01()
+	{
+		A = [0x7E3C33 + X];
+
+		if (N == 1)
+			return this.L81AA46();
+
+		A = [0x7E3BF3 + X];
+		Stack.Push(A);
+		A = [0x7E3C33 + X];
+		[0x7E3BF3 + X] = A;
+		A = Stack.Pop();
+		[0x7E3C33 + X] = A;
+		A = [0x7E3BF3 + X];
+		[0x26] = A;
+		A = [0x7E3C33 + X];
+		[0x28] = A;
+		A = [0x1AA1];
+		[0x2A] = A;
+		A = [0x1AA3];
+		[0x2C] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L80860D();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2E];
+		[0x7E3BF3 + X] = A;
+		A = [0x30];
+		[0x7E3C33 + X] = A;
+		return this.L81AA53();
+	}
+
+	public void L81AA46()
+	{
+		temp = A - 0x8000;
+
+		if (Z == 1)
+			return this.L81AA53();
+
+		A = [0x7E3C33 + X];
+		[0x7E3BF3 + X] = A;
+	}
+
+	public void L81AA53()
+	{
+		A = [0x7E3CB3 + X];
+
+		if (N == 1)
+			return this.L81AA98();
+
+		A = [0x7E3C73 + X];
+		Stack.Push(A);
+		A = [0x7E3CB3 + X];
+		[0x7E3C73 + X] = A;
+		A = Stack.Pop();
+		[0x7E3CB3 + X] = A;
+		A = [0x7E3C73 + X];
+		[0x26] = A;
+		A = [0x7E3CB3 + X];
+		[0x28] = A;
+		A = [0x1AA1];
+		[0x2A] = A;
+		A = [0x1AA3];
+		[0x2C] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L80860D();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2E];
+		[0x7E3C73 + X] = A;
+		A = [0x30];
+		[0x7E3CB3 + X] = A;
+		return this.L81AAA5();
+	}
+
+	public void L81AA98()
+	{
+		temp = A - 0x8000;
+
+		if (Z == 1)
+			return this.L81AAA5();
+
+		A = [0x7E3CB3 + X];
+		[0x7E3C73 + X] = A;
+	}
+
+	public void L81AAA5()
+	{
+		X++;
+		X++;
+		Y--;
+
+		if (Z == 1)
+			return this.L81AAAD();
+
+		return this.L81A8BF();
+	}
+
+	public void L81AAAD()
+	{
+		X = 0x0000;
+	}
+
+	public void L81AAB0()
+	{
+		A = [0x7E3DC3 + X];
+		Stack.Push(A);
+		A = [0x7E40C3 + X];
+		[0x7E3DC3 + X] = A;
+		A = Stack.Pop();
+		[0x7E40C3 + X] = A;
+		A = [0x7E3DC3 + X];
+		[0x26] = A;
+		A = [0x7E40C3 + X];
+		[0x28] = A;
+		A = [0x1AA1];
+		[0x2A] = A;
+		A = [0x1AA3];
+		[0x2C] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L80860D();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x2E];
+		[0x7E3DC3 + X] = A;
+		A = [0x30];
+		[0x7E40C3 + X] = A;
+		X++;
+		X++;
+		temp = X - 0x0080;
+
+		if (Z == 1)
+			return this.L81AAF6();
+
+		return this.L81AAB0();
+	}
+
+	public void L81AAF6()
+	{
+		return;
+	}
+
+	public void L81AAF7()
+	{
+		Stack.Push(X);
+		A = [0x0381];
+		A <<= 1;
+		C = 0;
+		A += [0x0381] + C;
+		X = A;
+		A = [0xAB2F + X];
+		[0x01] = A;
+		A = [0xAB2E + X];
+		[0x00] = A;
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L81AB0D()
+	{
+		Stack.Push(X);
+		A = [0x0381];
+		A <<= 1;
+		C = 0;
+		A += [0x0381] + C;
+		X = A;
+		A = [0xAB38 + X];
+		[0x01] = A;
+		A = [0xAB37 + X];
+		[0x00] = A;
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L81AB23()
+	{
+		A = 0x8100;
+		[0x01] = A;
+		A = 0xACE1;
+		[0x00] = A;
+		return;
+	}
+
+	public void L81AB40()
+	{
+		Stack.Push(X);
+		A = [0x14D6];
+		A <<= 1;
+		C = 0;
+		A += [0x14D6] + C;
+		X = A;
+		A = [0x81AB89 + X];
+		[0x01] = A;
+		A = [0x81AB88 + X];
+		[0x00] = A;
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L81AB70()
+	{
+		Stack.Push(X);
+		A = [0x14D6];
+		A <<= 1;
+		C = 0;
+		A += [0x14D6] + C;
+		X = A;
+		A = [0x81ABEF + X];
+		[0x01] = A;
+		A = [0x81ABEE + X];
+		[0x00] = A;
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L81E739()
+	{
+		Stack.Push(B);
+		this.L81E741();
+		B = Stack.Pop();
+		return this.L81E765();
+	}
+
+	public void L81E741()
+	{
+		A = [0x14D6];
+		temp = A - 0x0011;
+
+		if (N == 1)
+			return this.L81E74B();
+
+	}
+
+	public void L81E749()
+	{
+		return this.L81E749();
+	}
+
+	public void L81E74B()
+	{
+		A <<= 1;
+		A += [0x14D6] + C;
+		X = A;
+		A = [0x81E76D + X];
+		[0x0F] = A;
+		P |= 0x20;
+		A = [0x81E76F + X];
+		[0x11] = A;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		return [[0x000F]]();    //24-Bit Address
+	}
+
+	public void L81E765()
+	{
+		this.L838000();
+		return this.L80A0ED();
+	}
+
 	public void L81E7A7()
 	{
 		Stack.Push(B);
@@ -24835,6 +13663,53 @@ public class SnesRom
 	}
 
 	public void L81E7D3()
+	{
+		return;
+	}
+
+	public void L81E807()
+	{
+		A = [0x150C];
+		A &= 0xDFFF;
+		[0x150C] = A;
+		Stack.Push(B);
+		this.L81E818();
+		B = Stack.Pop();
+		return this.L81E83C();
+	}
+
+	public void L81E818()
+	{
+		A = [0x14D6];
+		temp = A - 0x0011;
+
+		if (N == 1)
+			return this.L81E822();
+
+	}
+
+	public void L81E820()
+	{
+		return this.L81E820();
+	}
+
+	public void L81E822()
+	{
+		A <<= 1;
+		A += [0x14D6] + C;
+		X = A;
+		A = [0x81E83D + X];
+		[0x0F] = A;
+		P |= 0x20;
+		A = [0x81E83F + X];
+		[0x11] = A;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		return [[0x000F]]();    //24-Bit Address
+	}
+
+	public void L81E83C()
 	{
 		return;
 	}
@@ -25089,6 +13964,51 @@ public class SnesRom
 
 	public void L81EA80()
 	{
+		return;
+	}
+
+	public void L81EAB4()
+	{
+		Stack.Push(B);
+		this.L81EABC();
+		B = Stack.Pop();
+		return this.L81EAE0();
+	}
+
+	public void L81EABC()
+	{
+		A = [0x14D6];
+		temp = A - 0x0011;
+
+		if (N == 1)
+			return this.L81EAC6();
+
+	}
+
+	public void L81EAC4()
+	{
+		return this.L81EAC4();
+	}
+
+	public void L81EAC6()
+	{
+		A <<= 1;
+		A += [0x14D6] + C;
+		X = A;
+		A = [0x81EAE5 + X];
+		[0x0F] = A;
+		P |= 0x20;
+		A = [0x81EAE7 + X];
+		[0x11] = A;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		return [[0x000F]]();    //24-Bit Address
+	}
+
+	public void L81EAE0()
+	{
+		this.L80F159();
 		return;
 	}
 
@@ -25403,6 +14323,211 @@ public class SnesRom
 		return;
 	}
 
+	public void L81F437()
+	{
+		Stack.Push(A);
+		Stack.Push(X);
+		Stack.Push(Y);
+		Y = A;
+		A = [0x1B41];
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L81F454();
+
+		A = Y;
+		temp = A - 0x0004;
+
+		if (N == 1)
+			return this.L81F44C();
+
+		A = 0x0003;
+	}
+
+	public void L81F44C()
+	{
+		temp = A - [0x150E];
+
+		if (C == 0)
+			return this.L81F454();
+
+		[0x150E] = A;
+	}
+
+	public void L81F454()
+	{
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = Stack.Pop();
+		return;
+	}
+
+	public void L828000()
+	{
+		Stack.Push(P);
+		P &= ~0x30;
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0xB4];
+		A <<= 1;
+		X = A;
+		A = [0x8A2A + X];
+		C = 0;
+		A += 0x8A2A + C;
+		Y = A;
+		A = [0x0000 + Y];
+
+		if (N == 0)
+			return this.L82802A();
+
+		A = 0x8200;
+		[0x01] = A;
+		Y++;
+		Y++;
+		[0x00] = Y;
+		this.L828027();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L828027()
+	{
+		return [[0x0000]]();    //24-Bit Address
+	}
+
+	public void L82802A()
+	{
+		[0xA1] = A;
+		A = [0xA6];
+		A >>= 1;
+		A >>= 1;
+		[0x9E] = A;
+		temp = A - 0x0080;
+
+		if (C == 1)
+			return this.L828054();
+
+		C = 0;
+		A += [0xA1] + C;
+		temp = A - 0x0080;
+
+		if (C == 1)
+			return this.L828045();
+
+		A <<= 1;
+		A <<= 1;
+		[0xA6] = A;
+		return this.L828057();
+	}
+
+	public void L828045()
+	{
+		A = 0x0080;
+		C = 1;
+		A -= [0x9E] - !C;
+		[0xA1] = A;
+		A = 0x0200;
+		[0xA6] = A;
+		return this.L828057();
+	}
+
+	public void L828054()
+	{
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L828057()
+	{
+		A = [0x9E];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		Y++;
+		Y++;
+	}
+
+	public void L82805E()
+	{
+		A = [0x0000 + Y];
+
+		if (N == 1)
+			return this.L82807C();
+
+		C = 0;
+		A += [0xB0] + C;
+		[0x7800 + X] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L8280A1();
+
+		A = [0x82B6 + X];
+		[0x9E] = A;
+		A = [(0x9E)];
+		A |= [0x82B8 + X];
+		[(0x9E)] = A;
+		return this.L8280A1();
+	}
+
+	public void L82807C()
+	{
+		C = 0;
+		A += [0xB0] + C;
+		[0x7800 + X] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L828095();
+
+		A = [0x82B6 + X];
+		[0x9E] = A;
+		A = [(0x9E)];
+		A |= [0x84B8 + X];
+		[(0x9E)] = A;
+		return this.L8280A1();
+	}
+
+	public void L828095()
+	{
+		A = [0x82B6 + X];
+		[0x9E] = A;
+		A = [(0x9E)];
+		A |= [0x84B6 + X];
+		[(0x9E)] = A;
+	}
+
+	public void L8280A1()
+	{
+		A = [0x0002 + Y];
+		C = 0;
+		A += [0xB2] + C;
+		[0x7801 + X] = A;
+		A = [0x0003 + Y];
+		[0x7802 + X] = A;
+		Y++;
+		Y++;
+		Y++;
+		Y++;
+		Y++;
+		X++;
+		X++;
+		X++;
+		X++;
+		[0xA1]--;
+
+		if (Z == 0)
+			return this.L82805E();
+
+		[0xA6] = X;
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
 	public void L8280C2()
 	{
 		Stack.Push(P);
@@ -25538,6 +14663,573 @@ public class SnesRom
 
 		B = Stack.Pop();
 		P = Stack.Pop();
+		return;
+	}
+
+	public void L8286B6()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		P |= 0x30;
+		A = [0xA5];
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x30;
+		A = [0xB4];
+		A <<= 1;
+		Y = A;
+		A = [(0xA3) + Y];
+		C = 0;
+		A += [0xA3] + C;
+		Y = A;
+		A = [0x0000 + Y];
+
+		if (N == 0)
+			return this.L8286E8();
+
+		temp = A - 0xFFFE;
+
+		if (Z == 1)
+			return this.L8286DC();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L8286E2();
+
+		return this.L8286E8();
+	}
+
+	public void L8286DC()
+	{
+		this.L828875();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L8286E2()
+	{
+		this.L828927();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L8286E8()
+	{
+		[0xA1] = A;
+		A = [0xA6];
+		A >>= 1;
+		A >>= 1;
+		[0x9E] = A;
+		temp = A - 0x0080;
+
+		if (C == 1)
+			return this.L828712();
+
+		C = 0;
+		A += [0xA1] + C;
+		temp = A - 0x0080;
+
+		if (C == 1)
+			return this.L828703();
+
+		A <<= 1;
+		A <<= 1;
+		[0xA6] = A;
+		return this.L828715();
+	}
+
+	public void L828703()
+	{
+		A = 0x0080;
+		C = 1;
+		A -= [0x9E] - !C;
+		[0xA1] = A;
+		A = 0x0200;
+		[0xA6] = A;
+		return this.L828715();
+	}
+
+	public void L828712()
+	{
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L828715()
+	{
+		A = [0x007FF6];
+		A &= 0xFF00;
+		A |= [0x9E];
+		X = A;
+		Y++;
+		Y++;
+	}
+
+	public void L828721()
+	{
+		A = X;
+		[0x007FF6] = A;
+		A = [0x0000 + Y];
+
+		if (N == 0)
+			return this.L82873B();
+
+		C = 0;
+		A += [0xB0] + C;
+		[0x007FF0] = A;
+		A |= 0x0200;
+		[0x007FF3] = A;
+		return this.L828749();
+	}
+
+	public void L82873B()
+	{
+		C = 0;
+		A += [0xB0] + C;
+		[0x007FF0] = A;
+		A &= 0xFDFF;
+		[0x007FF3] = A;
+	}
+
+	public void L828749()
+	{
+		C = 0;
+		A = [0x0002 + Y];
+		A += [0xB2] + C;
+		[0x007FF1] = A;
+		A = [0x0003 + Y];
+		A &= [0xA8];
+		A |= [0xAA];
+		[0x007FF2] = A;
+		C = 0;
+		A = Y;
+		A += 0x0005 + C;
+		Y = A;
+		X++;
+		[0xA1]--;
+
+		if (Z == 0)
+			return this.L828721();
+
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L82876C()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		P |= 0x30;
+		A = [0xA5];
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x30;
+		A = [0xB4];
+		A <<= 1;
+		Y = A;
+		A = [(0xA3) + Y];
+		C = 0;
+		A += [0xA3] + C;
+		Y = A;
+		A = [0x0000 + Y];
+
+		if (N == 0)
+			return this.L82879E();
+
+		temp = A - 0xFFFE;
+
+		if (Z == 1)
+			return this.L828792();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L828798();
+
+		return this.L82879E();
+	}
+
+	public void L828792()
+	{
+		this.L828875();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L828798()
+	{
+		this.L828927();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L82879E()
+	{
+		[0xA1] = A;
+		A = [0xA6];
+		A >>= 1;
+		A >>= 1;
+		[0x9E] = A;
+		temp = A - 0x0080;
+
+		if (C == 1)
+			return this.L8287C8();
+
+		C = 0;
+		A += [0xA1] + C;
+		temp = A - 0x0080;
+
+		if (C == 1)
+			return this.L8287B9();
+
+		A <<= 1;
+		A <<= 1;
+		[0xA6] = A;
+		return this.L8287CB();
+	}
+
+	public void L8287B9()
+	{
+		A = 0x0080;
+		C = 1;
+		A -= [0x9E] - !C;
+		[0xA1] = A;
+		A = 0x0200;
+		[0xA6] = A;
+		return this.L8287CB();
+	}
+
+	public void L8287C8()
+	{
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L8287CB()
+	{
+		A = [0x007FF6];
+		A &= 0xFF00;
+		A |= [0x9E];
+		X = A;
+		Y++;
+		Y++;
+	}
+
+	public void L8287D7()
+	{
+		A = X;
+		[0x007FF6] = A;
+		A = [0x0000 + Y];
+
+		if (N == 0)
+			return this.L8287F1();
+
+		C = 0;
+		A += [0xB0] + C;
+		[0x007FF0] = A;
+		A |= 0x0200;
+		[0x007FF3] = A;
+		return this.L8287FF();
+	}
+
+	public void L8287F1()
+	{
+		C = 0;
+		A += [0xB0] + C;
+		[0x007FF0] = A;
+		A &= 0xFDFF;
+		[0x007FF3] = A;
+	}
+
+	public void L8287FF()
+	{
+		A = [0x0002 + Y];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L82880C();
+
+		A &= 0x007F;
+		return this.L82880F();
+	}
+
+	public void L82880C()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L82880F()
+	{
+		C = 0;
+		A += [0xB2] + C;
+		[0x007FF1] = A;
+		C = 0;
+		A += 0x0010 + C;
+		temp = A - 0x0100;
+
+		if (C == 0)
+			return this.L828826();
+
+		A = 0x00F0;
+		[0x007FF1] = A;
+	}
+
+	public void L828826()
+	{
+		A = [0x0003 + Y];
+		A &= [0xA8];
+		A |= [0xAA];
+		[0x007FF2] = A;
+		A = Y;
+		C = 0;
+		A += 0x0005 + C;
+		Y = A;
+		X++;
+		[0xA1]--;
+
+		if (Z == 1)
+			return this.L82883F();
+
+		return this.L8287D7();
+	}
+
+	public void L82883F()
+	{
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L828875()
+	{
+		this.L828982();
+		A = [0xB4];
+		temp = A - [0xB6];
+
+		if (Z == 0)
+			return this.L828881();
+
+		return this.L82891F();
+	}
+
+	public void L828881()
+	{
+		[0xB6] = A;
+		A = [0xB8];
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L82888D();
+
+		return this.L82891E();
+	}
+
+	public void L82888D()
+	{
+		A = [0xBA];
+		temp = A & [0xB8];[0xB8] |= A;
+		Y++;
+		Y++;
+	}
+
+	public void L828893()
+	{
+		A = [0x0000 + Y];
+		temp = A - 0xFFFF;
+
+		if (Z == 0)
+			return this.L82889E();
+
+		return this.L82891E();
+	}
+
+	public void L82889E()
+	{
+		X = A;
+		A = [0x0002 + Y];
+		[0xA1] = A;
+		Y++;
+		Y++;
+		Y++;
+		Y++;
+		temp = A & 0x0003;
+
+		if (Z == 1)
+			return this.L8288E9();
+
+		temp = A & 0x0001;
+
+		if (Z == 1)
+			return this.L8288C4();
+
+	}
+
+	public void L8288B2()
+	{
+		A = [0x0000 + Y];
+		[0x7E0000 + X] = A;
+		X++;
+		X++;
+		Y++;
+		Y++;
+		[0xA1]--;
+
+		if (Z == 0)
+			return this.L8288B2();
+
+		return this.L828893();
+	}
+
+	public void L8288C4()
+	{
+		A = [0x0000 + Y];
+		[0x7E0000 + X] = A;
+		A = [0x0002 + Y];
+		[0x7E0002 + X] = A;
+		A = X;
+		C = 0;
+		A += 0x0004 + C;
+		X = A;
+		A = Y;
+		C = 0;
+		A += 0x0004 + C;
+		Y = A;
+		A = [0xA1];
+		A--;
+		A--;
+		[0xA1] = A;
+
+		if (Z == 0)
+			return this.L8288C4();
+
+		return this.L828893();
+	}
+
+	public void L8288E9()
+	{
+		A = [0x0000 + Y];
+		[0x7E0000 + X] = A;
+		A = [0x0002 + Y];
+		[0x7E0002 + X] = A;
+		A = [0x0004 + Y];
+		[0x7E0004 + X] = A;
+		A = [0x0006 + Y];
+		[0x7E0006 + X] = A;
+		A = X;
+		C = 0;
+		A += 0x0008 + C;
+		X = A;
+		A = Y;
+		C = 0;
+		A += 0x0008 + C;
+		Y = A;
+		A = [0xA1];
+		C = 1;
+		A -= 0x0004 - !C;
+		[0xA1] = A;
+
+		if (Z == 0)
+			return this.L8288E9();
+
+		return this.L828893();
+	}
+
+	public void L82891E()
+	{
+		return;
+	}
+
+	public void L82891F()
+	{
+		A = [0xBA];
+		A &= 0x0C00;
+		temp = A & [0xB8];[0xB8] |= A;
+		return;
+	}
+
+	public void L828927()
+	{
+		this.L828982();
+		A = [0xB4];
+		temp = A - [0xB6];
+
+		if (Z == 0)
+			return this.L828933();
+
+		return this.L82897A();
+	}
+
+	public void L828933()
+	{
+		[0xB6] = A;
+		A = [0xB8];
+		temp = A & 0x3200;
+
+		if (Z == 0)
+			return this.L828979();
+
+		A = [0xBC];
+		temp = A & [0xB8];[0xB8] |= A;
+		A = [0x0152];
+		X = A;
+		C = 0;
+		A += 0x0009 + C;
+		[0x0152] = A;
+		A = [0x0002 + Y];
+		[0x0155 + X] = A;
+		A = [0x0006 + Y];
+		[0x0159 + X] = A;
+		A = [0x0008 + Y];
+		[0x015B + X] = A;
+		A = [0x000A + Y];
+		[0x015D + X] = A;
+		A = Y;
+		C = 0;
+		A += 0x000C + C;
+		[0x0156 + X] = A;
+		P |= 0x20;
+		Stack.Push(B);
+		A = Stack.Pop();
+		[0x0158 + X] = A;
+		A = 0x01;
+		[0x0154] = A;
+		P &= ~0x20;
+	}
+
+	public void L828979()
+	{
+		return;
+	}
+
+	public void L82897A()
+	{
+		A = [0xBC];
+		A &= 0x0C00;
+		temp = A & [0xB8];[0xB8] |= A;
+		return;
+	}
+
+	public void L828982()
+	{
+		A = [0xB8];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L82898D();
+
+		this.L82898E();
+	}
+
+	public void L82898D()
+	{
 		return;
 	}
 
@@ -26001,7 +15693,7 @@ public class SnesRom
 	{
 		A <<= 1;
 		X = A;
-		Cpu.JSR((0x81D6 + X));
+		return [(0x81D6 + X)]();
 	}
 
 	public void L8381A8()
@@ -26040,6 +15732,142 @@ public class SnesRom
 		return;
 	}
 
+	public void L838248()
+	{
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P |= 0x20;
+		A = 0x00;
+		[0x19DB + Y] = A;
+		[0x1A0B + Y] = A;
+		P &= ~0x20;
+		A = [0x8140 + Y];
+		A &= 0x00FF;
+		X = A;
+		A = 0x9000;
+		[0x19EB + X] = A;
+		A = [0x8150 + Y];
+		A &= 0x00FF;
+		X = A;
+		A = [0x01];
+		[0x19AC + X] = A;
+		A = [0x00];
+		[0x19AB + X] = A;
+		A = 0x0000;
+		[0x1A1C + X] = A;
+		A = 0x14F4;
+		[0x1A1B + X] = A;
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L838316()
+	{
+		A = 0x0000;
+		[0x1514] = A;
+		A = 0xD000;
+		temp = A & [0x19ED];[0x19ED] &= ~A;
+		temp = A & [0x19EF];[0x19EF] &= ~A;
+		temp = A & [0x19F1];[0x19F1] &= ~A;
+		temp = A & [0x19F3];[0x19F3] &= ~A;
+		temp = A & [0x19F5];[0x19F5] &= ~A;
+		temp = A & [0x19F7];[0x19F7] &= ~A;
+		temp = A & [0x19F9];[0x19F9] &= ~A;
+		temp = A & [0x19FB];[0x19FB] &= ~A;
+		temp = A & [0x19FD];[0x19FD] &= ~A;
+		temp = A & [0x19FF];[0x19FF] &= ~A;
+		temp = A & [0x1A01];[0x1A01] &= ~A;
+		temp = A & [0x1A03];[0x1A03] &= ~A;
+		temp = A & [0x1A05];[0x1A05] &= ~A;
+		temp = A & [0x1A07];[0x1A07] &= ~A;
+		temp = A & [0x1A09];[0x1A09] &= ~A;
+		A = 0x0000;
+		[0x7E3963] = A;
+		[0x7E3965] = A;
+		[0x7E3967] = A;
+		[0x7E3969] = A;
+		[0x7E396B] = A;
+		[0x7E396D] = A;
+		[0x7E396F] = A;
+		[0x7E3971] = A;
+		[0x7E3973] = A;
+		[0x7E3975] = A;
+		[0x7E3977] = A;
+		[0x7E3979] = A;
+		[0x7E397B] = A;
+		[0x7E397D] = A;
+		[0x7E397F] = A;
+		[0x7E3981] = A;
+		A = 0x0010;
+		temp = A & [0x1976];[0x1976] &= ~A;
+		A = 0x0008;
+		temp = A & [0x150C];[0x150C] &= ~A;
+		A = 0xFFFF;
+		[0x7E5CCC] = A;
+		return;
+	}
+
+	public void L8383F1()
+	{
+		P |= 0x30;
+		Y = 0x02;
+		A = [[0x9B] + Y];
+		[0x97] = A;
+		Y = 0x05;
+		A = [[0x9B] + Y];
+		[0x9A] = A;
+		P &= ~0x30;
+		Y = 0x0003;
+		A = [[0x9B] + Y];
+		[0x98] = A;
+		A = [[0x98]];
+		A <<= 1;
+		C = 0;
+		A += [[0x9B]] +C;
+		[0x95] = A;
+		A = [[0x95]];
+		return;
+	}
+
+	public void L838413()
+	{
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x9C] = A;
+		A = [0x8F];
+		[0x9B] = A;
+		return;
+	}
+
+	public void L838422()
+	{
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		[0x9B]++;
+		Stack.Push(P);
+		Stack.Push(B);
+		P |= 0x20;
+		A = [[0x9B]];
+		[0x91] = A;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		this.L83843F();
+		B = Stack.Pop();
+		P = Stack.Pop();
+		[0x9B]++;
+		return;
+	}
+
+	public void L83843F()
+	{
+		return [[0x008F]]();    //24-Bit Address
+	}
+
 	public void L838442()
 	{
 		X = [0x1A7F];
@@ -26058,6 +15886,2095 @@ public class SnesRom
 		[0x19DB + X] = A;
 		P &= ~0x20;
 		[0x9B]++;
+		return;
+	}
+
+	public void L838467()
+	{
+		[0x9B]++;
+		X = [0x1A7F];
+		A = [[0x9B]];
+		[0x1A1B + X] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x1A1C + X] = A;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L83847D()
+	{
+		[0x9B]++;
+		X = [0x1A7F];
+		A = [0x1A1B + X];
+		[0x8F] = A;
+		A = [0x1A1C + X];
+		[0x90] = A;
+		A = [[0x9B]];
+		[[]] = A;
+		[0xE69BE6] = A;
+		Y = X;
+		X = [0x1A7B];
+		P |= 0x20;
+		A = [[0x9B]];
+		[0x19DB + X] = A;
+		P &= ~0x20;
+		[0x9B]++;
+		return;
+	}
+
+	public void L8384A3()
+	{
+		[0x9B]++;
+		X = [0x1A7B];
+		P |= 0x20;
+		A = [[0x9B]];
+		[0x19DB + X] = A;
+		P &= ~0x20;
+		[0x9B]++;
+		return;
+	}
+
+	public void L8384B4()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		X = [0x1A7B];
+		P |= 0x20;
+		A = [[0x8F]];
+		[0x19DB + X] = A;
+		P &= ~0x20;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L8384D1()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		Y = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x00] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x01] = A;
+		this.L838248();
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L8384EE()
+	{
+		X = [0x1A7D];
+		A = [0x19EB + X];
+		A &= 0x2FFF;
+		[0x19EB + X] = A;
+		return;
+	}
+
+	public void L8384FB()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		X = A;
+		A = [0x838140 + X];
+		A &= 0x00FF;
+		X = A;
+		A = [0x19EB + X];
+		A &= 0x2FFF;
+		[0x19EB + X] = A;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838517()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		X = A;
+		A = [0x838140 + X];
+		A &= 0x00FF;
+		X = A;
+		A = [0x19EB + X];
+		A ^= 0x8000;
+		[0x19EB + X] = A;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838533()
+	{
+		[0x9B]++;
+		X = [0x1A7D];
+		A = [0x19EB + X];
+		A |= 0x4000;
+		[0x19EB + X] = A;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		X = A;
+		A = [0x19EB];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L838555();
+
+		X--;
+
+		if (Z == 0)
+			return this.L838555();
+
+		return this.L838636();
+	}
+
+	public void L838555()
+	{
+		A = [0x19ED];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L838563();
+
+		X--;
+
+		if (Z == 0)
+			return this.L838563();
+
+		return this.L838636();
+	}
+
+	public void L838563()
+	{
+		A = [0x19EF];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L838571();
+
+		X--;
+
+		if (Z == 0)
+			return this.L838571();
+
+		return this.L838636();
+	}
+
+	public void L838571()
+	{
+		A = [0x19F1];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L83857F();
+
+		X--;
+
+		if (Z == 0)
+			return this.L83857F();
+
+		return this.L838636();
+	}
+
+	public void L83857F()
+	{
+		A = [0x19F3];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L83858D();
+
+		X--;
+
+		if (Z == 0)
+			return this.L83858D();
+
+		return this.L838636();
+	}
+
+	public void L83858D()
+	{
+		A = [0x19F5];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L83859B();
+
+		X--;
+
+		if (Z == 0)
+			return this.L83859B();
+
+		return this.L838636();
+	}
+
+	public void L83859B()
+	{
+		A = [0x19F7];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8385A9();
+
+		X--;
+
+		if (Z == 0)
+			return this.L8385A9();
+
+		return this.L838636();
+	}
+
+	public void L8385A9()
+	{
+		A = [0x19F9];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8385B7();
+
+		X--;
+
+		if (Z == 0)
+			return this.L8385B7();
+
+		return this.L838636();
+	}
+
+	public void L8385B7()
+	{
+		A = [0x19FB];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8385C5();
+
+		X--;
+
+		if (Z == 0)
+			return this.L8385C5();
+
+		return this.L838636();
+	}
+
+	public void L8385C5()
+	{
+		A = [0x19FD];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8385D3();
+
+		X--;
+
+		if (Z == 0)
+			return this.L8385D3();
+
+		return this.L838636();
+	}
+
+	public void L8385D3()
+	{
+		A = [0x19FF];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8385E1();
+
+		X--;
+
+		if (Z == 0)
+			return this.L8385E1();
+
+		return this.L838636();
+	}
+
+	public void L8385E1()
+	{
+		A = [0x1A01];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8385EF();
+
+		X--;
+
+		if (Z == 0)
+			return this.L8385EF();
+
+		return this.L838636();
+	}
+
+	public void L8385EF()
+	{
+		A = [0x1A03];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8385FD();
+
+		X--;
+
+		if (Z == 0)
+			return this.L8385FD();
+
+		return this.L838636();
+	}
+
+	public void L8385FD()
+	{
+		A = [0x1A05];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L83860B();
+
+		X--;
+
+		if (Z == 0)
+			return this.L83860B();
+
+		return this.L838636();
+	}
+
+	public void L83860B()
+	{
+		A = [0x1A07];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L838619();
+
+		X--;
+
+		if (Z == 0)
+			return this.L838619();
+
+		return this.L838636();
+	}
+
+	public void L838619()
+	{
+		A = [0x1A09];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L838627();
+
+		X--;
+
+		if (Z == 0)
+			return this.L838627();
+
+		return this.L838636();
+	}
+
+	public void L838627()
+	{
+		[0x9B]--;
+		X = [0x1A7B];
+		P |= 0x20;
+		A = 0x01;
+		[0x19DB + X] = A;
+		P &= ~0x20;
+		return;
+	}
+
+	public void L838636()
+	{
+		A = [0x19EB];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L83864A();
+
+		A &= 0xBFFF;
+		[0x19EB] = A;
+		[0x19AB]++;
+		[0x19AB]++;
+	}
+
+	public void L83864A()
+	{
+		A = [0x19ED];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L83865E();
+
+		A &= 0xBFFF;
+		[0x19ED] = A;
+		[0x19AE]++;
+		[0x19AE]++;
+	}
+
+	public void L83865E()
+	{
+		A = [0x19EF];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L838672();
+
+		A &= 0xBFFF;
+		[0x19EF] = A;
+		[0x19B1]++;
+		[0x19B1]++;
+	}
+
+	public void L838672()
+	{
+		A = [0x19F1];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L838686();
+
+		A &= 0xBFFF;
+		[0x19F1] = A;
+		[0x19B4]++;
+		[0x19B4]++;
+	}
+
+	public void L838686()
+	{
+		A = [0x19F3];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L83869A();
+
+		A &= 0xBFFF;
+		[0x19F3] = A;
+		[0x19B7]++;
+		[0x19B7]++;
+	}
+
+	public void L83869A()
+	{
+		A = [0x19F5];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8386AE();
+
+		A &= 0xBFFF;
+		[0x19F5] = A;
+		[0x19BA]++;
+		[0x19BA]++;
+	}
+
+	public void L8386AE()
+	{
+		A = [0x19F7];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8386C2();
+
+		A &= 0xBFFF;
+		[0x19F7] = A;
+		[0x19BD]++;
+		[0x19BD]++;
+	}
+
+	public void L8386C2()
+	{
+		A = [0x19F9];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8386D6();
+
+		A &= 0xBFFF;
+		[0x19F9] = A;
+		[0x19C0]++;
+		[0x19C0]++;
+	}
+
+	public void L8386D6()
+	{
+		A = [0x19FB];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8386EA();
+
+		A &= 0xBFFF;
+		[0x19FB] = A;
+		[0x19C3]++;
+		[0x19C3]++;
+	}
+
+	public void L8386EA()
+	{
+		A = [0x19FD];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L8386FE();
+
+		A &= 0xBFFF;
+		[0x19FD] = A;
+		[0x19C6]++;
+		[0x19C6]++;
+	}
+
+	public void L8386FE()
+	{
+		A = [0x19FF];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L838712();
+
+		A &= 0xBFFF;
+		[0x19FF] = A;
+		[0x19C9]++;
+		[0x19C9]++;
+	}
+
+	public void L838712()
+	{
+		A = [0x1A01];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L838726();
+
+		A &= 0xBFFF;
+		[0x1A01] = A;
+		[0x19CC]++;
+		[0x19CC]++;
+	}
+
+	public void L838726()
+	{
+		A = [0x1A03];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L83873A();
+
+		A &= 0xBFFF;
+		[0x1A03] = A;
+		[0x19CF]++;
+		[0x19CF]++;
+	}
+
+	public void L83873A()
+	{
+		A = [0x1A05];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L83874E();
+
+		A &= 0xBFFF;
+		[0x1A05] = A;
+		[0x19D2]++;
+		[0x19D2]++;
+	}
+
+	public void L83874E()
+	{
+		A = [0x1A07];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L838762();
+
+		A &= 0xBFFF;
+		[0x1A07] = A;
+		[0x19D5]++;
+		[0x19D5]++;
+	}
+
+	public void L838762()
+	{
+		A = [0x1A09];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L838776();
+
+		A &= 0xBFFF;
+		[0x1A09] = A;
+		[0x19D8]++;
+		[0x19D8]++;
+	}
+
+	public void L838776()
+	{
+		[0x9B]++;
+		return;
+	}
+
+	public void L838779()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		X = A;
+		A = [0x838140 + X];
+		A &= 0x00FF;
+		X = A;
+		A = [0x19EB + X];
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L83879A();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L83879A()
+	{
+		[0x9B]++;
+		this.L838413();
+		return;
+	}
+
+	public void L8387A0()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		X = A;
+		A = [0x838140 + X];
+		A &= 0x00FF;
+		X = A;
+		A = [0x19EB + X];
+		temp = A & 0x8000;
+
+		if (Z == 1)
+			return this.L8387C1();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L8387C1()
+	{
+		[0x9B]++;
+		this.L838413();
+		return;
+	}
+
+	public void L8387C7()
+	{
+		[0x9B]++;
+		this.L838413();
+		return;
+	}
+
+	public void L8387CD()
+	{
+		[0x9B]++;
+		this.L838422();
+		return;
+	}
+
+	public void L8387D3()
+	{
+		Y = 0x0004;
+		X = [0x1A7B];
+		P |= 0x20;
+		A = [[0x9B] + Y];
+		temp = A - [0x1A0B + X];
+
+		if (Z == 1)
+			return this.L8387FC();
+
+		[0x1A0B + X]++;
+		P |= 0x20;
+		A = 0x01;
+		[0x19DB + X] = A;
+		P &= ~0x20;
+		[0x9B]++;
+		this.L838422();
+		[0x9B]--;
+		[0x9B]--;
+		[0x9B]--;
+		[0x9B]--;
+		return;
+	}
+
+	public void L8387FC()
+	{
+		P |= 0x20;
+		[0x1A0B + X] = 0;
+		P &= ~0x20;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L83880E()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		A = [[0x8F]];
+		A--;
+		[[]] = A;
+		[0xE60BD0] = A;
+		Y = X;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838834()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x8F]];
+		A--;
+		[[]] = A;
+		[0xD09BC7] = A;
+		Stack.Push(D);
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838860()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x8F]];
+		A++;
+		[[]] = A;
+		[0xD09BC7] = A;
+		Stack.Push(D);
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L83888C()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x8F]];
+		temp = A - [[0x9B]];
+
+		if (Z == 1)
+			return this.L8388AD();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L8388AD()
+	{
+		[0x9B]++;
+		[0x9B]++;
+		this.L838413();
+		return;
+	}
+
+	public void L8388B5()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x8F]];
+		temp = A - [[0x9B]];
+
+		if (Z == 0)
+			return this.L8388D6();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L8388D6()
+	{
+		[0x9B]++;
+		[0x9B]++;
+		this.L838413();
+		return;
+	}
+
+	public void L8388DE()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x8F]];
+		temp = A - [[0x9B]];
+
+		if (Z == 1)
+			return this.L8388F6();
+
+
+		if (N == 0)
+			return this.L838901();
+
+	}
+
+	public void L8388F6()
+	{
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838901()
+	{
+		[0x9B]++;
+		[0x9B]++;
+		this.L838413();
+		return;
+	}
+
+	public void L838909()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x8F]];
+		temp = A - [[0x9B]];
+
+		if (N == 0)
+			return this.L83892A();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L83892A()
+	{
+		[0x9B]++;
+		[0x9B]++;
+		this.L838413();
+		return;
+	}
+
+	public void L838932()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x8F]];
+		temp = A - [[0x9B]];
+
+		if (N == 1)
+			return this.L838953();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838953()
+	{
+		[0x9B]++;
+		[0x9B]++;
+		this.L838413();
+		return;
+	}
+
+	public void L83895B()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x8F]];
+		temp = A - [[0x9B]];
+
+		if (Z == 1)
+			return this.L83897E();
+
+
+		if (N == 1)
+			return this.L83897E();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L83897E()
+	{
+		[0x9B]++;
+		[0x9B]++;
+		this.L838413();
+		return;
+	}
+
+	public void L838986()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x9B]];
+		[[]] = A;
+		[0xE69BE6] = A;
+		Y = X;
+		return;
+	}
+
+	public void L83899F()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x92] = A;
+		A = [[0x8F]];
+		C = 0;
+		A += [0x92] + C;
+		[[]] = A;
+		[0xE69BE6] = A;
+		Y = X;
+		return;
+	}
+
+	public void L8389BF()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x92] = A;
+		A = [[0x8F]];
+		C = 1;
+		A -= [0x92] - !C;
+		[[]] = A;
+		[0xE69BE6] = A;
+		Y = X;
+		return;
+	}
+
+	public void L8389DF()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x92] = A;
+		A = [[0x8F]];
+		A &= [0x92];
+		[[]] = A;
+		[0xE69BE6] = A;
+		Y = X;
+		return;
+	}
+
+	public void L8389FE()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x92] = A;
+		A = [[0x8F]];
+		A |= [0x92];
+		[[]] = A;
+		[0xE69BE6] = A;
+		Y = X;
+		return;
+	}
+
+	public void L838A1D()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x92] = A;
+		A = [[0x8F]];
+		A ^= [0x92];
+		[[]] = A;
+		[0xE69BE6] = A;
+		Y = X;
+		return;
+	}
+
+	public void L838A3C()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x12] = A;
+		A = [[0x8F]];
+		temp = A & [0x12];
+
+		if (Z == 1)
+			return this.L838A61();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838A61()
+	{
+		[0x9B]++;
+		[0x9B]++;
+		this.L838413();
+		return;
+	}
+
+	public void L838A69()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x12] = A;
+		A = [[0x8F]];
+		temp = A & [0x12];
+
+		if (Z == 0)
+			return this.L838A8E();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838A8E()
+	{
+		[0x9B]++;
+		[0x9B]++;
+		this.L838413();
+		return;
+	}
+
+	public void L838A96()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		this.L8383F1();
+		[[]] = A;
+		[0x189BA5] = A;
+		A += 0x0006 + C;
+		[0x9B] = A;
+		return;
+	}
+
+	public void L838AB4()
+	{
+		[0x9B]++;
+		this.L8383F1();
+		X = [0x1A7B];
+		P |= 0x20;
+		[0x19DB + X] = A;
+		P &= ~0x20;
+		A = [0x9B];
+		C = 0;
+		A += 0x0006 + C;
+		[0x9B] = A;
+		return;
+	}
+
+	public void L838ACC()
+	{
+		A = [0x9B];
+		C = 0;
+		A += 0x0004 + C;
+		[0x9B] = A;
+		this.L8383F1();
+		X = [0x1A7B];
+		P |= 0x20;
+		temp = A - [0x1A0B + X];
+
+		if (Z == 1)
+			return this.L838B01();
+
+		[0x1A0B + X]++;
+		P |= 0x20;
+		A = 0x01;
+		[0x19DB + X] = A;
+		P &= ~0x20;
+		A = [0x9B];
+		C = 0;
+		A += 0xFFFD + C;
+		[0x9B] = A;
+		this.L838422();
+		A = [0x9B];
+		C = 0;
+		A += 0xFFFC + C;
+		[0x9B] = A;
+		return;
+	}
+
+	public void L838B01()
+	{
+		P |= 0x20;
+		[0x1A0B + X] = 0;
+		P &= ~0x20;
+		A = [0x9B];
+		C = 0;
+		A += 0x0006 + C;
+		[0x9B] = A;
+		return;
+	}
+
+	public void L838B11()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		[0x12] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		[0x14] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x16] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		[0x18] = A;
+		this.L83944A();
+		[0x9B]++;
+		return;
+	}
+
+	public void L838B3B()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		[0x12] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		[0x14] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x16] = A;
+		[0x9B]++;
+		[0x9B]++;
+		this.L8383F1();
+		[0x18] = A;
+		this.L83944A();
+		A = [0x9B];
+		C = 0;
+		A += 0x0006 + C;
+		[0x9B] = A;
+		return;
+	}
+
+	public void L838B69()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		[0x12] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		[0x14] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x16] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		A <<= 1;
+		Y = A;
+		this.L83952E();
+		[0x9B]++;
+		return;
+	}
+
+	public void L838B93()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		A <<= 1;
+		Y = A;
+		this.L83954F();
+		[0x9B]++;
+		return;
+	}
+
+	public void L838BA3()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		this.L8094E2();
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838BB0()
+	{
+		[0x9B]++;
+		A = [0x14D8];
+		this.L809977();
+		A |= [[0x9B]];
+		this.L809492();
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838BC4()
+	{
+		[0x9B]++;
+		A = [0x14D8];
+		this.L809977();
+		A |= [[0x9B]];
+		this.L8094BA();
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838BD8()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		C = 1;
+		A = [0x1826 + X];
+		A -= 0x0000 - !C;
+		[0x88] = A;
+		A = [0x1866 + X];
+		A -= 0x0000 - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L838BFA();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L838BFA()
+	{
+
+		if (N == 1)
+			return this.L838C05();
+
+		A = [0x1726 + X];
+		A |= 0x8000;
+		[0x1726 + X] = A;
+	}
+
+	public void L838C05()
+	{
+		[0x9B]++;
+		return;
+	}
+
+	public void L838C08()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		C = 1;
+		A = [0x1826 + X];
+		A -= 0x0000 - !C;
+		[0x88] = A;
+		A = [0x1866 + X];
+		A -= 0x0000 - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L838C2A();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L838C2A()
+	{
+
+		if (N == 1)
+			return this.L838C35();
+
+		A = [0x1726 + X];
+		A &= 0x7FFF;
+		[0x1726 + X] = A;
+	}
+
+	public void L838C35()
+	{
+		[0x9B]++;
+		return;
+	}
+
+	public void L838C38()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		this.L839170();
+		[0x9B]++;
+		return;
+	}
+
+	public void L838C48()
+	{
+		[0x9B]++;
+		X = [0x1A7F];
+		A = [[0x9B]];
+		[0x1A4B + X] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x1A4C + X] = A;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838C5E()
+	{
+		[0x9B]++;
+		X = [0x1A7F];
+		A = [0x1A4B + X];
+		[0x92] = A;
+		A = [0x1A4C + X];
+		[0x93] = A;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		A = [[0x92]];
+		[[]] = A;
+		[0x1A4BBD] = A;
+		A++;
+		A++;
+		[0x1A4B + X] = A;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838C88()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		[0x9B]++;
+		A = [0x1726 + X];
+		temp = A & 0x8000;
+
+		if (Z == 1)
+			return this.L838CA2();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838CA2()
+	{
+		this.L838413();
+		return;
+	}
+
+	public void L838CA6()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		[0x9B]++;
+		A = [0x1726 + X];
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L838CC0();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838CC0()
+	{
+		this.L838413();
+		return;
+	}
+
+	public void L838CC4()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		[0x9B]++;
+		C = 1;
+		A = [0x1826 + X];
+		A -= 0x0000 - !C;
+		[0x88] = A;
+		A = [0x1866 + X];
+		A -= 0x0000 - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L838CE8();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L838CE8()
+	{
+
+		if (N == 0)
+			return this.L838CF1();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838CF1()
+	{
+		this.L838413();
+		return;
+	}
+
+	public void L838CF5()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		[0x9B]++;
+		C = 1;
+		A = [0x1826 + X];
+		A -= 0x0000 - !C;
+		[0x88] = A;
+		A = [0x1866 + X];
+		A -= 0x0000 - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L838D19();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L838D19()
+	{
+
+		if (N == 1)
+			return this.L838D22();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838D22()
+	{
+		this.L838413();
+		return;
+	}
+
+	public void L838D26()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		[0x9B]++;
+		A = [0x1726 + X];
+		temp = A & 0x0003;
+
+		if (Z == 0)
+			return this.L838D40();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838D40()
+	{
+		this.L838413();
+		return;
+	}
+
+	public void L838D44()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		[0x9B]++;
+		A = [0x1726 + X];
+		temp = A & 0x0003;
+
+		if (Z == 1)
+			return this.L838D5E();
+
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838D5E()
+	{
+		this.L838413();
+		return;
+	}
+
+	public void L838D62()
+	{
+		[0x9B]++;
+		C = 1;
+		A = [0x14DE];
+		A -= 0x0000 - !C;
+		[0x88] = A;
+		A = [0x14E0];
+		A -= 0x0000 - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L838D7D();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L838D7D()
+	{
+
+		if (Z == 1)
+			return this.L838D86();
+
+
+		if (N == 0)
+			return this.L838D8B();
+
+		A = 0x0000;
+		return this.L838D90();
+	}
+
+	public void L838D86()
+	{
+		A = 0x0003;
+		return this.L838D90();
+	}
+
+	public void L838D8B()
+	{
+		A = 0x0006;
+		return this.L838D90();
+	}
+
+	public void L838D90()
+	{
+		C = 0;
+		A += [0x9B] + C;
+		[0x9B] = A;
+		this.L838413();
+		return;
+	}
+
+	public void L838D99()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		C = 1;
+		A = [0x14DE];
+		A -= 0x0000 - !C;
+		[0x88] = A;
+		A = [0x14E0];
+		A -= 0x0000 - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L838DC2();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L838DC2()
+	{
+
+		if (Z == 1)
+			return this.L838DC8();
+
+
+		if (N == 0)
+			return this.L838DF1();
+
+		return this.L838DE7();
+	}
+
+	public void L838DC8()
+	{
+		C = 1;
+		A = [0x14E2];
+		A -= 0x0000 - !C;
+		[0x88] = A;
+		A = [0x14E4];
+		A -= 0x0000 - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L838DE1();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L838DE1()
+	{
+
+		if (Z == 1)
+			return this.L838DEC();
+
+
+		if (N == 0)
+			return this.L838DF1();
+
+		return this.L838DE7();
+	}
+
+	public void L838DE7()
+	{
+		A = 0xFFFF;
+		return this.L838DF6();
+	}
+
+	public void L838DEC()
+	{
+		A = 0x0000;
+		return this.L838DF6();
+	}
+
+	public void L838DF1()
+	{
+		A = 0x0001;
+		return this.L838DF6();
+	}
+
+	public void L838DF6()
+	{
+		[[]] = A;
+		[0x9BE660] = A;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		C = 1;
+		A = [0x14E2];
+		A -= 0x0000 - !C;
+		[0x88] = A;
+		A = [0x14E4];
+		A -= 0x0000 - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L838E22();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L838DF9()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		C = 1;
+		A = [0x14E2];
+		A -= 0x0000 - !C;
+		[0x88] = A;
+		A = [0x14E4];
+		A -= 0x0000 - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L838E22();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L838E22()
+	{
+
+		if (Z == 1)
+			return this.L838E32();
+
+
+		if (N == 0)
+			return this.L838E2B();
+
+		A = 0xFFFF;
+		return this.L838E30();
+	}
+
+	public void L838E2B()
+	{
+		A = 0x0001;
+		return this.L838E30();
+	}
+
+	public void L838E30()
+	{
+		[[]] = A;
+		[0x9BE660] = A;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x8F]];
+
+		if (Z == 1)
+			return this.L838E68();
+
+
+		if (N == 0)
+			return this.L838E87();
+
+		X = [0x1A7F];
+		A = [0x1A1B + X];
+		[0x8F] = A;
+		A = [0x1A1C + X];
+		[0x90] = A;
+		A = [[0x9B]];
+		[[]] = A;
+		[0xE69BE6] = A;
+		Y = X;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return this.L838EA4();
+	}
+
+	public void L838E32()
+	{
+		return;
+	}
+
+	public void L838E33()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x8F]];
+
+		if (Z == 1)
+			return this.L838E68();
+
+
+		if (N == 0)
+			return this.L838E87();
+
+		X = [0x1A7F];
+		A = [0x1A1B + X];
+		[0x8F] = A;
+		A = [0x1A1C + X];
+		[0x90] = A;
+		A = [[0x9B]];
+		[[]] = A;
+		[0xE69BE6] = A;
+		Y = X;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		return this.L838EA4();
+	}
+
+	public void L838E68()
+	{
+		[0x9B]++;
+		[0x9B]++;
+		X = [0x1A7F];
+		A = [0x1A1B + X];
+		[0x8F] = A;
+		A = [0x1A1C + X];
+		[0x90] = A;
+		A = [[0x9B]];
+		[[]] = A;
+		[0xE69BE6] = A;
+		Y = X;
+		[0x9B]++;
+		[0x9B]++;
+		return this.L838EA4();
+	}
+
+	public void L838E87()
+	{
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		[0x9B]++;
+		X = [0x1A7F];
+		A = [0x1A1B + X];
+		[0x8F] = A;
+		A = [0x1A1C + X];
+		[0x90] = A;
+		A = [[0x9B]];
+		[[]] = A;
+		[0xE69BE6] = A;
+		Y = X;
+	}
+
+	public void L838EA4()
+	{
+		X = [0x1A7B];
+		P |= 0x20;
+		A = [[0x9B]];
+		[0x19DB + X] = A;
+		P &= ~0x20;
+		[0x9B]++;
+		return;
+	}
+
+	public void L838EB3()
+	{
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x8F] = A;
+		[0x9B]++;
+		A = [[0x9B]];
+		[0x90] = A;
+		[0x9B]++;
+		[0x9B]++;
+		A = [[0x8F]];
+
+		if (Z == 1)
+			return this.L838ECE();
+
+
+		if (N == 0)
+			return this.L838ED3();
+
+		A = 0x0000;
+		return this.L838ED8();
+	}
+
+	public void L838ECE()
+	{
+		A = 0x0003;
+		return this.L838ED8();
+	}
+
+	public void L838ED3()
+	{
+		A = 0x0006;
+		return this.L838ED8();
+	}
+
+	public void L838ED8()
+	{
+		C = 0;
+		A += [0x9B] + C;
+		[0x9B] = A;
+		this.L838413();
 		return;
 	}
 
@@ -26141,6 +18058,531 @@ public class SnesRom
 		C = 0;
 		A += [0x18] + C;
 		[0x1504] = A;
+		return;
+	}
+
+	public void L839170()
+	{
+		A = 0xFFFF;
+		[0x1866 + X] = A;
+		[0x18E6 + X] = A;
+		A = [0x1726 + X];
+		A |= 0x8000;
+		A |= 0x0080;
+		A |= 0x0008;
+		[0x1726 + X] = A;
+		return;
+	}
+
+	public void L8391CD()
+	{
+		X = 0x003E;
+	}
+
+	public void L8391D0()
+	{
+		A = 0xFFFF;
+		[0x16A6 + X] = A;
+		A = 0x0000;
+		[0x16E6 + X] = A;
+		A = 0x8000;
+		[0x1726 + X] = A;
+		A = 0x0000;
+		[0x1926 + X] = A;
+		A = 0xFFFF;
+		[0x1826 + X] = A;
+		A = 0xFFFF;
+		[0x1766 + X] = A;
+		[0x17A6 + X] = A;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L8391D0();
+
+		A = 0x0000;
+		[0x14DA] = A;
+		[0x14DC] = A;
+		[0x14DE] = A;
+		[0x14E0] = A;
+		[0x14E2] = A;
+		[0x14E4] = A;
+		[0x14E8] = A;
+		[0x14EA] = A;
+		[0x14EC] = A;
+		[0x14EE] = A;
+		[0x14F0] = A;
+		[0x14F2] = A;
+		[0x14F4] = A;
+		[0x14F6] = A;
+		[0x14F8] = A;
+		[0x14FA] = A;
+		[0x14FC] = A;
+		[0x1504] = A;
+		[0x1506] = A;
+		[0x1500] = A;
+		[0x1508] = A;
+		A = 0x0180;
+		[0x14D8] = A;
+		[0x14E6] = A;
+		A = 0x0000;
+		[0x150E] = A;
+		[0x1514] = A;
+		[0x1516] = A;
+		[0x151A] = A;
+		[0x151E] = A;
+		[0x1520] = A;
+		[0x1AE1] = A;
+		[0x1AE3] = A;
+		[0x1AE5] = A;
+		[0x1AE7] = A;
+		[0x1AE9] = A;
+		[0x1AEB] = A;
+		[0x1AED] = A;
+		[0x1AEF] = A;
+		[0x1AF1] = A;
+		[0x1AF3] = A;
+		[0x7E39E7] = A;
+		[0x7E39E9] = A;
+		A |= 0x1000;
+		A |= 0x0800;
+		A = [0x150C];
+		A &= 0x4113;
+		A |= 0x2000;
+		[0x150C] = A;
+		this.L8393B5();
+		A = 0x0000;
+		[0x7E5BF1] = A;
+		A = 0xFFFF;
+		[0x1AC9] = A;
+		A = 0x8000;
+		[0x1AC5] = A;
+		[0x1AC7] = A;
+		A = 0x0000;
+		[0x1AC1] = A;
+		[0x1AC3] = A;
+		[0x1AD3] = A;
+		[0x1AD5] = A;
+		[0x1ACF] = A;
+		[0x1AD1] = A;
+		A = 0x0000;
+		[0x7E3987] = A;
+		[0x7E398B] = A;
+		[0x7E3989] = A;
+		[0x7E398D] = A;
+		[0x7E398F] = A;
+		[0x7E3993] = A;
+		[0x7E3991] = A;
+		[0x7E3995] = A;
+		A = 0x0000;
+		[0x7E5CCC] = A;
+		[0x7E5D0E] = A;
+		[0x7E5DAE] = A;
+		[0xB8] = 0;
+		A = 0xFFFF;
+		[0xB6] = A;
+		A = 0x0000;
+		[0x1978] = A;
+		[0x197A] = A;
+		[0x197C] = A;
+		[0x197E] = A;
+		[0x1980] = A;
+		[0x1982] = A;
+		[0x1984] = A;
+		[0x1986] = A;
+		[0x1988] = A;
+		[0x198A] = A;
+		[0x198C] = A;
+		[0x198E] = A;
+		[0x1990] = A;
+		[0x1992] = A;
+		[0x1994] = A;
+		[0x1996] = A;
+		[0x1998] = A;
+		[0x199A] = A;
+		[0x199C] = A;
+		[0x199E] = A;
+		[0x19A0] = A;
+		[0x19A2] = A;
+		[0x19A4] = A;
+		[0x19A6] = A;
+		A = 0x0000;
+		[0x1976] = 0;
+		[0x196A] = A;
+		[0x196C] = A;
+		this.L80E680();
+		A = 0x0000;
+		[0x7E5BEB] = A;
+		[0x7E5BED] = A;
+		A = 0x7FFF;
+		[0x001BA5] = A;
+		[0x001BA7] = A;
+		[0x001BA9] = A;
+		[0x001BAB] = A;
+		[0x001BAD] = A;
+		[0x001BAF] = A;
+		[0x001BB1] = A;
+		[0x001BB3] = A;
+		[0x001BB5] = A;
+		[0x001BB7] = A;
+		[0x7E5C18] = A;
+		[0x7E5C1A] = A;
+		[0x7E5C1C] = A;
+		[0x7E5C1E] = A;
+		[0x7E5C20] = A;
+		[0x7E5C22] = A;
+		[0x7E5C24] = A;
+		[0x7E5C26] = A;
+		[0x7E5C28] = A;
+		[0x7E5C2A] = A;
+		return;
+	}
+
+	public void L8393B5()
+	{
+		A = [0x50];
+		[0x1B11] = A;
+		A = 0x0060;
+		temp = A & [0x150C];[0x150C] &= ~A;
+		A = [0x036F];
+		A--;
+
+		if (Z == 0)
+			return this.L8393E2();
+
+		A = [0x0371];
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L8393E2();
+
+		A = [0x036D];
+		temp = A - 0x0004;
+
+		if (C == 0)
+			return this.L8393D9();
+
+		A = 0x0003;
+	}
+
+	public void L8393D9()
+	{
+		A <<= 1;
+		X = A;
+		A = [0x83940E + X];
+		temp = A & [0x150C];[0x150C] |= A;
+	}
+
+	public void L8393E2()
+	{
+		A = [0x50];
+		temp = A & 0x0210;
+
+		if (Z == 1)
+			return this.L83940D();
+
+		A = 0x0060;
+		temp = A & [0x150C];[0x150C] &= ~A;
+		X = 0x0000;
+		A = [0x50];
+		temp = A & 0x0020;
+
+		if (Z == 1)
+			return this.L8393FB();
+
+		X++;
+		X++;
+	}
+
+	public void L8393FB()
+	{
+		A = [0x50];
+		temp = A & 0x0010;
+
+		if (Z == 1)
+			return this.L839406();
+
+		X++;
+		X++;
+		X++;
+		X++;
+	}
+
+	public void L839406()
+	{
+		A = [0x83940E + X];
+		temp = A & [0x150C];[0x150C] |= A;
+	}
+
+	public void L83940D()
+	{
+		return;
+	}
+
+	public void L839416()
+	{
+		X = 0x001E;
+	}
+
+	public void L839419()
+	{
+		A = 0x0000;
+		[0x19EB + X] = A;
+		[0x7E5CCE + X] = A;
+		[0x7E5D6E + X] = A;
+		[0x7E5D8E + X] = A;
+		[0x7E5CEE + X] = A;
+		[0x7E5D2E + X] = A;
+		A = 0x0050;
+		[0x7E5D0E + X] = A;
+		[0x7E5D4E + X] = A;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L839419();
+
+		return;
+	}
+
+	public void L839443()
+	{
+		A = 0x4110;
+		temp = A & [0x150C];[0x150C] &= ~A;
+		return;
+	}
+
+	public void L83944A()
+	{
+		A = [0x7E3963];
+
+		if (Z == 0)
+			return this.L839456();
+
+		Y = 0x0000;
+		return this.L83950D();
+	}
+
+	public void L839456()
+	{
+		A = [0x7E3965];
+
+		if (Z == 0)
+			return this.L839462();
+
+		Y = 0x0002;
+		return this.L83950D();
+	}
+
+	public void L839462()
+	{
+		A = [0x7E3967];
+
+		if (Z == 0)
+			return this.L83946E();
+
+		Y = 0x0004;
+		return this.L83950D();
+	}
+
+	public void L83946E()
+	{
+		A = [0x7E3969];
+
+		if (Z == 0)
+			return this.L83947A();
+
+		Y = 0x0006;
+		return this.L83950D();
+	}
+
+	public void L83947A()
+	{
+		A = [0x7E396B];
+
+		if (Z == 0)
+			return this.L839486();
+
+		Y = 0x0008;
+		return this.L83950D();
+	}
+
+	public void L839486()
+	{
+		A = [0x7E396D];
+
+		if (Z == 0)
+			return this.L839492();
+
+		Y = 0x000A;
+		return this.L83950D();
+	}
+
+	public void L839492()
+	{
+		A = [0x7E396F];
+
+		if (Z == 0)
+			return this.L83949E();
+
+		Y = 0x000C;
+		return this.L83950D();
+	}
+
+	public void L83949E()
+	{
+		A = [0x7E3971];
+
+		if (Z == 0)
+			return this.L8394AA();
+
+		Y = 0x000E;
+		return this.L83950D();
+	}
+
+	public void L8394AA()
+	{
+		A = [0x7E3973];
+
+		if (Z == 0)
+			return this.L8394B6();
+
+		Y = 0x0010;
+		return this.L83950D();
+	}
+
+	public void L8394B6()
+	{
+		A = [0x7E3975];
+
+		if (Z == 0)
+			return this.L8394C2();
+
+		Y = 0x0012;
+		return this.L83950D();
+	}
+
+	public void L8394C2()
+	{
+		A = [0x7E3977];
+
+		if (Z == 0)
+			return this.L8394CE();
+
+		Y = 0x0014;
+		return this.L83950D();
+	}
+
+	public void L8394CE()
+	{
+		A = [0x7E3979];
+
+		if (Z == 0)
+			return this.L8394DA();
+
+		Y = 0x0016;
+		return this.L83950D();
+	}
+
+	public void L8394DA()
+	{
+		A = [0x7E397B];
+
+		if (Z == 0)
+			return this.L8394E6();
+
+		Y = 0x0018;
+		return this.L83950D();
+	}
+
+	public void L8394E6()
+	{
+		A = [0x7E397D];
+
+		if (Z == 0)
+			return this.L8394F2();
+
+		Y = 0x001A;
+		return this.L83950D();
+	}
+
+	public void L8394F2()
+	{
+		A = [0x7E397F];
+
+		if (Z == 0)
+			return this.L8394FE();
+
+		Y = 0x001C;
+		return this.L83950D();
+	}
+
+	public void L8394FE()
+	{
+		A = [0x7E3981];
+
+		if (Z == 0)
+			return this.L83950A();
+
+		Y = 0x001E;
+		return this.L83950D();
+	}
+
+	public void L83950A()
+	{
+		return this.L839511();
+	}
+
+	public void L83950D()
+	{
+		this.L839512();
+	}
+
+	public void L839511()
+	{
+		return;
+	}
+
+	public void L839512()
+	{
+		Stack.Push(X);
+		X = Y;
+		A = [0x12];
+		[0x7E3903 + X] = A;
+		A = [0x14];
+		[0x7E3923 + X] = A;
+		A = [0x16];
+		[0x7E3943 + X] = A;
+		A = [0x18];
+		[0x7E3963 + X] = A;
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L83952E()
+	{
+		Stack.Push(X);
+		X = Y;
+		A = [0x12];
+		[0x7E3903 + X] = A;
+		A = [0x14];
+		[0x7E3923 + X] = A;
+		A = [0x16];
+		[0x7E3943 + X] = A;
+		A = [0x7E3963 + X];
+		A |= 0x7FFE;
+		[0x7E3963 + X] = A;
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L83954F()
+	{
+		Stack.Push(X);
+		X = Y;
+		A = 0x0000;
+		[0x7E3963 + X] = A;
+		X = Stack.Pop();
 		return;
 	}
 
@@ -27806,6 +20248,7225 @@ public class SnesRom
 		return;
 	}
 
+	public void L83B0CA()
+	{
+		this.L83B0DD();
+		A = [0x1B35];
+		this.L809977();
+		A |= 0x0014;
+		this.L8094BA();
+		return;
+	}
+
+	public void L83B0DD()
+	{
+		this.L80C92B();
+
+		if (C == 0)
+			return this.L83B0F8();
+
+		this.L80CA1D();
+
+		if (C == 0)
+			return this.L83B0F8();
+
+		this.L80C90B();
+
+		if (C == 0)
+			return this.L83B0F8();
+
+		this.L80CABF();
+
+		if (C == 0)
+			return this.L83B0F8();
+
+		return this.L83B125();
+	}
+
+	public void L83B0F8()
+	{
+		A = 0x0075;
+		this.L80CB73();
+		A = [0x1B35];
+		[0x0B9C + Y] = A;
+		[0x1004 + Y] = A;
+		A = [0x1B37];
+		[0x0C58 + Y] = A;
+		[0x1062 + Y] = A;
+		A = 0x0000;
+		[0x111E + Y] = A;
+		A = 0x0083;
+		[0x13B0 + Y] = A;
+		A = 0xB5F8;
+		[0x140E + Y] = A;
+		C = 0;
+		return;
+	}
+
+	public void L83B125()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L83B127()
+	{
+		this.L83B432();
+		this.L80CE38();
+		this.L83B14A();
+		this.L80C88D();
+		return;
+	}
+
+	public void L83B138()
+	{
+		this.L83B4F0();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L80C88D();
+		return;
+	}
+
+	public void L83B149()
+	{
+		return;
+	}
+
+	public void L83B14A()
+	{
+		A = [0x11DA + Y];
+		temp = A - 0x0005;
+
+		if (C == 0)
+			return this.L83B154();
+
+	}
+
+	public void L83B152()
+	{
+		return this.L83B152();
+	}
+
+	public void L83B154()
+	{
+		A <<= 1;
+		X = A;
+		return [(0xB159 + X)]();
+	}
+
+	public void L83B163()
+	{
+		A = [0x1976];
+		temp = A & 0x1000;
+
+		if (Z == 1)
+			return this.L83B177();
+
+		A = [0x1504];
+		C = 0;
+		A += [0x7E5BF1] + C;
+		[0x24] = A;
+		return this.L83B187();
+	}
+
+	public void L83B177()
+	{
+		A = [0x14E6];
+		C = 0;
+		A += [0x1506] + C;
+		C = 0;
+		A += [0x7E5BF1] + C;
+		[0x24] = A;
+		return this.L83B187();
+	}
+
+	public void L83B187()
+	{
+		C = 0;
+		A = [0x0DD0 + Y];
+		A += 0x4000 + C;
+		[0x0DD0 + Y] = A;
+		A = [0x0E2E + Y];
+		A += 0x0000 + C;
+		[0x0E2E + Y] = A;
+		C = 0;
+		A = [0x0B3E + Y];
+		A += [0x0D14 + Y] + C;
+		[0x0B3E + Y] = A;
+		A = [0x0B9C + Y];
+		A += [0x0D72 + Y] + C;
+		[0x0B9C + Y] = A;
+		C = 0;
+		A += 0x0040 + C;
+		temp = A - 0x0180;
+
+		if (C == 0)
+			return this.L83B1B9();
+
+		return this.L83B2EC();
+	}
+
+	public void L83B1B9()
+	{
+		C = 0;
+		A = [0x0BFA + Y];
+		A += [0x0DD0 + Y] + C;
+		[0x0BFA + Y] = A;
+		A = [0x0C58 + Y];
+		A += [0x0E2E + Y] + C;
+		[0x0C58 + Y] = A;
+		C = 0;
+		A += 0x0040 + C;
+		temp = A - 0x0128;
+
+		if (C == 0)
+			return this.L83B1D8();
+
+		return this.L83B2EC();
+	}
+
+	public void L83B1D8()
+	{
+		A = [0x0C58 + Y];
+		temp = A - [0x24];
+
+		if (Z == 1)
+			return this.L83B242();
+
+
+		if (N == 1)
+			return this.L83B242();
+
+		A = [0x0E2E + Y];
+
+		if (N == 1)
+			return this.L83B242();
+
+		A = [0x197C];
+		[0x12] = A;
+		A = [0x197E];
+		[0x14] = A;
+		A = [0x14];
+		Cpu.ROL();
+		Cpu.ROR(0x14);
+		Cpu.ROR(0x12);
+		A = [0x14];
+		Cpu.ROL();
+		Cpu.ROR(0x14);
+		Cpu.ROR(0x12);
+		C = 1;
+		A = [0x0D14 + Y];
+		A -= [0x12] - !C;
+		[0x0D14 + Y] = A;
+		A = [0x0D72 + Y];
+		A -= [0x14] - !C;
+		[0x0D72 + Y] = A;
+		A = 0x0000;
+		[0x0BFA + Y] = A;
+		A = [0x24];
+		[0x0C58 + Y] = A;
+		A = [0x146C + Y];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x83AF8E + X];
+		A |= [0x83AF90 + X];
+
+		if (Z == 0)
+			return this.L83B22D();
+
+		return this.L83B2EC();
+	}
+
+	public void L83B22D()
+	{
+		A = [0x83AF8E + X];
+		[0x0DD0 + Y] = A;
+		A = [0x83AF90 + X];
+		[0x0E2E + Y] = A;
+		A = [0x146C + Y];
+		A++;
+		[0x146C + Y] = A;
+	}
+
+	public void L83B242()
+	{
+		A = [0x146C + Y];
+		temp = A - 0x0003;
+
+		if (C == 0)
+			return this.L83B26D();
+
+		A = [0x1004 + Y];
+		[0x1B35] = A;
+		A = [0x1062 + Y];
+		[0x1B37] = A;
+		A = 0x0000;
+		[0x1B3D] = A;
+		A = 0x0053;
+		[0x1B3B] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L97E314();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		return this.L83B2EC();
+	}
+
+	public void L83B26D()
+	{
+		A = [0x146C + Y];
+		temp = A - 0x0003;
+
+		if (C == 1)
+			return this.L83B2EB();
+
+		A = [0x11DA + Y];
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L83B296();
+
+		A = [0x10C0 + Y];
+		temp = A - 0x0028;
+
+		if (N == 1)
+			return this.L83B28A();
+
+		A = 0x0001;
+		return this.L83B28F();
+	}
+
+	public void L83B28A()
+	{
+		A = 0x0000;
+		return this.L83B28F();
+	}
+
+	public void L83B28F()
+	{
+		A &= [0x014C];
+
+		if (Z == 0)
+			return this.L83B2EB();
+
+		return this.L83B2B7();
+	}
+
+	public void L83B296()
+	{
+		A = [0x10C0 + Y];
+		temp = A - 0x0008;
+
+		if (N == 1)
+			return this.L83B2AB();
+
+		temp = A - 0x0010;
+
+		if (N == 1)
+			return this.L83B2A6();
+
+		return this.L83B2EB();
+	}
+
+	public void L83B2A6()
+	{
+		A = 0x0001;
+		return this.L83B2B0();
+	}
+
+	public void L83B2AB()
+	{
+		A = 0x0000;
+		return this.L83B2B0();
+	}
+
+	public void L83B2B0()
+	{
+		A &= [0x014C];
+
+		if (Z == 0)
+			return this.L83B2EB();
+
+		return this.L83B2B7();
+	}
+
+	public void L83B2B7()
+	{
+		A = [0x10C0 + Y];
+		A++;
+		[0x10C0 + Y] = A;
+		A = [0x1062 + Y];
+		[0xB2] = A;
+		A = [0x1004 + Y];
+		[0xB0] = A;
+		A = [0x0CB6 + Y];
+		X = A;
+		A = [0x1726 + X];
+		temp = A & 0x0010;
+
+		if (Z == 1)
+			return this.L83B2EB();
+
+		A = [0x1666 + X];
+		[0xB4] = A;
+		A = [0x16A6 + X];
+		[0xA8] = A;
+		A = [0x16E6 + X];
+		[0xAA] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L8286B6();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+	}
+
+	public void L83B2EB()
+	{
+		return;
+	}
+
+	public void L83B2EC()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 0)
+			return this.L83B305();
+
+		A = [0x1004 + Y];
+		[0x1B35] = A;
+		A = [0x1062 + Y];
+		[0x1B37] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L83B0CA();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+	}
+
+	public void L83B305()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		this.L83B315();
+		return;
+	}
+
+	public void L83B315()
+	{
+		A = [0x14D6];
+		temp = A - 0x000A;
+
+		if (Z == 1)
+			return this.L83B320();
+
+		return this.L83B325();
+	}
+
+	public void L83B320()
+	{
+		[0xB8] = 0;
+		[0x0400] = 0;
+	}
+
+	public void L83B325()
+	{
+		return;
+	}
+
+	public void L83B326()
+	{
+		C = 0;
+		A = [0x0DD0 + Y];
+		A += 0xE000 + C;
+		[0x0DD0 + Y] = A;
+		A = [0x0E2E + Y];
+		A += 0xFFFF + C;
+		[0x0E2E + Y] = A;
+		C = 0;
+		A = [0x0B3E + Y];
+		A += [0x0D14 + Y] + C;
+		[0x0B3E + Y] = A;
+		A = [0x0B9C + Y];
+		A += [0x0D72 + Y] + C;
+		[0x0B9C + Y] = A;
+		C = 0;
+		A += 0x0040 + C;
+		temp = A - 0x0180;
+
+		if (C == 0)
+			return this.L83B358();
+
+		return this.L83B3DB();
+	}
+
+	public void L83B358()
+	{
+		C = 0;
+		A = [0x0BFA + Y];
+		A += [0x0DD0 + Y] + C;
+		[0x0BFA + Y] = A;
+		A = [0x0C58 + Y];
+		A += [0x0E2E + Y] + C;
+		[0x0C58 + Y] = A;
+		C = 0;
+		A += 0x0040 + C;
+		temp = A - 0x0128;
+
+		if (C == 0)
+			return this.L83B377();
+
+		return this.L83B3DB();
+	}
+
+	public void L83B377()
+	{
+		A = [0x10C0 + Y];
+		temp = A - 0x0028;
+
+		if (N == 1)
+			return this.L83B384();
+
+		A = 0x0001;
+		return this.L83B389();
+	}
+
+	public void L83B384()
+	{
+		A = 0x0000;
+		return this.L83B389();
+	}
+
+	public void L83B389()
+	{
+		A &= [0x014C];
+
+		if (Z == 0)
+			return this.L83B3DA();
+
+		A = [0x11DA + Y];
+		temp = A - 0x0004;
+
+		if (Z == 1)
+			return this.L83B39B();
+
+		A = 0x001E;
+		return this.L83B3A0();
+	}
+
+	public void L83B39B()
+	{
+		A = 0x000F;
+		return this.L83B3A0();
+	}
+
+	public void L83B3A0()
+	{
+		[0x1E] = A;
+		A = [0x10C0 + Y];
+		A++;
+		[0x10C0 + Y] = A;
+		temp = A - [0x1E];
+
+		if (C == 1)
+			return this.L83B3DB();
+
+		A = [0x1062 + Y];
+		[0xB2] = A;
+		A = [0x1004 + Y];
+		[0xB0] = A;
+		A = [0x0CB6 + Y];
+		X = A;
+		A = [0x1726 + X];
+		temp = A & 0x0010;
+
+		if (Z == 1)
+			return this.L83B3DA();
+
+		A = [0x1666 + X];
+		[0xB4] = A;
+		A = [0x16A6 + X];
+		[0xA8] = A;
+		A = [0x16E6 + X];
+		[0xAA] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L8286B6();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+	}
+
+	public void L83B3DA()
+	{
+		return;
+	}
+
+	public void L83B3DB()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 0)
+			return this.L83B3F4();
+
+		A = [0x1004 + Y];
+		[0x1B35] = A;
+		A = [0x1062 + Y];
+		[0x1B37] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L83B0CA();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+	}
+
+	public void L83B3F4()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		this.L83B315();
+		return;
+	}
+
+	public void L83B404()
+	{
+		Stack.Push(X);
+		A = [0x7E5BEF];
+		C = 0;
+		A += 0x6D31 + C;
+		[0x7E5BEF] = A;
+		A = [0x7E5BEF];
+		A &= 0x0007;
+		A <<= 1;
+		X = A;
+		A = [0x83B422 + X];
+		[0x12] = A;
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L83B432()
+	{
+		Stack.Push(B);
+		A = [0x111E + Y];
+
+		if (Z == 1)
+			return this.L83B43B();
+
+		return this.L83B4EA();
+	}
+
+	public void L83B43B()
+	{
+		P |= 0x20;
+		A = [0x13B0 + Y];
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		X = [0x140E + Y];
+		this.L83B404();
+		A = [0x1004 + Y];
+		C = 0;
+		A += [0x12] + C;
+		[0x1B35] = A;
+		this.L83B404();
+		A = [0x1062 + Y];
+		C = 0;
+		A += [0x12] + C;
+		[0x1B37] = A;
+		A = 0x0000;
+		[0x1B3D] = A;
+	}
+
+	public void L83B465()
+	{
+		A = [0x0000 + X];
+		[0x1B3B] = A;
+		temp = A - 0x0044;
+
+		if (Z == 0)
+			return this.L83B489();
+
+		Stack.Push(A);
+		Stack.Push(Y);
+		temp = Y - 0x0034;
+
+		if (Z == 1)
+			return this.L83B47C();
+
+		Y = 0x0034;
+		return this.L83B481();
+	}
+
+	public void L83B47C()
+	{
+		Y = 0x0032;
+		return this.L83B481();
+	}
+
+	public void L83B481()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		Y = Stack.Pop();
+		A = Stack.Pop();
+	}
+
+	public void L83B489()
+	{
+		temp = A - 0x8000;
+
+		if (Z == 0)
+			return this.L83B495();
+
+		A = [0x0002 + X];
+		X = A;
+		return this.L83B465();
+	}
+
+	public void L83B495()
+	{
+		temp = A - 0x8001;
+
+		if (Z == 0)
+			return this.L83B4AC();
+
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		this.L83B315();
+		return this.L83B4EE();
+	}
+
+	public void L83B4AC()
+	{
+		A = [0x0002 + X];
+		[0x111E + Y] = A;
+		A = [0x0004 + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L83B4C9();
+
+		[0x26] = A;
+		A = [0x1B35];
+		this.L809977();
+		A |= [0x26];
+		this.L8094BA();
+	}
+
+	public void L83B4C9()
+	{
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L97E314();
+		[0x12] = Y;
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		temp = Y - [0x12];
+
+		if (Z == 0)
+			return this.L83B4D8();
+
+		Cpu.NOP();
+	}
+
+	public void L83B4D8()
+	{
+		X++;
+		X++;
+		X++;
+		X++;
+		X++;
+		X++;
+		A = X;
+		[0x140E + Y] = A;
+		A = [0x111E + Y];
+
+		if (Z == 0)
+			return this.L83B4EA();
+
+		return this.L83B465();
+	}
+
+	public void L83B4EA()
+	{
+		A--;
+		[0x111E + Y] = A;
+	}
+
+	public void L83B4EE()
+	{
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L83B4F0()
+	{
+		Stack.Push(B);
+		A = [0x111E + Y];
+
+		if (Z == 1)
+			return this.L83B4F9();
+
+		return this.L83B5A6();
+	}
+
+	public void L83B4F9()
+	{
+		P |= 0x20;
+		A = [0x13B0 + Y];
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		X = [0x140E + Y];
+		A = 0x0000;
+		[0x1B3D] = A;
+	}
+
+	public void L83B50B()
+	{
+		A = [0x0000 + X];
+		temp = A - 0x8000;
+
+		if (Z == 0)
+			return this.L83B51A();
+
+		A = [0x0002 + X];
+		X = A;
+		return this.L83B50B();
+	}
+
+	public void L83B51A()
+	{
+		temp = A - 0x8001;
+
+		if (Z == 0)
+			return this.L83B531();
+
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		this.L83B315();
+		return this.L83B5AA();
+	}
+
+	public void L83B531()
+	{
+		A = [0x1004 + Y];
+		C = 0;
+		A += [0x0000 + X] + C;
+		[0x1B35] = A;
+		A = [0x1062 + Y];
+		C = 0;
+		A += [0x0002 + X] + C;
+		[0x1B37] = A;
+		A = [0x0004 + X];
+		[0x1B3B] = A;
+		temp = A - 0x0044;
+
+		if (Z == 0)
+			return this.L83B569();
+
+		Stack.Push(A);
+		Stack.Push(Y);
+		temp = Y - 0x0034;
+
+		if (Z == 1)
+			return this.L83B55C();
+
+		Y = 0x0034;
+		return this.L83B561();
+	}
+
+	public void L83B55C()
+	{
+		Y = 0x0032;
+		return this.L83B561();
+	}
+
+	public void L83B561()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		Y = Stack.Pop();
+		A = Stack.Pop();
+	}
+
+	public void L83B569()
+	{
+		A = [0x0006 + X];
+		[0x111E + Y] = A;
+		A = [0x0008 + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L83B586();
+
+		[0x26] = A;
+		A = [0x1B35];
+		this.L809977();
+		A |= [0x26];
+		this.L8094BA();
+	}
+
+	public void L83B586()
+	{
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L97E314();
+		[0x12] = Y;
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		temp = Y - [0x12];
+
+		if (Z == 0)
+			return this.L83B595();
+
+		Cpu.NOP();
+	}
+
+	public void L83B595()
+	{
+		A = X;
+		C = 0;
+		A += 0x000A + C;
+		X = A;
+		[0x140E + Y] = A;
+		A = [0x111E + Y];
+
+		if (Z == 0)
+			return this.L83B5A6();
+
+		return this.L83B50B();
+	}
+
+	public void L83B5A6()
+	{
+		A--;
+		[0x111E + Y] = A;
+	}
+
+	public void L83B5AA()
+	{
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L83C2C4()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L83C4F0();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L83C2E1()
+	{
+		this.L96E964();
+		this.L83C5C6();
+		this.L83C45C();
+		this.L83C3D0();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L83C302()
+	{
+		this.L96E926();
+		this.L96E669();
+		this.L83C351();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L83C31F()
+	{
+		this.L96E945();
+		this.L96E6CB();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L83C338()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L83C351()
+	{
+		A = [0x11DA + Y];
+		A >>= 1;
+
+		if (C == 1)
+			return this.L83C391();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x83F776 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L83C36A();
+
+		A &= 0x007F;
+		return this.L83C36D();
+	}
+
+	public void L83C36A()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L83C36D()
+	{
+		[0x0E8C + Y] = A;
+		A = [0x83F777 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L83C37E();
+
+		A &= 0x007F;
+		return this.L83C381();
+	}
+
+	public void L83C37E()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L83C381()
+	{
+		[0x0EEA + Y] = A;
+		A = [0x1870];
+
+		if (N == 0)
+			return this.L83C390();
+
+		A = [0x0EEA + Y];
+		A <<= 1;
+		[0x0EEA + Y] = A;
+	}
+
+	public void L83C390()
+	{
+		return;
+	}
+
+	public void L83C391()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x83F776 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L83C3A4();
+
+		A &= 0x007F;
+		return this.L83C3A7();
+	}
+
+	public void L83C3A4()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L83C3A7()
+	{
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x83F777 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L83C3BC();
+
+		A &= 0x007F;
+		return this.L83C3BF();
+	}
+
+	public void L83C3BC()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L83C3BF()
+	{
+		[0x0EEA + Y] = A;
+		A = [0x1870];
+
+		if (N == 0)
+			return this.L83C3CE();
+
+		A = [0x0EEA + Y];
+		A <<= 1;
+		[0x0EEA + Y] = A;
+	}
+
+	public void L83C3CE()
+	{
+		return;
+	}
+
+	public void L83C3D0()
+	{
+		A = [0x0B9C + Y];
+		C = 1;
+		A -= 0x0080 - !C;
+
+		if (N == 0)
+			return this.L83C3DD();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L83C3DD()
+	{
+		temp = A - 0x0010;
+
+		if (C == 0)
+			return this.L83C421();
+
+		temp = A - 0x0020;
+
+		if (C == 0)
+			return this.L83C415();
+
+		temp = A - 0x0040;
+
+		if (C == 0)
+			return this.L83C409();
+
+		temp = A - 0x0080;
+
+		if (C == 0)
+			return this.L83C3FD();
+
+		A = 0x0000;
+		[0x12] = A;
+		A = 0x0010;
+		[0x14] = A;
+		return this.L83C42D();
+	}
+
+	public void L83C3FD()
+	{
+		A = 0x0000;
+		[0x12] = A;
+		A = 0x0008;
+		[0x14] = A;
+		return this.L83C42D();
+	}
+
+	public void L83C409()
+	{
+		A = 0x0000;
+		[0x12] = A;
+		A = 0x0008;
+		[0x14] = A;
+		return this.L83C42D();
+	}
+
+	public void L83C415()
+	{
+		A = 0x0000;
+		[0x12] = A;
+		A = 0x0004;
+		[0x14] = A;
+		return this.L83C42D();
+	}
+
+	public void L83C421()
+	{
+		A = 0x0000;
+		[0x12] = A;
+		A = 0x0001;
+		[0x14] = A;
+		return this.L83C42D();
+	}
+
+	public void L83C42D()
+	{
+		A = [0x0B9C + Y];
+		temp = A - 0x0080;
+
+		if (N == 0)
+			return this.L83C448();
+
+		C = 0;
+		A = [0x0B3E + Y];
+		A += [0x12] + C;
+		[0x0B3E + Y] = A;
+		A = [0x0B9C + Y];
+		A += [0x14] + C;
+		[0x0B9C + Y] = A;
+		return this.L83C45B();
+	}
+
+	public void L83C448()
+	{
+		C = 1;
+		A = [0x0B3E + Y];
+		A -= [0x12] - !C;
+		[0x0B3E + Y] = A;
+		A = [0x0B9C + Y];
+		A -= [0x14] - !C;
+		[0x0B9C + Y] = A;
+		return this.L83C45B();
+	}
+
+	public void L83C45B()
+	{
+		return;
+	}
+
+	public void L83C45C()
+	{
+		A = [0x11DA + Y];
+		A >>= 1;
+
+		if (C == 1)
+			return this.L83C47F();
+
+		A = [0x140E + Y];
+		X = A;
+		A = [0x83C498 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L83C474();
+
+		A &= 0x007F;
+		return this.L83C477();
+	}
+
+	public void L83C474()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L83C477()
+	{
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		return;
+	}
+
+	public void L83C47F()
+	{
+		A = [0x140E + Y];
+		X = A;
+		A = [0x83C498 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L83C491();
+
+		A &= 0x007F;
+		return this.L83C494();
+	}
+
+	public void L83C491()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L83C494()
+	{
+		[0x0E8C + Y] = A;
+		return;
+	}
+
+	public void L83C4F0()
+	{
+		A = [0x11DA + Y];
+		A >>= 1;
+
+		if (C == 1)
+			return this.L83C524();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x83C556 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L83C509();
+
+		A &= 0x007F;
+		return this.L83C50C();
+	}
+
+	public void L83C509()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L83C50C()
+	{
+		[0x0E8C + Y] = A;
+		A = [0x83C557 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L83C51D();
+
+		A &= 0x007F;
+		return this.L83C520();
+	}
+
+	public void L83C51D()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L83C520()
+	{
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L83C524()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x83C556 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L83C537();
+
+		A &= 0x007F;
+		return this.L83C53A();
+	}
+
+	public void L83C537()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L83C53A()
+	{
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x83C557 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L83C54F();
+
+		A &= 0x007F;
+		return this.L83C552();
+	}
+
+	public void L83C54F()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L83C552()
+	{
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L83C5C6()
+	{
+		A = [0x11DA + Y];
+		A >>= 1;
+
+		if (C == 1)
+			return this.L83C5DB();
+
+		A = [0x0CB6 + Y];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x83C60C + X];
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L83C5DB()
+	{
+		A = [0x0CB6 + Y];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x83C5EA + X];
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L8493FC()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L849415()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L84942E()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L849447()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L849460()
+	{
+		this.L96E907();
+		this.L96E69A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L849479()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L84A360();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L849496()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L84A3B0();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8494B3()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L84A360();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L84A360()
+	{
+		Stack.Push(X);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x1238 + Y];
+		temp = A & 0x2000;
+
+		if (Z == 0)
+			return this.L84A3AB();
+
+		A = [0x11DA + Y];
+		X = A;
+		A = [0x0000 + X];
+		temp = A - 0x8080;
+
+		if (Z == 1)
+			return this.L84A3AE();
+
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L84A382();
+
+		A &= 0x007F;
+		return this.L84A385();
+	}
+
+	public void L84A382()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L84A385()
+	{
+		C = 0;
+		A += [0x0B9C + Y] + C;
+		[0x0B9C + Y] = A;
+		A = [0x0001 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L84A399();
+
+		A &= 0x007F;
+		return this.L84A39C();
+	}
+
+	public void L84A399()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L84A39C()
+	{
+		C = 0;
+		A += [0x0C58 + Y] + C;
+		[0x0C58 + Y] = A;
+		A = [0x11DA + Y];
+		A++;
+		A++;
+		[0x11DA + Y] = A;
+	}
+
+	public void L84A3AB()
+	{
+		B = Stack.Pop();
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L84A3AE()
+	{
+		return this.L84A3AE();
+	}
+
+	public void L84A3B0()
+	{
+		Stack.Push(X);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x1238 + Y];
+		temp = A & 0x2000;
+
+		if (Z == 0)
+			return this.L84A3FF();
+
+		A = [0x11DA + Y];
+		X = A;
+		A = [0x0000 + X];
+		temp = A - 0x8080;
+
+		if (Z == 1)
+			return this.L84A402();
+
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L84A3D2();
+
+		A &= 0x007F;
+		return this.L84A3D5();
+	}
+
+	public void L84A3D2()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L84A3D5()
+	{
+		A ^= 0xFFFF;
+		A++;
+		C = 0;
+		A += [0x0B9C + Y] + C;
+		[0x0B9C + Y] = A;
+		A = [0x0001 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L84A3ED();
+
+		A &= 0x007F;
+		return this.L84A3F0();
+	}
+
+	public void L84A3ED()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L84A3F0()
+	{
+		C = 0;
+		A += [0x0C58 + Y] + C;
+		[0x0C58 + Y] = A;
+		A = [0x11DA + Y];
+		A++;
+		A++;
+		[0x11DA + Y] = A;
+	}
+
+	public void L84A3FF()
+	{
+		B = Stack.Pop();
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L84A402()
+	{
+		return this.L84A402();
+	}
+
+	public void L84EF30()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L84EF49()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L84EF62()
+	{
+		this.L96E907();
+		this.L96E669();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L858000()
+	{
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		C = 1;
+		A = [0x7E5E2C];
+		A -= [0x197C] - !C;
+		[0x7E5E2C] = A;
+		A = [0x7E5E2E];
+		A -= [0x197E] - !C;
+		[0x7E5E2E] = A;
+		C = 1;
+		A = [0x7E5E30];
+		A -= [0x1988] - !C;
+		[0x7E5E30] = A;
+		A = [0x7E5E32];
+		A -= [0x198A] - !C;
+		[0x7E5E32] = A;
+		A = [0x7E5E2E];
+		temp = A - 0x8000;
+		Cpu.ROR();
+		[0x7E5E36] = A;
+		temp = A - 0x8000;
+		Cpu.ROR();
+		[0x7E5E3E] = A;
+		temp = A - 0x8000;
+		Cpu.ROR();
+		[0x7E5E46] = A;
+		A = [0x7E5E32];
+		temp = A - 0x8000;
+		Cpu.ROR();
+		[0x7E5E3A] = A;
+		temp = A - 0x8000;
+		Cpu.ROR();
+		[0x7E5E42] = A;
+		temp = A - 0x8000;
+		Cpu.ROR();
+		[0x7E5E4A] = A;
+		A = 0x0000;
+		[0xAA] = A;
+		A = 0xFFFF;
+		[0xA8] = A;
+		A = [0x7E5E2E];
+		[0x14] = A;
+		A = [0x7E5E32];
+		[0x16] = A;
+		A = [0x14];
+		C = 0;
+		A += [0x8609] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858092();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L8580AD();
+
+	}
+
+	public void L858092()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x860B] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L8580A7();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L8580AD();
+
+	}
+
+	public void L8580A7()
+	{
+		[0xB2] = A;
+		this.L858681();
+	}
+
+	public void L8580AD()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x860D] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8580C0();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L8580DB();
+
+	}
+
+	public void L8580C0()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x860F] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L8580D5();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L8580DB();
+
+	}
+
+	public void L8580D5()
+	{
+		[0xB2] = A;
+		this.L858681();
+	}
+
+	public void L8580DB()
+	{
+		A = [0x7E5E36];
+		[0x14] = A;
+		A = [0x7E5E3A];
+		[0x16] = A;
+		A = [0x14];
+		C = 0;
+		A += [0x8611] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8580FA();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858115();
+
+	}
+
+	public void L8580FA()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8613] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L85810F();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858115();
+
+	}
+
+	public void L85810F()
+	{
+		[0xB2] = A;
+		this.L858751();
+	}
+
+	public void L858115()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8615] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858128();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858143();
+
+	}
+
+	public void L858128()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8617] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L85813D();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858143();
+
+	}
+
+	public void L85813D()
+	{
+		[0xB2] = A;
+		this.L858751();
+	}
+
+	public void L858143()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8619] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858156();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858171();
+
+	}
+
+	public void L858156()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x861B] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L85816B();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858171();
+
+	}
+
+	public void L85816B()
+	{
+		[0xB2] = A;
+		this.L858751();
+	}
+
+	public void L858171()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x861D] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858184();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L85819F();
+
+	}
+
+	public void L858184()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x861F] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L858199();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L85819F();
+
+	}
+
+	public void L858199()
+	{
+		[0xB2] = A;
+		this.L858751();
+	}
+
+	public void L85819F()
+	{
+		A = [0x7E5E3E];
+		[0x14] = A;
+		A = [0x7E5E42];
+		[0x16] = A;
+		A = [0x14];
+		C = 0;
+		A += [0x8621] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8581BE();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L8581D9();
+
+	}
+
+	public void L8581BE()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8623] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L8581D3();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L8581D9();
+
+	}
+
+	public void L8581D3()
+	{
+		[0xB2] = A;
+		this.L8587CB();
+	}
+
+	public void L8581D9()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8625] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8581EC();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858207();
+
+	}
+
+	public void L8581EC()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8627] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L858201();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858207();
+
+	}
+
+	public void L858201()
+	{
+		[0xB2] = A;
+		this.L8587CB();
+	}
+
+	public void L858207()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8629] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L85821A();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858235();
+
+	}
+
+	public void L85821A()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x862B] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L85822F();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858235();
+
+	}
+
+	public void L85822F()
+	{
+		[0xB2] = A;
+		this.L8587CB();
+	}
+
+	public void L858235()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x862D] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858248();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858263();
+
+	}
+
+	public void L858248()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x862F] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L85825D();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858263();
+
+	}
+
+	public void L85825D()
+	{
+		[0xB2] = A;
+		this.L8587CB();
+	}
+
+	public void L858263()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8631] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858276();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858291();
+
+	}
+
+	public void L858276()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8633] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L85828B();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858291();
+
+	}
+
+	public void L85828B()
+	{
+		[0xB2] = A;
+		this.L8587CB();
+	}
+
+	public void L858291()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8635] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8582A4();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L8582BF();
+
+	}
+
+	public void L8582A4()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8637] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L8582B9();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L8582BF();
+
+	}
+
+	public void L8582B9()
+	{
+		[0xB2] = A;
+		this.L8587CB();
+	}
+
+	public void L8582BF()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8639] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8582D2();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L8582ED();
+
+	}
+
+	public void L8582D2()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x863B] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L8582E7();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L8582ED();
+
+	}
+
+	public void L8582E7()
+	{
+		[0xB2] = A;
+		this.L8587CB();
+	}
+
+	public void L8582ED()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x863D] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858300();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L85831B();
+
+	}
+
+	public void L858300()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x863F] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L858315();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L85831B();
+
+	}
+
+	public void L858315()
+	{
+		[0xB2] = A;
+		this.L8587CB();
+	}
+
+	public void L85831B()
+	{
+		A = [0x7E5E46];
+		[0x14] = A;
+		A = [0x7E5E4A];
+		[0x16] = A;
+		A = [0x14];
+		C = 0;
+		A += [0x8641] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L85833A();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858355();
+
+	}
+
+	public void L85833A()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8643] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L85834F();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858355();
+
+	}
+
+	public void L85834F()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L858355()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8645] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858368();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858383();
+
+	}
+
+	public void L858368()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8647] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L85837D();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858383();
+
+	}
+
+	public void L85837D()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L858383()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8649] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858396();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L8583B1();
+
+	}
+
+	public void L858396()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x864B] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L8583AB();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L8583B1();
+
+	}
+
+	public void L8583AB()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L8583B1()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x864D] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8583C4();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L8583DF();
+
+	}
+
+	public void L8583C4()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x864F] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L8583D9();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L8583DF();
+
+	}
+
+	public void L8583D9()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L8583DF()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8651] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8583F2();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L85840D();
+
+	}
+
+	public void L8583F2()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8653] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L858407();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L85840D();
+
+	}
+
+	public void L858407()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L85840D()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8655] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858420();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L85843B();
+
+	}
+
+	public void L858420()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8657] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L858435();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L85843B();
+
+	}
+
+	public void L858435()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L85843B()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8659] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L85844E();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858469();
+
+	}
+
+	public void L85844E()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x865B] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L858463();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858469();
+
+	}
+
+	public void L858463()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L858469()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x865D] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L85847C();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858497();
+
+	}
+
+	public void L85847C()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x865F] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L858491();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858497();
+
+	}
+
+	public void L858491()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L858497()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8661] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8584AA();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L8584C5();
+
+	}
+
+	public void L8584AA()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8663] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L8584BF();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L8584C5();
+
+	}
+
+	public void L8584BF()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L8584C5()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8665] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8584D8();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L8584F3();
+
+	}
+
+	public void L8584D8()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8667] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L8584ED();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L8584F3();
+
+	}
+
+	public void L8584ED()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L8584F3()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8669] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858506();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858521();
+
+	}
+
+	public void L858506()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x866B] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L85851B();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858521();
+
+	}
+
+	public void L85851B()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L858521()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x866D] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858534();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L85854F();
+
+	}
+
+	public void L858534()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x866F] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L858549();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L85854F();
+
+	}
+
+	public void L858549()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L85854F()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8671] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858562();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L85857D();
+
+	}
+
+	public void L858562()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8673] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L858577();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L85857D();
+
+	}
+
+	public void L858577()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L85857D()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8675] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L858590();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L8585AB();
+
+	}
+
+	public void L858590()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x8677] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L8585A5();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L8585AB();
+
+	}
+
+	public void L8585A5()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L8585AB()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x8679] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8585BE();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L8585D9();
+
+	}
+
+	public void L8585BE()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x867B] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L8585D3();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L8585D9();
+
+	}
+
+	public void L8585D3()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L8585D9()
+	{
+		A = [0x14];
+		C = 0;
+		A += [0x867D] + C;
+		A &= 0x01FF;
+		temp = A - 0x01EB;
+
+		if (C == 1)
+			return this.L8585EC();
+
+		temp = A - 0x0114;
+
+		if (C == 1)
+			return this.L858607();
+
+	}
+
+	public void L8585EC()
+	{
+		[0xB0] = A;
+		A = [0x16];
+		C = 0;
+		A += [0x867F] + C;
+		A &= 0x00FF;
+		temp = A - 0x00EB;
+
+		if (C == 1)
+			return this.L858601();
+
+		temp = A - 0x00BC;
+
+		if (C == 1)
+			return this.L858607();
+
+	}
+
+	public void L858601()
+	{
+		[0xB2] = A;
+		this.L858816();
+	}
+
+	public void L858607()
+	{
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L858681()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		P &= ~0x30;
+		Y = [0xA6];
+		temp = Y - 0x01F1;
+
+		if (C == 0)
+			return this.L85868F();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L85868F()
+	{
+		A = Y;
+		C = 0;
+		A += 0x0010 + C;
+		[0xA6] = A;
+		P |= 0x20;
+		A = 0x82;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		A = [0xB0];
+		[0x7800 + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L8586B2();
+
+		X = [0x82B6 + Y];
+		A = [0x00 + X];
+		A |= [0x82B8 + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L8586B2()
+	{
+		A = [0xB2];
+		[0x7801 + Y] = A;
+		A = 0x0EA6;
+		[0x7802 + Y] = A;
+		A = [0xB0];
+		C = 0;
+		A += 0x01F0 + C;
+		[0x7804 + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L8586D7();
+
+		X = [0x82BA + Y];
+		A = [0x00 + X];
+		A |= [0x84BC + Y];
+		[0x00 + X] = A;
+		return this.L8586E1();
+	}
+
+	public void L8586D7()
+	{
+		X = [0x82BA + Y];
+		A = [0x00 + X];
+		A |= [0x84BA + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L8586E1()
+	{
+		A = [0xB2];
+		[0x7805 + Y] = A;
+		A = 0x0EA4;
+		[0x7806 + Y] = A;
+		A = [0xB0];
+		[0x7808 + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L858702();
+
+		X = [0x82BE + Y];
+		A = [0x00 + X];
+		A |= [0x84C0 + Y];
+		[0x00 + X] = A;
+		return this.L85870C();
+	}
+
+	public void L858702()
+	{
+		X = [0x82BE + Y];
+		A = [0x00 + X];
+		A |= [0x84BE + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L85870C()
+	{
+		A = [0xB2];
+		C = 0;
+		A += 0x01F0 + C;
+		[0x7809 + Y] = A;
+		A = 0x0E86;
+		[0x780A + Y] = A;
+		A = [0xB0];
+		C = 0;
+		A += 0x01F0 + C;
+		[0x780C + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L858735();
+
+		X = [0x82C2 + Y];
+		A = [0x00 + X];
+		A |= [0x84C4 + Y];
+		[0x00 + X] = A;
+		return this.L85873F();
+	}
+
+	public void L858735()
+	{
+		X = [0x82C2 + Y];
+		A = [0x00 + X];
+		A |= [0x84C2 + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L85873F()
+	{
+		A = [0xB2];
+		C = 0;
+		A += 0x01F0 + C;
+		[0x780D + Y] = A;
+		A = 0x0E84;
+		[0x780E + Y] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L858751()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		P &= ~0x30;
+		Y = [0xA6];
+		temp = Y - 0x01F9;
+
+		if (C == 0)
+			return this.L85875F();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L85875F()
+	{
+		A = Y;
+		C = 0;
+		A += 0x0008 + C;
+		[0xA6] = A;
+		P |= 0x20;
+		A = 0x82;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		A = [0xB0];
+		[0x7800 + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L858784();
+
+		X = [0x82B6 + Y];
+		A = [0x00 + X];
+		A |= [0x84B8 + Y];
+		[0x00 + X] = A;
+		return this.L85878E();
+	}
+
+	public void L858784()
+	{
+		X = [0x82B6 + Y];
+		A = [0x00 + X];
+		A |= [0x84B6 + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L85878E()
+	{
+		A = [0xB2];
+		[0x7801 + Y] = A;
+		A = 0x0EA8;
+		[0x7802 + Y] = A;
+		A = [0xB0];
+		[0x7804 + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L8587AF();
+
+		X = [0x82BA + Y];
+		A = [0x00 + X];
+		A |= [0x84BC + Y];
+		[0x00 + X] = A;
+		return this.L8587B9();
+	}
+
+	public void L8587AF()
+	{
+		X = [0x82BA + Y];
+		A = [0x00 + X];
+		A |= [0x84BA + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L8587B9()
+	{
+		A = [0xB2];
+		C = 0;
+		A += 0x01F0 + C;
+		[0x7805 + Y] = A;
+		A = 0x0E88;
+		[0x7806 + Y] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L8587CB()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		P &= ~0x30;
+		Y = [0xA6];
+		temp = Y - 0x01FD;
+
+		if (C == 0)
+			return this.L8587D9();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L8587D9()
+	{
+		A = Y;
+		C = 0;
+		A += 0x0004 + C;
+		[0xA6] = A;
+		P |= 0x20;
+		A = 0x82;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		A = [0xB0];
+		[0x7800 + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L8587FE();
+
+		X = [0x82B6 + Y];
+		A = [0x00 + X];
+		A |= [0x84B8 + Y];
+		[0x00 + X] = A;
+		return this.L858808();
+	}
+
+	public void L8587FE()
+	{
+		X = [0x82B6 + Y];
+		A = [0x00 + X];
+		A |= [0x84B6 + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L858808()
+	{
+		A = [0xB2];
+		[0x7801 + Y] = A;
+		A = 0x0E8A;
+		[0x7802 + Y] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L858816()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		P &= ~0x30;
+		Y = [0xA6];
+		temp = Y - 0x01FD;
+
+		if (C == 0)
+			return this.L858824();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L858824()
+	{
+		A = Y;
+		C = 0;
+		A += 0x0004 + C;
+		[0xA6] = A;
+		P |= 0x20;
+		A = 0x82;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		A = [0xB0];
+		[0x7800 + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L858847();
+
+		X = [0x82B6 + Y];
+		A = [0x00 + X];
+		A |= [0x82B8 + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L858847()
+	{
+		A = [0xB2];
+		[0x7801 + Y] = A;
+		A = 0x0E8C;
+		[0x7802 + Y] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L85DF14()
+	{
+		A = [0x0CB6 + Y];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x85DF23 + X];
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L85E6FA()
+	{
+		Stack.Push(X);
+		Stack.Push(B);
+		P |= 0x20;
+		A = 0x86;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		A = [0x1238 + Y];
+		temp = A & 0x2000;
+
+		if (Z == 1)
+			return this.L85E70F();
+
+		return this.L85E789();
+	}
+
+	public void L85E70F()
+	{
+		A = [0x146C + Y];
+		X = A;
+		A = [0x11DA + Y];
+		temp = A & 0x0001;
+
+		if (Z == 0)
+			return this.L85E72D();
+
+		A = [0x0000 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L85E728();
+
+		A &= 0x007F;
+		return this.L85E72B();
+	}
+
+	public void L85E728()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L85E72B()
+	{
+		return this.L85E743();
+	}
+
+	public void L85E72D()
+	{
+		A = [0x0000 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L85E73A();
+
+		A &= 0x007F;
+		return this.L85E73D();
+	}
+
+	public void L85E73A()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L85E73D()
+	{
+		A ^= 0xFFFF;
+		A++;
+		return this.L85E743();
+	}
+
+	public void L85E743()
+	{
+		C = 0;
+		A += [0x0B9C + Y] + C;
+		[0x0B9C + Y] = A;
+		A = [0x11DA + Y];
+		temp = A & 0x0002;
+
+		if (Z == 0)
+			return this.L85E764();
+
+		A = [0x0001 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L85E75F();
+
+		A &= 0x007F;
+		return this.L85E762();
+	}
+
+	public void L85E75F()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L85E762()
+	{
+		return this.L85E77A();
+	}
+
+	public void L85E764()
+	{
+		A = [0x0001 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L85E771();
+
+		A &= 0x007F;
+		return this.L85E774();
+	}
+
+	public void L85E771()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L85E774()
+	{
+		A ^= 0xFFFF;
+		A++;
+		return this.L85E77A();
+	}
+
+	public void L85E77A()
+	{
+		C = 0;
+		A += [0x0C58 + Y] + C;
+		[0x0C58 + Y] = A;
+		A = [0x146C + Y];
+		A++;
+		A++;
+		[0x146C + Y] = A;
+	}
+
+	public void L85E789()
+	{
+		B = Stack.Pop();
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L8680DB()
+	{
+		this.L96E9A2();
+		this.L96E6CB();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8680F0()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L868105()
+	{
+		this.L96E907();
+		this.L96E69A();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86811A()
+	{
+		this.L96E983();
+		this.L96E669();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86812F()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L868144()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L868159()
+	{
+		this.L96E9A2();
+		this.L85DF14();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86816E()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L85E6FA();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L868187()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L85E6FA();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8681A0()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L85E6FA();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86CA1C()
+	{
+		A = [0x7FB3EF];
+
+		if (N == 1)
+			return this.L86CA27();
+
+		temp = A - 0x02D0;
+
+		if (C == 1)
+			return this.L86CA7C();
+
+	}
+
+	public void L86CA27()
+	{
+		A = 0x0080;
+		[0xB0] = A;
+		A = [0x014C];
+		A ^= 0xFFFF;
+		A++;
+		A &= 0x00FF;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		[0xB2] = A;
+		A = [0x7FB3EF];
+
+		if (N == 1)
+			return this.L86CA69();
+
+		temp = A - 0x01E0;
+
+		if (C == 0)
+			return this.L86CA4B();
+
+		A = 0x00C9;
+		return this.L86CA6C();
+	}
+
+	public void L86CA4B()
+	{
+		temp = A - 0x0168;
+
+		if (C == 0)
+			return this.L86CA55();
+
+		A = 0x00C8;
+		return this.L86CA6C();
+	}
+
+	public void L86CA55()
+	{
+		temp = A - 0x00F0;
+
+		if (C == 0)
+			return this.L86CA5F();
+
+		A = 0x00C7;
+		return this.L86CA6C();
+	}
+
+	public void L86CA5F()
+	{
+		temp = A - 0x0078;
+
+		if (C == 0)
+			return this.L86CA69();
+
+		A = 0x00C6;
+		return this.L86CA6C();
+	}
+
+	public void L86CA69()
+	{
+		A = 0x00C0;
+	}
+
+	public void L86CA6C()
+	{
+		[0xB4] = A;
+		A = 0xCFFF;
+		[0xA8] = A;
+		A = 0x2000;
+		[0xAA] = A;
+		this.L8286B6();
+	}
+
+	public void L86CA7C()
+	{
+		return;
+	}
+
+	public void L86CA7D()
+	{
+		A = [0x7FB3EF];
+
+		if (N == 1)
+			return this.L86CA88();
+
+		temp = A - 0x0258;
+
+		if (C == 1)
+			return this.L86CAE9();
+
+	}
+
+	public void L86CA88()
+	{
+		A = 0x0080;
+		[0xB0] = A;
+		A = [0x014C];
+		A ^= 0xFFFF;
+		A++;
+		A &= 0x00FF;
+		A <<= 1;
+		A <<= 1;
+		[0x26] = A;
+		A <<= 1;
+		C = 0;
+		A += [0x26] + C;
+		[0xB2] = A;
+		A = [0x7FB3EF];
+
+		if (N == 1)
+			return this.L86CAD6();
+
+		temp = A - 0x01E0;
+
+		if (C == 0)
+			return this.L86CAB1();
+
+		A = 0x00C5;
+		return this.L86CAD9();
+	}
+
+	public void L86CAB1()
+	{
+		temp = A - 0x0168;
+
+		if (C == 0)
+			return this.L86CABB();
+
+		A = 0x00C4;
+		return this.L86CAD9();
+	}
+
+	public void L86CABB()
+	{
+		temp = A - 0x00F0;
+
+		if (C == 0)
+			return this.L86CAC5();
+
+		A = 0x00C3;
+		return this.L86CAD9();
+	}
+
+	public void L86CAC5()
+	{
+		temp = A - 0x0078;
+
+		if (C == 0)
+			return this.L86CACF();
+
+		A = 0x00C2;
+		return this.L86CAD9();
+	}
+
+	public void L86CACF()
+	{
+
+		if (N == 1)
+			return this.L86CAD6();
+
+		A = 0x00C1;
+		return this.L86CAD9();
+	}
+
+	public void L86CAD6()
+	{
+		A = 0x00BF;
+	}
+
+	public void L86CAD9()
+	{
+		[0xB4] = A;
+		A = 0xCFFF;
+		[0xA8] = A;
+		A = 0x2000;
+		[0xAA] = A;
+		this.L8286B6();
+	}
+
+	public void L86CAE9()
+	{
+		return;
+	}
+
+	public void L86D05A()
+	{
+		this.L96E964();
+		this.L96E669();
+		this.L86D077();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D077()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D093 + X];
+		C = 0;
+		A += 0x0028 + C;
+		[0x0E8C + Y] = A;
+		A = [0x86D113 + X];
+		C = 1;
+		A -= 0x0038 - !C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D193()
+	{
+		this.L96E964();
+		this.L96E669();
+		this.L86D1B0();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D1B0()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D093 + X];
+		A ^= 0xFFFF;
+		A++;
+		C = 1;
+		A -= 0x0028 - !C;
+		[0x0E8C + Y] = A;
+		A = [0x86D113 + X];
+		C = 1;
+		A -= 0x0038 - !C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D1D0()
+	{
+		this.L96E964();
+		this.L96E669();
+		this.L86D1ED();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D1ED()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D093 + X];
+		A ^= 0xFFFF;
+		A++;
+		C = 0;
+		A += 0x0028 + C;
+		[0x0E8C + Y] = A;
+		A = [0x86D113 + X];
+		C = 1;
+		A -= 0x0038 - !C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D20D()
+	{
+		this.L96E964();
+		this.L96E669();
+		this.L86D22A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D22A()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D093 + X];
+		C = 1;
+		A -= 0x0028 - !C;
+		[0x0E8C + Y] = A;
+		A = [0x86D113 + X];
+		C = 1;
+		A -= 0x0038 - !C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D246()
+	{
+		this.L96E926();
+		this.L96E669();
+		this.L86D263();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D263()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D277 + X];
+		[0x0E8C + Y] = A;
+		A = [0x86D2CB + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D31F()
+	{
+		this.L96E926();
+		this.L96E669();
+		this.L86D33C();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D33C()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D277 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x86D2CB + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D354()
+	{
+		this.L96E926();
+		this.L96E669();
+		this.L86D371();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D371()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D277 + X];
+		[0x0E8C + Y] = A;
+		A = [0x86D2CB + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D389()
+	{
+		this.L96E926();
+		this.L96E669();
+		this.L86D3A6();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D3A6()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D277 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x86D2CB + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D3C2()
+	{
+		this.L96E926();
+		this.L96E669();
+		this.L86D3DF();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D3DF()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D3FB + X];
+		A--;
+		A ^= 0xFFFF;
+		[0x0E8C + Y] = A;
+		A = [0x86D44B + X];
+		C = 1;
+		A -= 0x0008 - !C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D49B()
+	{
+		this.L96E926();
+		this.L96E669();
+		this.L86D4B8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D4B8()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D3FB + X];
+		[0x0E8C + Y] = A;
+		A = [0x86D44B + X];
+		C = 1;
+		A -= 0x0008 - !C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D4D0()
+	{
+		this.L96E964();
+		this.L96E669();
+		this.L86D4ED();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D4ED()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D093 + X];
+		[0x0E8C + Y] = A;
+		A = [0x86D113 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D501()
+	{
+		this.L96E964();
+		this.L96E669();
+		this.L86D51E();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D51E()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x86D093 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x86D113 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L86D536()
+	{
+		this.L96E983();
+		this.L96E6FC();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D54F()
+	{
+		this.L96E983();
+		this.L96E6FC();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D568()
+	{
+		this.L96E964();
+		this.L96E6CB();
+		this.L96E89C();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D589()
+	{
+		this.L96E964();
+		this.L96E6CB();
+		this.L96E89C();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D5AA()
+	{
+		this.L86D6E5();
+		this.L86D6D0();
+		this.L86D5C3();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L86D5C3()
+	{
+		A = [0x140E + Y];
+		temp = A - 0x001E;
+
+		if (C == 0)
+			return this.L86D5DF();
+
+		C = 1;
+		A -= 0x001E - !C;
+		A <<= 1;
+		X = A;
+		A = [0x86D5E0 + X];
+		[0x0E8C + Y] = A;
+		A = [0x86D658 + X];
+		[0x0EEA + Y] = A;
+	}
+
+	public void L86D5DF()
+	{
+		return;
+	}
+
+	public void L86D6D0()
+	{
+		A = [0x140E + Y];
+		temp = A - 0x005A;
+
+		if (Z == 0)
+			return this.L86D6E4();
+
+		A = 0xFFFF;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+	}
+
+	public void L86D6E4()
+	{
+		return;
+	}
+
+	public void L86D6E5()
+	{
+		A = [0x140E + Y];
+		temp = A - 0x0028;
+
+		if (C == 1)
+			return this.L86D6F2();
+
+		A = 0x002F;
+		return this.L86D701();
+	}
+
+	public void L86D6F2()
+	{
+		temp = A - 0x003C;
+
+		if (C == 1)
+			return this.L86D6FC();
+
+		A = 0x002E;
+		return this.L86D701();
+	}
+
+	public void L86D6FC()
+	{
+		A = 0x002D;
+		return this.L86D701();
+	}
+
+	public void L86D701()
+	{
+		[0x1296 + Y] = A;
+		A = [0x014C];
+		[0x2C] = A;
+		A = 0x0003;
+		[0x2E] = A;
+		this.L8086B1();
+		A = [0x26];
+
+		if (Z == 1)
+			return this.L86D733();
+
+		A--;
+
+		if (Z == 1)
+			return this.L86D726();
+
+		A = 0xF1FF;
+		[0x12F4 + Y] = A;
+		A = 0x0400;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L86D726()
+	{
+		A = 0xF1FF;
+		[0x12F4 + Y] = A;
+		A = 0x0000;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L86D733()
+	{
+		A = 0xFFFF;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L87CB55()
+	{
+		this.L96E926();
+		this.L96E69A();
+		this.L87CB72();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87CB72()
+	{
+		A = [0x11DA + Y];
+
+		if (Z == 1)
+			return this.L87CB80();
+
+		A--;
+
+		if (Z == 1)
+			return this.L87CB95();
+
+		A--;
+
+		if (Z == 1)
+			return this.L87CBAA();
+
+		A--;
+
+		if (Z == 1)
+			return this.L87CBBF();
+
+	}
+
+	public void L87CB80()
+	{
+		A = [0x1C9E];
+		temp = A - 0x001F;
+
+		if (Z == 0)
+			return this.L87CB8B();
+
+		[0x1C9E] = 0;
+	}
+
+	public void L87CB8B()
+	{
+		A = [0x1C9E];
+		[0x12] = A;
+		[0x1C9E]++;
+		return this.L87CBD2();
+	}
+
+	public void L87CB95()
+	{
+		A = [0x1CA0];
+		temp = A - 0x001F;
+
+		if (Z == 0)
+			return this.L87CBA0();
+
+		[0x1CA0] = 0;
+	}
+
+	public void L87CBA0()
+	{
+		A = [0x1CA0];
+		[0x12] = A;
+		[0x1CA0]++;
+		return this.L87CBD2();
+	}
+
+	public void L87CBAA()
+	{
+		A = [0x1C9A];
+		temp = A - 0x001F;
+
+		if (Z == 0)
+			return this.L87CBB5();
+
+		[0x1C9A] = 0;
+	}
+
+	public void L87CBB5()
+	{
+		A = [0x1C9A];
+		[0x12] = A;
+		[0x1C9A]++;
+		return this.L87CBD2();
+	}
+
+	public void L87CBBF()
+	{
+		A = [0x1C9C];
+		temp = A - 0x001F;
+
+		if (Z == 0)
+			return this.L87CBCA();
+
+		[0x1C9C] = 0;
+	}
+
+	public void L87CBCA()
+	{
+		A = [0x1C9C];
+		[0x12] = A;
+		[0x1C9C]++;
+	}
+
+	public void L87CBD2()
+	{
+		A = 0x000F;
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87CBE6()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L87CC03();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87CC03()
+	{
+		A = [0x11DA + Y];
+
+		if (Z == 1)
+			return this.L87CC11();
+
+		A--;
+
+		if (Z == 1)
+			return this.L87CC26();
+
+		A--;
+
+		if (Z == 1)
+			return this.L87CC3B();
+
+		A--;
+
+		if (Z == 1)
+			return this.L87CC50();
+
+	}
+
+	public void L87CC11()
+	{
+		A = [0x1C9E];
+		temp = A - 0x001F;
+
+		if (Z == 0)
+			return this.L87CC1C();
+
+		[0x1C9E] = 0;
+	}
+
+	public void L87CC1C()
+	{
+		A = [0x1C9E];
+		[0x12] = A;
+		[0x1C9E]++;
+		return this.L87CC63();
+	}
+
+	public void L87CC26()
+	{
+		A = [0x1CA0];
+		temp = A - 0x001F;
+
+		if (Z == 0)
+			return this.L87CC31();
+
+		[0x1CA0] = 0;
+	}
+
+	public void L87CC31()
+	{
+		A = [0x1CA0];
+		[0x12] = A;
+		[0x1CA0]++;
+		return this.L87CC63();
+	}
+
+	public void L87CC3B()
+	{
+		A = [0x1C9A];
+		temp = A - 0x001F;
+
+		if (Z == 0)
+			return this.L87CC46();
+
+		[0x1C9A] = 0;
+	}
+
+	public void L87CC46()
+	{
+		A = [0x1C9A];
+		[0x12] = A;
+		[0x1C9A]++;
+		return this.L87CC63();
+	}
+
+	public void L87CC50()
+	{
+		A = [0x1C9C];
+		temp = A - 0x001F;
+
+		if (Z == 0)
+			return this.L87CC5B();
+
+		[0x1C9C] = 0;
+	}
+
+	public void L87CC5B()
+	{
+		A = [0x1C9C];
+		[0x12] = A;
+		[0x1C9C]++;
+	}
+
+	public void L87CC63()
+	{
+		A = 0x0040;
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87CC77()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L87CE63();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87CC94()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L87CE2E();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87CCB1()
+	{
+		this.L96E964();
+		this.L96E6CB();
+		this.L87CD3D();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87CCCE()
+	{
+		this.L96E964();
+		this.L96E6CB();
+		this.L87CD08();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87CCEB()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L87CD08();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87CD08()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87CE77 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x87CD51 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87CD20()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L87CD3D();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L80C8A2();
+		this.L96DC5B();
+		return;
+	}
+
+	public void L87CD3D()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87CE77 + X];
+		[0x0E8C + Y] = A;
+		A = [0x87CD51 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87CE11()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L87CE2E();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87CE2E()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87CE77 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x87CF37 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87CE46()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L87CE63();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87CE63()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87CE77 + X];
+		[0x0E8C + Y] = A;
+		A = [0x87CF37 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87CFF7()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L87D06B();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D014()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L87D083();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D031()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L87D097();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D04E()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L87D0B3();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D06B()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87CE77 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x87CD51 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87D083()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87CE77 + X];
+		[0x0E8C + Y] = A;
+		A = [0x87CD51 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87D097()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87CE77 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x87CF37 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87D0B3()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87CE77 + X];
+		[0x0E8C + Y] = A;
+		A = [0x87CF37 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87D0CB()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L87D122();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D0E8()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L87D157();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D105()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L87D122();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D122()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87D16B + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x87D1CD + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87D13A()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L87D157();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D157()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87D16B + X];
+		[0x0E8C + Y] = A;
+		A = [0x87D1CD + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87D22F()
+	{
+		this.L96E926();
+		this.L96E69A();
+		this.L87D24C();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D24C()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87D2FB + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x87D34B + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87D264()
+	{
+		this.L96E926();
+		this.L96E69A();
+		this.L87D281();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D281()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87D2FB + X];
+		[0x0E8C + Y] = A;
+		A = [0x87D34B + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87D295()
+	{
+		this.L96E926();
+		this.L96E669();
+		this.L87D2B2();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D2B2()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87D2FB + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x87D34B + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L87D2CA()
+	{
+		this.L96E926();
+		this.L96E669();
+		this.L87D2E7();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L87D2E7()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x87D2FB + X];
+		[0x0E8C + Y] = A;
+		A = [0x87D34B + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L899598()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L96E850();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L89B6A3()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L89B6C0();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L89B6C0()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		A <<= 1;
+		A &= 0x001F;
+		[0x12] = A;
+		A = 0x0008;
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89B6DE()
+	{
+		A = [0x11DA + Y];
+		this.L96E983();
+		this.L96E69A();
+		this.L89B6FE();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L89B6FE()
+	{
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L89B718();
+
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L89B71C();
+
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L89B720();
+
+		temp = A - 0x0004;
+
+		if (Z == 1)
+			return this.L89B724();
+
+	}
+
+	public void L89B718()
+	{
+		this.L89B728();
+		return;
+	}
+
+	public void L89B71C()
+	{
+		this.L89B759();
+		return;
+	}
+
+	public void L89B720()
+	{
+		this.L89B78B();
+		return;
+	}
+
+	public void L89B724()
+	{
+		this.L89B7B8();
+		return;
+	}
+
+	public void L89B728()
+	{
+		A = [0x140E + Y];
+		A >>= 1;
+		[0x1C] = A;
+		A = 0x0040;
+		C = 1;
+		A -= [0x140E + Y] - !C;
+		C = 0;
+		A += 0x0008 + C;
+		A &= 0x001F;
+		[0x12] = A;
+		A = [0x140E + Y];
+		A >>= 1;
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		C = 1;
+		A -= [0x1C] - !C;
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		C = 1;
+		A -= [0x1C] - !C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89B759()
+	{
+		A = [0x140E + Y];
+		A >>= 1;
+		[0x1C] = A;
+		A = 0x0040;
+		C = 1;
+		A -= [0x140E + Y] - !C;
+		C = 0;
+		A += 0x0014 + C;
+		A &= 0x001F;
+		[0x12] = A;
+		A = [0x140E + Y];
+		A >>= 1;
+		A >>= 1;
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		C = 1;
+		A -= [0x1C] - !C;
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		C = 1;
+		A -= [0x1C] - !C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89B78B()
+	{
+		A = [0x140E + Y];
+		A >>= 1;
+		[0x1C] = A;
+		A = [0x140E + Y];
+		C = 0;
+		A += 0x0018 + C;
+		A &= 0x001F;
+		[0x12] = A;
+		A = [0x140E + Y];
+		A >>= 1;
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		C = 0;
+		A += [0x1C] + C;
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		C = 1;
+		A -= [0x1C] - !C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89B7B8()
+	{
+		A = [0x140E + Y];
+		A >>= 1;
+		[0x1C] = A;
+		A = [0x140E + Y];
+		C = 0;
+		A += 0x000C + C;
+		A &= 0x001F;
+		[0x12] = A;
+		A = [0x140E + Y];
+		A >>= 1;
+		A >>= 1;
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		C = 0;
+		A += [0x1C] + C;
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		C = 1;
+		A -= [0x1C] - !C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89B7E6()
+	{
+		A = [0x11DA + Y];
+		this.L96E964();
+		this.L96E69A();
+		this.L89B806();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L89B806()
+	{
+		A = [0x140E + Y];
+		A >>= 1;
+		[0x1C] = A;
+		A = [0x140E + Y];
+		A &= 0x001F;
+		A <<= 1;
+		X = A;
+		A = [0x89B826 + X];
+		[0x0E8C + Y] = A;
+		A = [0x89B866 + X];
+		C = 1;
+		A -= [0x1C] - !C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89B8A6()
+	{
+		A = [0x11DA + Y];
+		this.L96E983();
+		this.L96E69A();
+		this.L89B8C6();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L89B8C6()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L89B8EA();
+
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L89B8FD();
+
+		A = [0x89B910 + X];
+		[0x0E8C + Y] = A;
+		A = [0x89B9B0 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89B8EA()
+	{
+		A = [0x89B910 + X];
+		C = 0;
+		A += [0x140E + Y] + C;
+		[0x0E8C + Y] = A;
+		A = [0x89B9B0 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89B8FD()
+	{
+		A = [0x89B910 + X];
+		C = 1;
+		A -= [0x140E + Y] - !C;
+		[0x0E8C + Y] = A;
+		A = [0x89B9B0 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89BA50()
+	{
+		A = [0x11DA + Y];
+		this.L96E964();
+		this.L96E69A();
+		this.L89BA70();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L89BA70()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L89BA9D();
+
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L89BAB4();
+
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L89BACB();
+
+		A = [0x89BAE6 + X];
+		C = 1;
+		A -= 0x0028 - !C;
+		[0x0E8C + Y] = A;
+		A = [0x89BB66 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89BA9D()
+	{
+		A = [0x89BAE6 + X];
+		A ^= 0xFFFF;
+		A++;
+		C = 0;
+		A += 0x0028 + C;
+		[0x0E8C + Y] = A;
+		A = [0x89BB66 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89BAB4()
+	{
+		A = [0x89BAE6 + X];
+		C = 1;
+		A -= 0x0028 - !C;
+		[0x0E8C + Y] = A;
+		A = [0x89BB66 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L89BACB()
+	{
+		A = [0x89BAE6 + X];
+		A ^= 0xFFFF;
+		A++;
+		C = 0;
+		A += 0x0028 + C;
+		[0x0E8C + Y] = A;
+		A = [0x89BB66 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L8B8000()
+	{
+		A = 0x0000;
+		[0x7E6A82] = A;
+		[0x7E6A84] = A;
+		this.L8B8018();
+		return;
+	}
+
+	public void L8B8010()
+	{
+		this.L8B8000();
+		[0x026D]++;
+		return;
+	}
+
+	public void L8B8018()
+	{
+		P &= ~0x20;
+		A = 0x0000;
+		[0x7E6A82] = A;
+		[0x7E6A84] = A;
+		this.L8B85FF();
+		this.L8B863B();
+		A = 0xFFFF;
+		[0x7E6AC6] = A;
+		[0x7E6AC8] = A;
+		[0x7E6ACA] = A;
+		[0x7E6ACC] = A;
+		[0x7E6ACE] = A;
+		[0x7E6AD0] = A;
+		[0x7E6AD2] = A;
+		[0x7E6AD4] = A;
+		[0x7E6A80] = A;
+		A = [0x014D];
+		[0x7E6A8E] = A;
+		A &= 0x0001;
+		[0x7E6AB1] = A;
+		A = 0x0000;
+		[0x7E6AB3] = A;
+		[0x7E6AA1] = A;
+		[0x7E6AA5] = A;
+		[0x7E6A7A] = A;
+		[0x7E6A7E] = A;
+		[0x7E6AA9] = A;
+		[0x7E6AAB] = A;
+		[0x7E6AAD] = A;
+		[0x7E6AA7] = A;
+		[0x7E6A8A] = A;
+		P |= 0x20;
+		A = 0xFF;
+		[0x7E6AB5] = A;
+		P &= ~0x20;
+		A = 0xFFFF;
+		[0x7E6A88] = A;
+		[0x7E6A7C] = A;
+		this.L8B80AD();
+		this.L8B86C6();
+		this.L8B80E8();
+		this.L8B80C9();
+		return;
+	}
+
+	public void L8B80AD()
+	{
+		Stack.Push(P);
+		P |= 0x20;
+		A = 0x00;
+		[0x7E6A90] = A;
+		X = 0x000F;
+	}
+
+	public void L8B80B9()
+	{
+		A = X;
+		A &= 0x0F;
+		[0x7E6A91 + X] = A;
+		X--;
+
+		if (N == 0)
+			return this.L8B80B9();
+
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L8B80C9()
+	{
+		A = [0x0B3C];
+		A &= 0xFFFC;
+	}
+
+	public void L8B80CF()
+	{
+
+		if (Z == 0)
+			return this.L8B80CF();
+
+		X = [0x0381];
+		A = [0x8B80E4 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += [0x0B3C] + C;
+		[0x7E6AD6] = A;
+		return;
+	}
+
+	public void L8B80E8()
+	{
+		Stack.Push(P);
+		P |= 0x20;
+		P &= ~0x10;
+		X = 0x000F;
+		A = 0x00;
+	}
+
+	public void L8B80F2()
+	{
+		[0x7E6AD8 + X] = A;
+		X--;
+
+		if (N == 0)
+			return this.L8B80F2();
+
+		P = Stack.Pop();
+		A = [0x014D];
+		C = 0;
+		A += [0x014C] + C;
+		[0x7E6AD8] = A;
+		A = [0x014D];
+		[0x7E6ADC] = A;
+		return;
+	}
+
+	public void L8B85FF()
+	{
+		A = [0x7E3D73];
+		[0x7E6AB6] = A;
+		[0x7E6AC6] = A;
+		A = [0x7E3D75];
+		[0x7E6AB8] = A;
+		[0x7E6AC8] = A;
+		A = [0x7E3D87];
+		[0x7E6ABA] = A;
+		[0x7E6ACA] = A;
+		A = [0x7E3D89];
+		[0x7E6ABC] = A;
+		[0x7E6ACC] = A;
+		A = 0x2000;
+		A |= [0x7E6AE0];
+		[0x7E6AE0] = A;
+		return;
+	}
+
+	public void L8B863B()
+	{
+		A = [0x7E3D9B];
+		[0x7E6ABE] = A;
+		[0x7E6ACE] = A;
+		A = [0x7E3D9D];
+		[0x7E6AC0] = A;
+		[0x7E6AD0] = A;
+		A = [0x7E3DAF];
+		[0x7E6AC2] = A;
+		[0x7E6AD2] = A;
+		A = [0x7E3DB1];
+		[0x7E6AC4] = A;
+		[0x7E6AD4] = A;
+		A = 0x2000;
+		A |= [0x7E6AE0];
+		[0x7E6AE0] = A;
+		return;
+	}
+
+	public void L8B86C6()
+	{
+		A = [0x14D6];
+		A <<= 1;
+		X = A;
+		A = [0x8B8EEC + X];
+		[0x12] = A;
+		A = [0x7E6AD6];
+		A <<= 1;
+		C = 0;
+		A += [0x12] + C;
+		X = A;
+		A = [0x8B0000 + X];
+		[0x7E6AA3] = A;
+		return;
+	}
+
+	public void L8C9702()
+	{
+		this.L96E907();
+		this.L96E669();
+		this.L8C971F();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8C971F()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		A <<= 1;
+		A &= 0x001F;
+		[0x12] = A;
+		A = 0x0008;
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L8C973D()
+	{
+		this.L96E907();
+		this.L96E669();
+		this.L8C975A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8C975A()
+	{
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L8C9775();
+
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L8C9784();
+
+		A = [0x140E + Y];
+		A >>= 1;
+		A &= 0x001F;
+		[0x12] = A;
+		return this.L8C9793();
+	}
+
+	public void L8C9775()
+	{
+		A = [0x140E + Y];
+		A >>= 1;
+		C = 0;
+		A += 0x000A + C;
+		A &= 0x001F;
+		[0x12] = A;
+		return this.L8C9793();
+	}
+
+	public void L8C9784()
+	{
+		A = [0x140E + Y];
+		A >>= 1;
+		C = 0;
+		A += 0x0016 + C;
+		A &= 0x001F;
+		[0x12] = A;
+		return this.L8C9793();
+	}
+
+	public void L8C9793()
+	{
+		A = [0x140E + Y];
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L8C97A7()
+	{
+		this.L96E945();
+		this.L96E669();
+		this.L8C97C4();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8C97C4()
+	{
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L8C97D9();
+
+		A = [0x140E + Y];
+		A &= 0x001F;
+		[0x12] = A;
+		return this.L8C97E5();
+	}
+
+	public void L8C97D9()
+	{
+		A = [0x140E + Y];
+		C = 0;
+		A += 0x0010 + C;
+		A &= 0x001F;
+		[0x12] = A;
+	}
+
+	public void L8C97E5()
+	{
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L8C97FB();
+
+		A = [0x12];
+		A <<= 1;
+		X = A;
+		A = [0x982D + X];
+		[0x14] = A;
+		return this.L8C980D();
+	}
+
+	public void L8C97FB()
+	{
+		A = [0x12];
+		C = 0;
+		A += 0x0008 + C;
+		A &= 0x001F;
+		A <<= 1;
+		X = A;
+		A = [0x982D + X];
+		[0x14] = A;
+		return this.L8C980D();
+	}
+
+	public void L8C980D()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		C = 0;
+		A += [0x14] + C;
+		temp = A - 0x0050;
+
+		if (C == 0)
+			return this.L8C981C();
+
+		A = 0x0050;
+	}
+
+	public void L8C981C()
+	{
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L8C986D()
+	{
+		this.L96E945();
+		this.L96E669();
+		this.L8C988A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8C988A()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L8C98AD();
+
+		A = [0x8C98BC + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x8C991C + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L8C98AD()
+	{
+		A = [0x8C98BC + X];
+		[0x0E8C + Y] = A;
+		A = [0x8C991C + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L8C997C()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L96E7DE();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8C999D()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L96E7DE();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8C99BE()
+	{
+		this.L96E907();
+		this.L96E69A();
+		this.L96E7B7();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8C99DF()
+	{
+		this.L96E945();
+		A = [0x117C + Y];
+		temp = A - 0xFFFF;
+
+		if (Z == 0)
+			return this.L8C99EE();
+
+		[0x1C4C] = 0;
+	}
+
+	public void L8C99EE()
+	{
+		this.L8C9A25();
+		this.L8C9A07();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8C9A07()
+	{
+		A = [0x140E + Y];
+		A ^= 0xFFFF;
+		A++;
+		C = 0;
+		A += 0x0010 + C;
+		[0x0E8C + Y] = A;
+		A = [0x140E + Y];
+		A >>= 1;
+		A ^= 0xFFFF;
+		A++;
+		C = 0;
+		A += 0x0010 + C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L8C9A25()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L8C9A36();
+
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x8C9A3D + X];
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L8C9A36()
+	{
+		A = 0x80C4;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L8CC0E4()
+	{
+		this.L8CC9C7();
+		return;
+	}
+
+	public void L8CC0E8()
+	{
+		P &= ~0x30;
+		this.L80823D();
+		P |= 0x20;
+		A = 0x8F;
+		[0x2100] = A;
+		[0x0100] = A;
+		A = 0x10;
+		[0x2102] = A;
+		[0x0102] = A;
+		A = 0x00;
+		[0x2103] = A;
+		[0x0103] = A;
+		A = 0x09;
+		[0x2105] = A;
+		[0x0104] = A;
+		A = 0x10;
+		[0x2109] = A;
+		[0x0108] = A;
+		A = 0x00;
+		[0x210C] = A;
+		[0x010B] = A;
+		A = 0x04;
+		[0x212C] = A;
+		[0x0126] = A;
+		A = 0x00;
+		[0x212D] = A;
+		[0x0127] = A;
+		A = 0x81;
+		[0x4200] = A;
+		[0x013C] = A;
+		P &= ~0x20;
+		A = 0x8C00;
+		[0x01] = A;
+		A = 0xC1C2;
+		[0x00] = A;
+		this.L8087A4();
+		A = 0x8C00;
+		[0x01] = A;
+		A = 0xC1D4;
+		[0x00] = A;
+		this.L8087A4();
+		this.L808202();
+		A = 0x0000;
+		Y = 0x0800;
+		X = 0x0000;
+	}
+
+	public void L8CC163()
+	{
+		[0x7E2000 + X] = A;
+		X++;
+		Y--;
+		X++;
+		Y--;
+
+		if (Z == 0)
+			return this.L8CC163();
+
+		Y = 0x0050;
+		X = 0x0000;
+	}
+
+	public void L8CC173()
+	{
+		A = [0x8CC1DB + X];
+		[0x7E2318 + X] = A;
+		X++;
+		Y--;
+		X++;
+		Y--;
+
+		if (Z == 0)
+			return this.L8CC173();
+
+		A = 0x8C00;
+		[0x01] = A;
+		A = 0xC1CB;
+		[0x00] = A;
+		this.L8087A4();
+		this.L808202();
+		this.L808252();
+		return;
+	}
+
+	public byte[] Table8CC1C2 = new byte[]
+	{
+		//02 E4 BF 8C 00 01 80 00 00
+	}
+
+	public byte[] Table8CC1CB = new byte[]
+	{
+		//02 00 20 7E 00 08 80 00 10
+	}
+
+	public byte[] Table8CC1D4 = new byte[]
+	{
+		//01 2B C2 8C 04 00 00
+	}
+
+	public void L8CC22F()
+	{
+		this.L80A10A();
+		this.L908453();
+		[0x1BB9] = 0;
+		[0x026D]++;
+		return;
+	}
+
+	public void L8CC23E()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x1BB9];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xC258 + X)]();
+	}
+
+	public void L8CC264()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x1BB9];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xC28A + X)]();
+	}
+
+	public void L8CC91F()
+	{
+		this.L908453();
+		[0x14CE] = 0;
+		A = 0xFFFF;
+		[0x02F3] = A;
+		A = 0x8014;
+		[0x02EB] = A;
+		P |= 0x20;
+		A = 0x01;
+		[0x0101] = A;
+		P &= ~0x20;
+		[0x1BB9] = 0;
+		[0x1BD9] = 0;
+		[0x026D]++;
+		return;
+	}
+
+	public void L8CC945()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x1BB9];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xC95B + X)]();
+	}
+
+	public void L8CC9C7()
+	{
+		A = [0x1BD7];
+
+		if (N == 1)
+			return this.L8CC9D1();
+
+		[0x1BD7]--;
+
+		if (Z == 1)
+			return this.L8CC9D2();
+
+	}
+
+	public void L8CC9D1()
+	{
+		return;
+	}
+
+	public void L8CC9D2()
+	{
+		[0x14CC] = 0;
+		return;
+	}
+
+	public void L8CC9D6()
+	{
+		A = 0x0001;
+		[0x14CC] = A;
+		A = [0x0400];
+		[0x1BBD] = A;
+		[0x0400] = 0;
+		A = 0x0000;
+		[0x0117] = A;
+		[0x7F0002] = A;
+		this.L909993();
+		this.L908DCF();
+		A = 0x8019;
+		[0x02EB] = A;
+		P |= 0x20;
+		A = 0x01;
+		[0x026B] = A;
+		A = 0x00;
+		[0x010D] = A;
+		[0x010E] = A;
+		A = 0xE0;
+		[0x011F] = A;
+		A = 0x00;
+		[0x0120] = A;
+		A = 0xFF;
+		[0x0121] = A;
+		P &= ~0x20;
+		[0x1C13] = 0;
+		[0x1C15] = 0;
+		[0x1C17] = 0;
+		[0x1C19] = 0;
+		[0x1C1B] = 0;
+		[0x1C1D] = 0;
+		[0x1BB9] = 0;
+		[0x1BD9] = 0;
+		[0x039B] = 0;
+		[0x026D]++;
+		A = [0x14D6];
+		temp = A - 0x000F;
+
+		if (Z == 0)
+			return this.L8CCA55();
+
+		P |= 0x20;
+		A = 0x15;
+		[0x0126] = A;
+		[0x0994] = A;
+		[0x0996] = A;
+		[0x0998] = A;
+		P &= ~0x20;
+	}
+
+	public void L8CCA55()
+	{
+		return;
+	}
+
+	public void L8CCA56()
+	{
+		P |= 0x20;
+		[0x012B] = 0;
+		P &= ~0x20;
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x1BB9];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xCA6F + X)]();
+	}
+
+	public void L8CD253()
+	{
+		this.L908453();
+		[0x14CE] = 0;
+		A = 0xFFFF;
+		[0x02F3] = A;
+		P |= 0x20;
+		A = 0x01;
+		[0x0101] = A;
+		P &= ~0x20;
+		this.L9084A0();
+		this.L9084BD();
+		[0x1BB9] = 0;
+		[0x1BD9] = 0;
+		[0x039B] = 0;
+		[0x026D]++;
+		return;
+	}
+
+	public void L8CD27E()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x1BB9];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xD29C + X)]();
+	}
+
+	public void L8CD2AE()
+	{
+		this.L908453();
+		this.L9084A0();
+		this.L9084BD();
+		A = 0x0001;
+		[0x09FC] = A;
+		this.L91AA76();
+		A = [0x09FC];
+
+		if (N == 1)
+			return this.L8CD2CA();
+
+		return;
+	}
+
+	public void L8CD2CA()
+	{
+		this.L9081B1();
+		[0x026D]++;
+		return;
+	}
+
+	public void L8D8002()
+	{
+		A = [0x1866];
+
+		if (N == 0)
+			return this.L8D8065();
+
+		[0x14CE] = 0;
+		A = [0x026F];
+
+		if (Z == 0)
+			return this.L8D8015();
+
+		A = 0x8013;
+		[0x02EB] = A;
+	}
+
+	public void L8D8015()
+	{
+		[0x026F]++;
+		A = [0x0371];
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L8D8053();
+
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L8D8053();
+
+		temp = A - 0x0004;
+
+		if (Z == 1)
+			return this.L8D8053();
+
+		A = [0x14D6];
+		temp = A - 0x0010;
+
+		if (Z == 1)
+			return this.L8D8058();
+
+		temp = A - 0x0006;
+
+		if (Z == 1)
+			return this.L8D8058();
+
+		temp = A - 0x000E;
+
+		if (Z == 1)
+			return this.L8D8058();
+
+		temp = A - 0x0005;
+
+		if (Z == 1)
+			return this.L8D8058();
+
+		A = [0x036F];
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L8D8053();
+
+		A = [0x14D6];
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L8D8058();
+
+		return this.L8D8053();
+	}
+
+	public void L8D8053()
+	{
+		this.L8D8092();
+
+		if (C == 1)
+			return this.L8D8065();
+
+	}
+
+	public void L8D8058()
+	{
+		this.L9682B5();
+		A = 0x001D;
+		[0x026D] = A;
+		[0x026F] = 0;
+	}
+
+	public void L8D8065()
+	{
+		A = [0x1968];
+
+		if (N == 0)
+			return this.L8D8091();
+
+		[0x14CE] = 0;
+		A = [0x026F];
+
+		if (Z == 0)
+			return this.L8D8078();
+
+		A = 0x8015;
+		[0x02EB] = A;
+	}
+
+	public void L8D8078()
+	{
+		[0x026F]++;
+		A = [0x026F];
+		temp = A - 0x003C;
+
+		if (C == 0)
+			return this.L8D8091();
+
+		A = [0x0379];
+
+		if (Z == 0)
+			return this.L8D8091();
+
+		A = 0x0030;
+		[0x026D] = A;
+		[0x026F] = 0;
+	}
+
+	public void L8D8091()
+	{
+		return;
+	}
+
+	public void L8D8092()
+	{
+		X = 0x003E;
+	}
+
+	public void L8D8095()
+	{
+		A = [0x1726 + X];
+		A &= 0x8000;
+
+		if (Z == 1)
+			return this.L8D80A3();
+
+	}
+
+	public void L8D809D()
+	{
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L8D8095();
+
+		return this.L8D80AE();
+	}
+
+	public void L8D80A3()
+	{
+		A = [0x1726 + X];
+		A &= 0x0010;
+
+		if (Z == 1)
+			return this.L8D809D();
+
+		return this.L8D8228();
+	}
+
+	public void L8D80AE()
+	{
+		A = [0x117C];
+
+		if (N == 1)
+			return this.L8D80B6();
+
+		return this.L8D8228();
+	}
+
+	public void L8D80B6()
+	{
+		A = [0x117E];
+
+		if (N == 1)
+			return this.L8D80BE();
+
+		return this.L8D8228();
+	}
+
+	public void L8D80BE()
+	{
+		A = [0x1180];
+
+		if (N == 1)
+			return this.L8D80C6();
+
+		return this.L8D8228();
+	}
+
+	public void L8D80C6()
+	{
+		A = [0x1182];
+
+		if (N == 1)
+			return this.L8D80CE();
+
+		return this.L8D8228();
+	}
+
+	public void L8D80CE()
+	{
+		A = [0x1184];
+
+		if (N == 1)
+			return this.L8D80D6();
+
+		return this.L8D8228();
+	}
+
+	public void L8D80D6()
+	{
+		A = [0x1186];
+
+		if (N == 1)
+			return this.L8D80DE();
+
+		return this.L8D8228();
+	}
+
+	public void L8D80DE()
+	{
+		A = [0x1188];
+
+		if (N == 1)
+			return this.L8D80E6();
+
+		return this.L8D8228();
+	}
+
+	public void L8D80E6()
+	{
+		A = [0x118A];
+
+		if (N == 1)
+			return this.L8D80EE();
+
+		return this.L8D8228();
+	}
+
+	public void L8D80EE()
+	{
+		A = [0x118C];
+
+		if (N == 1)
+			return this.L8D80F6();
+
+		return this.L8D8228();
+	}
+
+	public void L8D80F6()
+	{
+		A = [0x118E];
+
+		if (N == 1)
+			return this.L8D80FE();
+
+		return this.L8D8228();
+	}
+
+	public void L8D80FE()
+	{
+		A = [0x1190];
+
+		if (N == 1)
+			return this.L8D8106();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8106()
+	{
+		A = [0x1192];
+
+		if (N == 1)
+			return this.L8D810E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D810E()
+	{
+		A = [0x1194];
+
+		if (N == 1)
+			return this.L8D8116();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8116()
+	{
+		A = [0x1196];
+
+		if (N == 1)
+			return this.L8D811E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D811E()
+	{
+		A = [0x1198];
+
+		if (N == 1)
+			return this.L8D8126();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8126()
+	{
+		A = [0x119A];
+
+		if (N == 1)
+			return this.L8D812E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D812E()
+	{
+		A = [0x119C];
+
+		if (N == 1)
+			return this.L8D8136();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8136()
+	{
+		A = [0x119E];
+
+		if (N == 1)
+			return this.L8D813E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D813E()
+	{
+		A = [0x11A0];
+
+		if (N == 1)
+			return this.L8D8146();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8146()
+	{
+		A = [0x11A2];
+
+		if (N == 1)
+			return this.L8D814E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D814E()
+	{
+		A = [0x11A4];
+
+		if (N == 1)
+			return this.L8D8156();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8156()
+	{
+		A = [0x11A6];
+
+		if (N == 1)
+			return this.L8D815E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D815E()
+	{
+		A = [0x11A8];
+
+		if (N == 1)
+			return this.L8D8166();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8166()
+	{
+		A = [0x11AA];
+
+		if (N == 1)
+			return this.L8D816E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D816E()
+	{
+		A = [0x11AC];
+
+		if (N == 1)
+			return this.L8D8176();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8176()
+	{
+		A = [0x11AE];
+
+		if (N == 1)
+			return this.L8D817E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D817E()
+	{
+		A = [0x11B0];
+
+		if (N == 1)
+			return this.L8D8186();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8186()
+	{
+		A = [0x11B2];
+
+		if (N == 1)
+			return this.L8D818E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D818E()
+	{
+		A = [0x11B4];
+
+		if (N == 1)
+			return this.L8D8196();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8196()
+	{
+		A = [0x11B6];
+
+		if (N == 1)
+			return this.L8D819E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D819E()
+	{
+		A = [0x11B8];
+
+		if (N == 1)
+			return this.L8D81A6();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81A6()
+	{
+		A = [0x11BA];
+
+		if (N == 1)
+			return this.L8D81AE();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81AE()
+	{
+		A = [0x11BC];
+
+		if (N == 1)
+			return this.L8D81B6();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81B6()
+	{
+		A = [0x11BE];
+
+		if (N == 1)
+			return this.L8D81BE();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81BE()
+	{
+		A = [0x11C0];
+
+		if (N == 1)
+			return this.L8D81C6();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81C6()
+	{
+		A = [0x11C2];
+
+		if (N == 1)
+			return this.L8D81CE();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81CE()
+	{
+		A = [0x11C4];
+
+		if (N == 1)
+			return this.L8D81D6();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81D6()
+	{
+		A = [0x11C6];
+
+		if (N == 1)
+			return this.L8D81DE();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81DE()
+	{
+		A = [0x11C8];
+
+		if (N == 1)
+			return this.L8D81E6();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81E6()
+	{
+		A = [0x11CA];
+
+		if (N == 1)
+			return this.L8D81EE();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81EE()
+	{
+		A = [0x11CC];
+
+		if (N == 1)
+			return this.L8D81F6();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81F6()
+	{
+		A = [0x11CE];
+
+		if (N == 1)
+			return this.L8D81FE();
+
+		return this.L8D8228();
+	}
+
+	public void L8D81FE()
+	{
+		A = [0x11D0];
+
+		if (N == 1)
+			return this.L8D8206();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8206()
+	{
+		A = [0x11D2];
+
+		if (N == 1)
+			return this.L8D820E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D820E()
+	{
+		A = [0x11D4];
+
+		if (N == 1)
+			return this.L8D8216();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8216()
+	{
+		A = [0x11D6];
+
+		if (N == 1)
+			return this.L8D821E();
+
+		return this.L8D8228();
+	}
+
+	public void L8D821E()
+	{
+		A = [0x11D8];
+
+		if (N == 1)
+			return this.L8D8226();
+
+		return this.L8D8228();
+	}
+
+	public void L8D8226()
+	{
+		C = 0;
+		return;
+	}
+
+	public void L8D8228()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L8DCCFA()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L96E850();
+		this.L96E8E8();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8DCD74()
+	{
+		this.L96F974();
+		this.L80C88D();
+		A = 0x8D00;
+		[0x01] = A;
+		A = 0xCD8B;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L8DE631()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L96E850();
+		this.L96E8E8();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L8DE6B0()
+	{
+		this.L96F974();
+		this.L80C88D();
+		A = 0x8D00;
+		[0x01] = A;
+		A = 0xE6C7;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L8E98BE()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x7E6AF6];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x98D4 + X)]();
+	}
+
+	public void L8EAE4F()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L80CC06();
+		this.L839C9C();
+		A = [0x7E6AF6];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xAE75 + X)]();
+	}
+
+	public void L8EAEA9()
+	{
+		this.L80C88D();
+		A = 0x8E00;
+		[0x01] = A;
+		A = 0xAEBC;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L8EAED0()
+	{
+		this.L80C88D();
+		A = 0x8E00;
+		[0x01] = A;
+		A = 0xAEE3;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L8ECB6E()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x7E6AF6];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xCB84 + X)]();
+	}
+
+	public void L908000()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0xFFFF;
+		[0x03AD] = A;
+		[0x03AF] = A;
+		[0x036F] = 0;
+		[0x03FA] = 0;
+		[0x03FC] = 0;
+		A = 0x0000;
+		[0x7F0512] = A;
+		[0x7F0527] = A;
+		A = 0xFFFF;
+		[0x7F051B] = A;
+		[0x7F051D] = A;
+		[0x7F051F] = A;
+		[0x7F0521] = A;
+		[0x7F0523] = A;
+		[0x7F0525] = A;
+		P |= 0x20;
+		A = 0x01;
+		[0x03B2] = A;
+		A = 0x02;
+		[0x03CF] = A;
+		A = 0xFF;
+		[0x03B1] = A;
+		P &= ~0x20;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L908052()
+	{
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L91B06F();
+		this.L91AA56();
+		this.L91AD68();
+		P |= 0x20;
+		A = 0xFF;
+		[0x03EA] = A;
+		P &= ~0x20;
+		A = 0x0080;
+		[0x0375] = A;
+		[0x0379] = A;
+		[0x0377] = A;
+		[0x037B] = A;
+		A = 0xFFFF;
+		[0x00037F] = A;
+		[0x0393] = 0;
+		[0x0395] = 0;
+		[0x0404] = 0;
+		[0x0408] = 0;
+		[0x0408] = 0;
+		[0x040A] = 0;
+		[0x040C] = 0;
+		[0x040E] = 0;
+		[0x045A] = 0;
+		[0x045C] = 0;
+		[0x045E] = 0;
+		[0x0460] = 0;
+		[0x0462] = 0;
+		[0x0464] = 0;
+		[0x0466] = 0;
+		[0x0468] = 0;
+		[0x046A] = 0;
+		[0x046C] = 0;
+		[0x046E] = 0;
+		[0x0470] = 0;
+		[0x0452] = 0;
+		[0x0454] = 0;
+		[0x0456] = 0;
+		[0x0458] = 0;
+		[0x1BF5] = 0;
+		[0x03BB] = 0;
+		[0x03BD] = 0;
+		[0x03BF] = 0;
+		A = 0x0005;
+		[0x03DE] = A;
+		this.L9082B7();
+		this.L949B0B();
+		this.L9089DB();
+		this.L908A56();
+		this.L9088FD();
+		this.L94B383();
+		this.L948D87();
+		A = 0xFFFF;
+		[0x0312] = A;
+		[0x0402] = A;
+		[0x03AD] = A;
+		[0x03AF] = A;
+		[0x038D] = A;
+		[0x035D] = 0;
+		[0x035F] = 0;
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9081B1()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L80823D();
+		this.L80827B();
+		this.L8082A3();
+		P |= 0x20;
+		A = 0x80;
+		[0x4340] = A;
+		A = 0x32;
+		[0x4341] = A;
+		A = 0x5C;
+		[0x4342] = A;
+		A = 0x82;
+		[0x4343] = A;
+		A = 0x90;
+		[0x4344] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x80;
+		[0x4350] = A;
+		A = 0x32;
+		[0x4351] = A;
+		A = 0x5C;
+		[0x4352] = A;
+		A = 0x82;
+		[0x4353] = A;
+		A = 0x90;
+		[0x4354] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x80;
+		[0x4360] = A;
+		A = 0x32;
+		[0x4361] = A;
+		A = 0x5C;
+		[0x4362] = A;
+		A = 0x82;
+		[0x4363] = A;
+		A = 0x90;
+		[0x4364] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x80;
+		[0x4370] = A;
+		A = 0x32;
+		[0x4371] = A;
+		A = 0x5C;
+		[0x4372] = A;
+		A = 0x82;
+		[0x4373] = A;
+		A = 0x90;
+		[0x4374] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = [0x013C];
+		A &= 0x81;
+		[0x013C] = A;
+		[0x420C] = 0;
+		[0x0141] = 0;
+		[0x4A] = 0;
+		[0x434A] = 0;
+		[0x435A] = 0;
+		[0x436A] = 0;
+		[0x437A] = 0;
+		P &= ~0x20;
+		this.L808202();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90825D()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L91B091();
+		this.L91AA76();
+		this.L949269();
+		this.L948AD5();
+		this.L948BEB();
+		this.L948CE0();
+		this.L948D87();
+		this.L94817D();
+		this.L948267();
+		this.L94B8B0();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90828C()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L908999();
+		this.L90AAFB();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9082B7()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		X = 0x07FE;
+		A = 0x0000;
+	}
+
+	public void L9082C3()
+	{
+		[0x7E3000 + X] = A;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L9082C3();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
 	public void L908453()
 	{
 		Stack.Push(B);
@@ -27815,6 +27476,299 @@ public class SnesRom
 		this.L91B091();
 		this.L908907();
 		this.L908DCF();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L908479()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L949269();
+		this.L948AD5();
+		this.L948BEB();
+		this.L948CE0();
+		this.L948D87();
+		this.L94817D();
+		this.L948267();
+		this.L94B8B0();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9084A0()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0367];
+		temp = A - 0x0007;
+
+		if (Z == 1)
+			return this.L9084B6();
+
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L9084B6();
+
+		temp = A - 0x0002;
+
+		if (Z == 0)
+			return this.L9084BA();
+
+	}
+
+	public void L9084B6()
+	{
+		this.L908479();
+	}
+
+	public void L9084BA()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9084BD()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0367];
+		temp = A - 0x0007;
+
+		if (Z == 1)
+			return this.L9084D6();
+
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L9084F4();
+
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L9084FA();
+
+	}
+
+	public void L9084D3()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9084D6()
+	{
+		A = [0x7FB3EF];
+
+		if (N == 0)
+			return this.L9084E4();
+
+		this.L86CA7D();
+		this.L86CA1C();
+	}
+
+	public void L9084E4()
+	{
+		A = [0x036F];
+
+		if (Z == 0)
+			return this.L9084F2();
+
+		A = [0x0381];
+
+		if (Z == 0)
+			return this.L9084F2();
+
+		this.L90C047();
+	}
+
+	public void L9084F2()
+	{
+		return this.L9084D3();
+	}
+
+	public void L9084F4()
+	{
+		this.L9BD1EC();
+		return this.L9084D3();
+	}
+
+	public void L9084FA()
+	{
+		this.L858000();
+		return this.L9084D3();
+	}
+
+	public void L908500()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		X = 0x0000;
+	}
+
+	public void L908507()
+	{
+		A = [0x0B04 + X];
+
+		if (N == 0)
+			return this.L908512();
+
+		A = 0x0001;
+		[0x0B04 + X] = A;
+	}
+
+	public void L908512()
+	{
+		X++;
+		X++;
+		temp = X - 0x000C;
+
+		if (C == 0)
+			return this.L908507();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9086B7()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P |= 0x30;
+		A = 0x8F;
+		[0x2100] = A;
+		[0x0100] = A;
+		A = 0x01;
+		[0x2101] = A;
+		[0x0101] = A;
+		[0x2102] = 0;
+		[0x0102] = 0;
+		A = 0x80;
+		[0x2103] = A;
+		[0x0103] = A;
+		[0x2104] = 0;
+		[0x2104] = 0;
+		A = 0x09;
+		[0x2105] = A;
+		[0x0104] = A;
+		[0x2106] = 0;
+		[0x0105] = 0;
+		A = 0x01;
+		[0x2107] = A;
+		[0x0106] = A;
+		A = 0x09;
+		[0x2108] = A;
+		[0x0107] = A;
+		A = 0x10;
+		[0x2109] = A;
+		[0x0108] = A;
+		A = 0x00;
+		[0x210A] = A;
+		[0x0109] = A;
+		A = 0x44;
+		[0x210B] = A;
+		[0x010A] = A;
+		A = 0x41;
+		[0x210C] = A;
+		[0x010B] = A;
+		[0x210D] = 0;
+		[0x210D] = 0;
+		[0x210E] = 0;
+		[0x210E] = 0;
+		[0x210F] = 0;
+		[0x210F] = 0;
+		[0x2110] = 0;
+		[0x2110] = 0;
+		[0x2111] = 0;
+		[0x2111] = 0;
+		[0x2112] = 0;
+		[0x2112] = 0;
+		[0x2113] = 0;
+		[0x2113] = 0;
+		[0x2114] = 0;
+		[0x2114] = 0;
+		[0x2115] = 0;
+		[0x211A] = 0;
+		[0x010C] = 0;
+		[0x211B] = 0;
+		[0x211C] = 0;
+		[0x211D] = 0;
+		[0x211E] = 0;
+		[0x211F] = 0;
+		[0x2120] = 0;
+		[0x2123] = 0;
+		[0x010D] = 0;
+		[0x2123] = 0;
+		[0x010D] = 0;
+		[0x2124] = 0;
+		[0x010E] = 0;
+		[0x2125] = 0;
+		[0x011F] = 0;
+		[0x2126] = 0;
+		[0x0120] = 0;
+		[0x2127] = 0;
+		[0x0121] = 0;
+		[0x2128] = 0;
+		[0x0122] = 0;
+		[0x2129] = 0;
+		[0x0123] = 0;
+		[0x212A] = 0;
+		[0x0124] = 0;
+		[0x212B] = 0;
+		[0x0125] = 0;
+		A = 0x17;
+		[0x212C] = A;
+		[0x0126] = A;
+		[0x212E] = 0;
+		[0x0128] = 0;
+		A = 0x00;
+		[0x212D] = A;
+		[0x0127] = A;
+		[0x212F] = 0;
+		[0x0129] = 0;
+		A = 0x02;
+		[0x2130] = A;
+		[0x012A] = A;
+		A = 0x3F;
+		[0x2131] = A;
+		[0x012B] = A;
+		A = 0xE0;
+		[0x2132] = A;
+		[0x012C] = A;
+		[0x012E] = A;
+		[0x012D] = A;
+		[0x012C] = A;
+		A = 0x00;
+		[0x2133] = A;
+		[0x012F] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9088FD()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L9098E7();
 		P = Stack.Pop();
 		B = Stack.Pop();
 		return;
@@ -27837,6 +27791,107 @@ public class SnesRom
 		return;
 	}
 
+	public void L908999()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L908DE9();
+		this.L909018();
+		this.L909245();
+		this.L90941C();
+		this.L909492();
+		this.L9094EE();
+		this.L9097A0();
+		this.L9096CC();
+		this.L9099B2();
+		A = [0x0371];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x89CB + X)]();
+	}
+
+	public void L9089DB()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P |= 0x20;
+		P &= ~0x10;
+		X = 0xC0E1;
+		[0x3E] = X;
+		A = 0xA2;
+		[0x40] = A;
+		X = 0xAB38;
+		[0x43] = X;
+		A = 0x7E;
+		[0x45] = A;
+		this.L808888();
+		P &= ~0x30;
+		A = 0x9000;
+		[0x01] = A;
+		A = 0x8A44;
+		[0x00] = A;
+		this.L8087A4();
+		A = 0x9000;
+		[0x01] = A;
+		A = 0x8A4D;
+		[0x00] = A;
+		this.L8087A4();
+		P &= ~0x20;
+		Y = 0x003E;
+		X = 0x0000;
+	}
+
+	public void L908A1F()
+	{
+		A = [0x95D700 + X];
+		[0x7F0563 + X] = A;
+		X++;
+		Y--;
+		X++;
+		Y--;
+
+		if (Z == 0)
+			return this.L908A1F();
+
+		Y = 0x003E;
+		X = 0x0000;
+	}
+
+	public void L908A33()
+	{
+		A = [0x95D700 + X];
+		[0x7F1063 + X] = A;
+		X++;
+		Y--;
+		X++;
+		Y--;
+
+		if (Z == 0)
+			return this.L908A33();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L908A56()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0381];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x8AC3 + X)]();
+	}
+
 	public void L908DCF()
 	{
 		Stack.Push(P);
@@ -27846,6 +27901,164 @@ public class SnesRom
 		[0x00] = A;
 		this.L8087A4();
 		P = Stack.Pop();
+		return;
+	}
+
+	public void L908DE9()
+	{
+		P &= ~0x30;
+		this.L908E29();
+		A = [0x0381];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x8E21 + X)]();
+	}
+
+	public void L908E29()
+	{
+		A = 0x28C8;
+		[0x7E3554] = A;
+		[0x7E3556] = A;
+		[0x7E3558] = A;
+		[0x7E355A] = A;
+		[0x7E355C] = A;
+		[0x7E355E] = A;
+		[0x7E3560] = A;
+		[0x7E3562] = A;
+		[0x7E3564] = A;
+		[0x7E3566] = A;
+		[0x7E3568] = A;
+		[0x7E356A] = A;
+		A = [0x0393];
+		temp = A - 0x0060;
+
+		if (C == 1)
+			return this.L908EB3();
+
+		A &= 0x00F8;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x0393];
+		A &= 0x0007;
+		C = 0;
+		A += 0x00C0 + C;
+		A |= 0x2800;
+		[0x7E3554 + X] = A;
+		X++;
+		X++;
+		A = 0x28C0;
+		return [(0x8EB4 + X)]();
+	}
+
+	public void L908EB3()
+	{
+		return;
+	}
+
+	public void L909018()
+	{
+		A = [0x1BC7];
+		A--;
+
+		if (Z == 1)
+			return this.L909036();
+
+		A = [0x1968];
+
+		if (N == 1)
+			return this.L909033();
+
+		A = [0x1866];
+
+		if (N == 1)
+			return this.L909033();
+
+		A = [0x03C1];
+		A &= 0x0001;
+		A <<= 1;
+		X = A;
+		return [(0x9037 + X)]();
+	}
+
+	public void L909033()
+	{
+		this.L9090C7();
+	}
+
+	public void L909036()
+	{
+		return;
+	}
+
+	public void L9090C7()
+	{
+		X = [0x03C7];
+		A = [0x9B23 + X];
+		Y = 0x013A;
+		this.L90912C();
+		A = [0x03C5];
+		Y = 0x0134;
+		this.L90912C();
+		A = [0x03C3];
+		Y = 0x0130;
+		this.L90910A();
+		return;
+	}
+
+	public void L90910A()
+	{
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		A = [0x9B60 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += 0x00A0 + C;
+		A |= 0x2000;
+		Stack.Push(X);
+		X = Y;
+		Y = Stack.Pop();
+		[0x7E3000 + X] = A;
+		C = 0;
+		A += 0x0010 + C;
+		[0x7E3040 + X] = A;
+		return;
+	}
+
+	public void L90912C()
+	{
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		A = [0x9B61 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += 0x00A0 + C;
+		A |= 0x2000;
+		Stack.Push(X);
+		X = Y;
+		Y = Stack.Pop();
+		[0x7E3000 + X] = A;
+		C = 0;
+		A += 0x0010 + C;
+		[0x7E3040 + X] = A;
+		Stack.Push(X);
+		X = Y;
+		Y = Stack.Pop();
+		A = [0x9B60 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += 0x00A0 + C;
+		A |= 0x2000;
+		Stack.Push(X);
+		X = Y;
+		Y = Stack.Pop();
+		[0x7E3002 + X] = A;
+		C = 0;
+		A += 0x0010 + C;
+		[0x7E3042 + X] = A;
 		return;
 	}
 
@@ -28192,6 +28405,240 @@ public class SnesRom
 		return;
 	}
 
+	public void L90955E()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P |= 0x20;
+		A = 0x80;
+		[0x03D5] = A;
+		A = 0x95;
+		[0x03D2] = A;
+		P &= ~0x20;
+		A = 0x0060;
+		[0x03D3] = A;
+		X = 0x0006;
+	}
+
+	public void L909579()
+	{
+		A = [0x03F2 + X];
+
+		if (N == 1)
+			return this.L9095B3();
+
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		[0x12] = A;
+		A <<= 1;
+		C = 0;
+		A += [0x12] + C;
+		[0x12] = A;
+		C = 0;
+		A += 0x8880 + C;
+		[0x03D0] = A;
+		A = X;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		[0x12] = A;
+		A <<= 1;
+		C = 0;
+		A += [0x12] + C;
+		C = 0;
+		A += 0x1730 + C;
+		[0x03D6] = A;
+		Stack.Push(X);
+		A = 0x0000;
+		[0x01] = A;
+		A = 0x03CF;
+		[0x00] = A;
+		this.L8087A4();
+		X = Stack.Pop();
+	}
+
+	public void L9095B3()
+	{
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L909579();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9095BA()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+	}
+
+	public void L9095BE()
+	{
+		[0x03FC]++;
+		A = [0x03FC];
+		temp = A - 0x0004;
+
+		if (N == 1)
+			return this.L9095CC();
+
+		A = 0x0000;
+	}
+
+	public void L9095CC()
+	{
+		[0x03FC] = A;
+		A <<= 1;
+		X = A;
+		A = [0x03F2 + X];
+
+		if (N == 1)
+			return this.L9095BE();
+
+		[0x03FA] = A;
+		this.L909606();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9095E0()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x03FC] = 0;
+		A = [0x03F2];
+		[0x03FA] = A;
+		this.L909606();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L909606()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		X = 0x0000;
+		Y = 0x0614;
+		this.L909631();
+		X = 0x0002;
+		Y = 0x061A;
+		this.L909631();
+		X = 0x0004;
+		Y = 0x0620;
+		this.L909631();
+		X = 0x0006;
+		Y = 0x0626;
+		this.L909631();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L909631()
+	{
+		A = [0x03F2 + X];
+
+		if (N == 1)
+			return this.L90963E();
+
+		A = X;
+		A >>= 1;
+		[0x12] = A;
+		this.L909642();
+		return;
+	}
+
+	public void L90963E()
+	{
+		this.L9096A0();
+		return;
+	}
+
+	public void L909642()
+	{
+		A = [0x9698 + X];
+		[0x16] = A;
+		A = [0x12];
+		temp = A - [0x03FC];
+
+		if (Z == 0)
+			return this.L909655();
+
+		A = 0x3400;
+		[0x14] = A;
+		return this.L90965A();
+	}
+
+	public void L909655()
+	{
+		A = 0x2400;
+		[0x14] = A;
+	}
+
+	public void L90965A()
+	{
+		X = Y;
+		A = [0x14];
+		A |= [0x16];
+		[0x7E3000 + X] = A;
+		[0x16]++;
+		A = [0x14];
+		A |= [0x16];
+		[0x7E3002 + X] = A;
+		[0x16]++;
+		A = [0x14];
+		A |= [0x16];
+		[0x7E3004 + X] = A;
+		[0x16]++;
+		A = [0x14];
+		A |= [0x16];
+		[0x7E3040 + X] = A;
+		[0x16]++;
+		A = [0x14];
+		A |= [0x16];
+		[0x7E3042 + X] = A;
+		[0x16]++;
+		A = [0x14];
+		A |= [0x16];
+		[0x7E3044 + X] = A;
+		[0x16]++;
+		return;
+	}
+
+	public void L9096A0()
+	{
+		X = Y;
+		A = 0x3CE0;
+		[0x7E3000 + X] = A;
+		A = 0x3CE1;
+		[0x7E3002 + X] = A;
+		A = 0x3CE2;
+		[0x7E3004 + X] = A;
+		A = 0x3CE3;
+		[0x7E3040 + X] = A;
+		A = 0x3CE4;
+		[0x7E3042 + X] = A;
+		A = 0x3CE5;
+		[0x7E3044 + X] = A;
+		return;
+	}
+
 	public void L9096CC()
 	{
 		A = [0x0367];
@@ -28424,6 +28871,3761 @@ public class SnesRom
 	{
 		A = 0x788F;
 		[0x7E360C] = A;
+		return;
+	}
+
+	public void L9098E7()
+	{
+		P |= 0x20;
+		P &= ~0x10;
+		X = 0xD095;
+		[0x3E] = X;
+		A = 0xA2;
+		[0x40] = A;
+		X = 0xAB38;
+		[0x43] = X;
+		A = 0x7E;
+		[0x45] = A;
+		this.L808888();
+		P &= ~0x30;
+		P |= 0x20;
+		A = 0x7E;
+		[0x03D2] = A;
+		A = 0x80;
+		[0x03D5] = A;
+		P &= ~0x20;
+		A = 0x0080;
+		[0x03D3] = A;
+		A = 0x16C0;
+		[0x03D6] = A;
+		A = [0x0367];
+		A <<= 1;
+		X = A;
+		A = [0x9942 + X];
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += 0xAB38 + C;
+		[0x03D0] = A;
+		A = 0x0000;
+		[0x01] = A;
+		A = 0x03CF;
+		[0x00] = A;
+		this.L8087A4();
+		return;
+	}
+
+	public void L909993()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0xFFFF;
+		[0x037F] = A;
+		X = 0x0216;
+		this.L909ACF();
+		X = 0x04C6;
+		this.L909ACF();
+		A = 0xFFFF;
+		[0x02F3] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9099B2()
+	{
+		A = [0x037F];
+
+		if (N == 0)
+			return this.L9099C9();
+
+		A = [0x0375];
+		temp = A - 0x0020;
+
+		if (C == 1)
+			return this.L9099C8();
+
+		[0x037F] = 0;
+		A = 0x801C;
+		[0x02F3] = A;
+	}
+
+	public void L9099C8()
+	{
+		return;
+	}
+
+	public void L9099C9()
+	{
+		A = [0x0375];
+		temp = A - 0x0020;
+
+		if (C == 0)
+			return this.L9099D6();
+
+		this.L909993();
+		return;
+	}
+
+	public void L9099D6()
+	{
+		A = [0x037F];
+		A &= 0x4000;
+
+		if (Z == 0)
+			return this.L909A14();
+
+		[0x037F]++;
+		A = [0x037F];
+		A &= 0x00FF;
+		temp = A - 0x0018;
+
+		if (C == 1)
+			return this.L9099F3();
+
+	}
+
+	public void L9099EC()
+	{
+		X = 0x0216;
+		this.L909A34();
+		return;
+	}
+
+	public void L9099F3()
+	{
+		A = [0x037F];
+		A &= 0xFF00;
+		[0x037F] = A;
+		A = [0x0380];
+		A++;
+		[0x0380] = A;
+		A &= 0x000F;
+		temp = A - 0x0003;
+
+		if (C == 0)
+			return this.L9099EC();
+
+		A = [0x037F];
+		A |= 0x4000;
+		[0x037F] = A;
+	}
+
+	public void L909A14()
+	{
+		[0x037F]++;
+		A = [0x037F];
+		A &= 0x00FF;
+		temp = A - 0x0018;
+
+		if (C == 1)
+			return this.L909A29();
+
+	}
+
+	public void L909A22()
+	{
+		X = 0x04C6;
+		this.L909A34();
+		return;
+	}
+
+	public void L909A29()
+	{
+		A = [0x037F];
+		A &= 0xFF00;
+		[0x037F] = A;
+		return this.L909A22();
+	}
+
+	public void L909A34()
+	{
+		A = [0x037F];
+		A &= 0x00FF;
+		temp = A - 0x0010;
+
+		if (C == 0)
+			return this.L909A42();
+
+		return this.L909ACF();
+	}
+
+	public void L909A42()
+	{
+		A = 0x3180;
+		[0x7E3000 + X] = A;
+		A = 0x3181;
+		[0x7E3002 + X] = A;
+		A = 0x3182;
+		[0x7E3004 + X] = A;
+		A = 0x3183;
+		[0x7E3006 + X] = A;
+		A = 0x3184;
+		[0x7E3008 + X] = A;
+		A = 0x3185;
+		[0x7E300A + X] = A;
+		A = 0x3186;
+		[0x7E300C + X] = A;
+		A = 0x3187;
+		[0x7E300E + X] = A;
+		A = 0x3188;
+		[0x7E3010 + X] = A;
+		A = 0x3189;
+		[0x7E3012 + X] = A;
+		A = 0x318A;
+		[0x7E3040 + X] = A;
+		A = 0x318B;
+		[0x7E3042 + X] = A;
+		A = 0x318C;
+		[0x7E3044 + X] = A;
+		A = 0x318D;
+		[0x7E3046 + X] = A;
+		A = 0x318E;
+		[0x7E3048 + X] = A;
+		A = 0x318F;
+		[0x7E304A + X] = A;
+		A = 0x3190;
+		[0x7E304C + X] = A;
+		A = 0x3191;
+		[0x7E304E + X] = A;
+		A = 0x3192;
+		[0x7E3050 + X] = A;
+		A = 0x3193;
+		[0x7E3052 + X] = A;
+		return;
+	}
+
+	public void L909ACF()
+	{
+		A = 0x0080;
+		[0x7E3000 + X] = A;
+		[0x7E3002 + X] = A;
+		[0x7E3004 + X] = A;
+		[0x7E3006 + X] = A;
+		[0x7E3008 + X] = A;
+		[0x7E300A + X] = A;
+		[0x7E300C + X] = A;
+		[0x7E300E + X] = A;
+		[0x7E3010 + X] = A;
+		[0x7E3012 + X] = A;
+		[0x7E3040 + X] = A;
+		[0x7E3042 + X] = A;
+		[0x7E3044 + X] = A;
+		[0x7E3046 + X] = A;
+		[0x7E3048 + X] = A;
+		[0x7E304A + X] = A;
+		[0x7E304C + X] = A;
+		[0x7E304E + X] = A;
+		[0x7E3050 + X] = A;
+		[0x7E3052 + X] = A;
+		return;
+	}
+
+	public void L909CDE()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L80823D();
+		this.L9081B1();
+		this.L94E94E();
+		this.L908000();
+		[0x026D]++;
+		P = Stack.Pop();
+		I = 0;
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L909CF9()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L91B06F();
+		A = 0x0000;
+		[0x7E6AF6] = A;
+		[0x7E5BF3] = A;
+		[0x035D] = 0;
+		[0x035F] = 0;
+		[0x0365] = 0;
+		[0x0371] = 0;
+		[0x1BC7] = 0;
+		[0x03C1] = 0;
+		A = 0x0001;
+		[0x0373] = A;
+		A = 0x0002;
+		[0x7E6B22] = A;
+		[0x7E6B24] = A;
+		A = 0x0000;
+		[0x7FE717] = A;
+		[0x7F052B] = A;
+		this.L90A5AD();
+		A = 0x0000;
+		[0x7F0527] = A;
+		A = 0x0009;
+		[0x7F051B] = A;
+		[0x7F051D] = A;
+		[0x7F051F] = A;
+		[0x7F0521] = A;
+		[0x7F0523] = A;
+		[0x7F0525] = A;
+		this.L809559();
+		A = 0x00E0;
+		this.L809517();
+		A = 0x00F9;
+		this.L8094E2();
+		P |= 0x20;
+		A = 0xFF;
+		[0x03B1] = A;
+		P &= ~0x20;
+		[0x026D]++;
+		P = Stack.Pop();
+		I = 0;
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L909D82()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x036F];
+		temp = A - 0x0002;
+
+		if (Z == 0)
+			return this.L909D91();
+
+		[0x036F] = 0;
+	}
+
+	public void L909D91()
+	{
+		[0x026D]++;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L909D97()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x026D]++;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L909DA1()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L9081B1();
+		this.L9086B7();
+		this.L908052();
+		A = [0x0371];
+
+		if (Z == 1)
+			return this.L909DC5();
+
+		temp = A - 0x0003;
+
+		if (C == 0)
+			return this.L909DCB();
+
+		temp = A - 0x0005;
+
+		if (C == 1)
+			return this.L909DCB();
+
+		this.L90A597();
+		return this.L909DCB();
+	}
+
+	public void L909DC5()
+	{
+		this.L90A7DE();
+		this.L90A8CF();
+	}
+
+	public void L909DCB()
+	{
+		A = [0x0381];
+
+		if (Z == 0)
+			return this.L909DE5();
+
+		A = [0x0367];
+		temp = A - 0x000E;
+
+		if (Z == 0)
+			return this.L909DE5();
+
+		A = [0x7F052B];
+		A--;
+
+		if (Z == 0)
+			return this.L909DE5();
+
+		this.L90955E();
+		return this.L909DE9();
+	}
+
+	public void L909DE5()
+	{
+		this.L90EF24();
+	}
+
+	public void L909DE9()
+	{
+		A = [0x0367];
+		temp = A - 0x0009;
+
+		if (Z == 1)
+			return this.L909DF8();
+
+	}
+
+	public void L909DF1()
+	{
+		[0x026D]++;
+		P = Stack.Pop();
+		I = 0;
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L909DF8()
+	{
+		A = [0x150C];
+		temp = A & 0x0100;
+
+		if (Z == 0)
+			return this.L909DF1();
+
+		A = 0x8033;
+		[0x02EB] = A;
+		return this.L909DF1();
+	}
+
+	public void L909E46()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x20;
+		A = 0x9000;
+		[0x01] = A;
+		A = 0x9EDC;
+		[0x00] = A;
+		this.L8087A4();
+		A = [0x1BC7];
+
+		if (Z == 0)
+			return this.L909E6F();
+
+		A = [0x0371];
+
+		if (Z == 0)
+			return this.L909E6F();
+
+		A = 0x0000;
+		[0x706020] = A;
+		this.L94E927();
+	}
+
+	public void L909E6F()
+	{
+		this.L908500();
+		this.L80A10A();
+		this.L908453();
+		this.L908479();
+		this.L9681FF();
+		Y = 0x000C;
+		X = 0x0000;
+	}
+
+	public void L909E89()
+	{
+		A = [0x7F051B + X];
+		[0x7FE70B + X] = A;
+		X++;
+		Y--;
+		X++;
+		Y--;
+
+		if (Z == 0)
+			return this.L909E89();
+
+		A = [0x7F0527];
+		[0x7FE717] = A;
+		A = [0x03FE];
+		[0x7FE719] = A;
+		Y = 0x0008;
+		X = 0x0000;
+	}
+
+	public void L909EAC()
+	{
+		A = [0x0003F2 + X];
+		[0x7FE71B + X] = A;
+		X++;
+		Y--;
+		X++;
+		Y--;
+
+		if (Z == 0)
+			return this.L909EAC();
+
+		A = [0x036F];
+		A--;
+
+		if (Z == 1)
+			return this.L909ED2();
+
+		A = [0x0371];
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L909ED2();
+
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L909ED2();
+
+		temp = A - 0x0004;
+
+		if (Z == 0)
+			return this.L909ED6();
+
+	}
+
+	public void L909ED2()
+	{
+		this.L90AC9A();
+	}
+
+	public void L909ED6()
+	{
+		[0x026D]++;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L909EE5()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L908453();
+		this.L9084BD();
+		A = [0x0367];
+		temp = A - 0x0009;
+
+		if (Z == 1)
+			return this.L909EFF();
+
+		[0x026D]++;
+	}
+
+	public void L909EFC()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L909EFF()
+	{
+		A = 0x0055;
+		[0x026D] = A;
+		return this.L909EFC();
+	}
+
+	public void L909F08()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x14CE] = 0;
+		A = 0xFFFF;
+		[0x038D] = A;
+		A = 0x0000;
+		[0x0117] = A;
+		[0x7F0002] = A;
+		this.L909993();
+		this.L80A10A();
+		this.L908453();
+		this.L9084A0();
+		A = [0x0371];
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L909F8F();
+
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L909FA6();
+
+		temp = A - 0x0004;
+
+		if (Z == 1)
+			return this.L909FBC();
+
+		this.L90A0CC();
+		this.L90A06E();
+		this.L90A963();
+
+		if (C == 1)
+			return this.L909F50();
+
+		this.L94F255();
+	}
+
+	public void L909F50()
+	{
+		this.L90A071();
+		this.L94EC82();
+		A = [0x036F];
+		temp = A - 0x0001;
+
+		if (Z == 0)
+			return this.L909F62();
+
+		return this.L90A08F();
+	}
+
+	public void L909F62()
+	{
+		[0x0365]++;
+	}
+
+	public void L909F65()
+	{
+		this.L90A7DE();
+		A = [0x0367];
+		temp = A - 0x0004;
+
+		if (Z == 1)
+			return this.L909FCB();
+
+		temp = A - 0x0007;
+
+		if (Z == 1)
+			return this.L909FD3();
+
+		temp = A - 0x000F;
+
+		if (Z == 1)
+			return this.L909FDB();
+
+		temp = A - 0x0005;
+
+		if (Z == 1)
+			return this.L909FE3();
+
+		temp = A - 0x000D;
+
+		if (Z == 1)
+			return this.L909FEB();
+
+		temp = A - 0x000E;
+
+		if (Z == 1)
+			return this.L909FFA();
+
+		[0x026D]++;
+	}
+
+	public void L909F8C()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L909F8F()
+	{
+		P |= 0x20;
+		A = 0xE0;
+		[0x012E] = A;
+		[0x012D] = A;
+		[0x012C] = A;
+		P &= ~0x20;
+		A = 0x0024;
+		[0x026D] = A;
+		return this.L909F8C();
+	}
+
+	public void L909FA6()
+	{
+		A = 0x002B;
+		[0x026D] = A;
+		this.L90A06E();
+		this.L94F255();
+		this.L94EC82();
+		this.L90A0CC();
+		return this.L909F8C();
+	}
+
+	public void L909FBC()
+	{
+		this.L90A06E();
+		this.L94F255();
+		A = 0x0027;
+		[0x026D] = A;
+		return this.L909F8C();
+	}
+
+	public void L909FCB()
+	{
+		A = 0x0059;
+		[0x026D] = A;
+		return this.L909F8C();
+	}
+
+	public void L909FD3()
+	{
+		A = 0x006E;
+		[0x026D] = A;
+		return this.L909F8C();
+	}
+
+	public void L909FDB()
+	{
+		A = 0x007B;
+		[0x026D] = A;
+		return this.L909F8C();
+	}
+
+	public void L909FE3()
+	{
+		A = 0x0087;
+		[0x026D] = A;
+		return this.L909F8C();
+	}
+
+	public void L909FEB()
+	{
+		A = 0x0000;
+		[0x7F2873] = A;
+		A = 0x0094;
+		[0x026D] = A;
+		return this.L909F8C();
+	}
+
+	public void L909FFA()
+	{
+		X = [0x036D];
+		A = [0xA048 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += [0x70601C] + C;
+		temp = A - 0x00F8;
+
+		if (C == 0)
+			return this.L90A010();
+
+		A = 0x00F8;
+	}
+
+	public void L90A010()
+	{
+		[0x70601C] = A;
+		this.L94EE56();
+		this.L94FC54();
+		A = 0x0001;
+		[0x706026] = A;
+		A = 0x0000;
+		[0x706020] = A;
+		this.L90A626();
+		this.L94E927();
+		A = [0x1884];
+
+		if (N == 0)
+			return this.L90A03F();
+
+		A = 0x00AC;
+		[0x026D] = A;
+		return this.L90A045();
+	}
+
+	public void L90A03F()
+	{
+		A = 0x00A8;
+		[0x026D] = A;
+	}
+
+	public void L90A045()
+	{
+		return this.L909F8C();
+	}
+
+	public void L90A06E()
+	{
+		this.L90A8F4();
+	}
+
+	public void L90A071()
+	{
+		A = [0x7F055B];
+		[0x26] = A;
+		A = [0x7F055D];
+		[0x28] = A;
+		A = [0x7F055F];
+		[0x2A] = A;
+		A = [0x7F052B];
+		[0x2C] = A;
+		A = [0x0381];
+		[0x2E] = A;
+		return;
+	}
+
+	public void L90A08F()
+	{
+		[0x0365] = 0;
+	}
+
+	public void L90A092()
+	{
+		A = [0x0365];
+		A <<= 1;
+		X = A;
+		A = [0x9C5C + X];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x7060B5 + X];
+		A &= 0x00FF;
+		temp = A - 0x00FF;
+
+		if (Z == 1)
+			return this.L90A0AE();
+
+		[0x0365]++;
+		return this.L90A092();
+	}
+
+	public void L90A0AE()
+	{
+		A = [0x0367];
+		temp = A - 0x000D;
+
+		if (Z == 1)
+			return this.L90A0B9();
+
+		return this.L909F65();
+	}
+
+	public void L90A0B9()
+	{
+		A = 0x0000;
+		[0x7F2873] = A;
+		A = 0x009D;
+		[0x026D] = A;
+		this.L90A7DE();
+		return this.L909F8C();
+	}
+
+	public void L90A0CC()
+	{
+		A = [0x0367];
+		A <<= 1;
+		X = A;
+		A = 0x0001;
+		[0x706090 + X] = A;
+		this.L94E927();
+		return;
+	}
+
+	public void L90A0DD()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x035D];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xA0FB + X)]();
+	}
+
+	public void L90A14F()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x036F];
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L90A16C();
+
+		A = [0x0371];
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L90A16C();
+
+		A = 0x0008;
+		[0x026D] = A;
+	}
+
+	public void L90A169()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90A16C()
+	{
+		A = 0x0003;
+		[0x026D] = A;
+		return this.L90A169();
+	}
+
+	public void L90A267()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x7F052B] = A;
+		[0x7F055B] = A;
+		[0x7F055D] = A;
+		[0x7F055F] = A;
+		A = [0x0371];
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L90A29A();
+
+		temp = A - 0x0004;
+
+		if (Z == 1)
+			return this.L90A29A();
+
+		this.L90A9A8();
+		this.L90A7DE();
+		this.L90A8CF();
+	}
+
+	public void L90A294()
+	{
+		[0x026D]++;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90A29A()
+	{
+		A = 0x0001;
+		[0x0373] = A;
+		A = [0x036D];
+		A--;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		[0x12] = A;
+		A = [0x0365];
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += [0x12] + C;
+		X = A;
+		A = [0x036F];
+
+		if (Z == 0)
+			return this.L90A2D3();
+
+		A = [0x9C76 + X];
+		[0x0367] = A;
+		A = [0x9C78 + X];
+		[0x14D6] = A;
+		A = [0x036D];
+		A--;
+		A <<= 1;
+		X = A;
+		A = [0xA2EE + X];
+		[0x7F052D] = A;
+		return this.L90A294();
+	}
+
+	public void L90A2D3()
+	{
+		A = [0x9CA6 + X];
+		[0x0367] = A;
+		A = [0x9CA8 + X];
+		[0x14D6] = A;
+		A = [0x036D];
+		A--;
+		A <<= 1;
+		X = A;
+		A = [0xA2F4 + X];
+		[0x7F052D] = A;
+		return this.L90A294();
+	}
+
+	public void L90A324()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x03C1] = 0;
+		[0x03FC] = 0;
+		[0x0395] = 0;
+		[0x0393] = 0;
+		A = 0x0001;
+		[0x03FE] = A;
+		A = 0x0002;
+		[0x0371] = A;
+		A = 0x0007;
+		[0x0B36] = A;
+		A = 0x0001;
+		[0x7E3983] = A;
+		A = 0x0000;
+		[0x7E3985] = A;
+		A = 0x0000;
+		[0x03F2] = A;
+		[0x03FA] = A;
+		A = 0x0003;
+		[0x03F4] = A;
+		A = 0xFFFF;
+		[0x03F6] = A;
+		[0x03F8] = A;
+		A = 0x004E;
+		[0x026D] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90A597()
+	{
+		A = 0x0000;
+		[0x7E3983] = A;
+		[0x7E3985] = A;
+		[0x0B3A] = A;
+		[0x0B38] = A;
+		this.L90A5AD();
+		return;
+	}
+
+	public void L90A5AD()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x03FE] = A;
+		A = 0x0000;
+		[0x03F2] = A;
+		[0x03FA] = A;
+		A = 0x0003;
+		[0x03F4] = A;
+		A = 0xFFFF;
+		[0x03F6] = A;
+		[0x03F8] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90A626()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x7F055B] = A;
+		[0x7F055D] = A;
+		[0x7F055F] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90A782()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L80A10A();
+		this.L908453();
+		this.L908479();
+		A = [0x0371];
+		temp = A - 0x0003;
+
+		if (Z == 0)
+			return this.L90A7D8();
+
+		A = [0x036B];
+
+		if (Z == 1)
+			return this.L90A7D8();
+
+		A = [0x7F052B];
+
+		if (Z == 0)
+			return this.L90A7D8();
+
+		A = [0x0365];
+
+		if (Z == 0)
+			return this.L90A7B9();
+
+		A = [0x026D];
+		A++;
+		[0x14CA] = A;
+		A = 0x001B;
+		[0x026D] = A;
+		return this.L90A7DB();
+	}
+
+	public void L90A7B9()
+	{
+		A = [0x0369];
+
+		if (Z == 0)
+			return this.L90A7CC();
+
+		A = [0x1BBF];
+		[0x025D] = A;
+		A = [0x1BC1];
+		[0x025F] = A;
+		return this.L90A7D8();
+	}
+
+	public void L90A7CC()
+	{
+		A = [0x1BC3];
+		[0x025D] = A;
+		A = [0x1BC5];
+		[0x025F] = A;
+	}
+
+	public void L90A7D8()
+	{
+		[0x026D]++;
+	}
+
+	public void L90A7DB()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90A7DE()
+	{
+		A = [0x7F0512];
+
+		if (Z == 0)
+			return this.L90A7F6();
+
+		A = [0x1BC7];
+
+		if (Z == 0)
+			return this.L90A7F6();
+
+		A = [0x036F];
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L90A7F6();
+
+		A = [0x0371];
+
+		if (Z == 1)
+			return this.L90A7F7();
+
+	}
+
+	public void L90A7F6()
+	{
+		return;
+	}
+
+	public void L90A7F7()
+	{
+		P &= ~0x20;
+		A = 0x0000;
+		[0x706020] = A;
+		A = [0x0381];
+		[0x70605A] = A;
+		A = [0x0365];
+		[0x70605C] = A;
+		A = [0x036D];
+		[0x70605E] = A;
+		A = [0x036F];
+		[0x706060] = A;
+		A = [0x0371];
+		[0x706062] = A;
+		A = [0x03FE];
+		[0x70606C] = A;
+		A = [0x7F052B];
+		[0x70607C] = A;
+		A = [0x7F0527];
+		[0x70607A] = A;
+		A = [0x03F2];
+		[0x706064] = A;
+		A = [0x03F4];
+		[0x706066] = A;
+		A = [0x03F6];
+		[0x706068] = A;
+		A = [0x03F8];
+		[0x70606A] = A;
+		A = [0x7F051B];
+		[0x70606E] = A;
+		A = [0x7F051D];
+		[0x706070] = A;
+		A = [0x7F051F];
+		[0x706072] = A;
+		A = [0x7F0521];
+		[0x706074] = A;
+		A = [0x7F0523];
+		[0x706076] = A;
+		A = [0x7F0525];
+		[0x706078] = A;
+		A = [0x7E3983];
+		[0x70607E] = A;
+		A = [0x7E3985];
+		[0x706080] = A;
+		A = [0x0B36];
+		[0x706082] = A;
+		A = [0x0B38];
+		[0x706084] = A;
+		A = [0x0B3A];
+		[0x706086] = A;
+		A = [0x0B3C];
+		[0x706088] = A;
+		A = [0x7F055B];
+		[0x70608A] = A;
+		A = [0x7F055D];
+		[0x70608C] = A;
+		A = [0x7F055F];
+		[0x70608E] = A;
+		this.L94E927();
+		return;
+	}
+
+	public void L90A8CF()
+	{
+		A = [0x7F0512];
+
+		if (Z == 0)
+			return this.L90A8E7();
+
+		A = [0x1BC7];
+
+		if (Z == 0)
+			return this.L90A8E7();
+
+		A = [0x036F];
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L90A8E7();
+
+		A = [0x0371];
+
+		if (Z == 1)
+			return this.L90A8E8();
+
+	}
+
+	public void L90A8E7()
+	{
+		return;
+	}
+
+	public void L90A8E8()
+	{
+		A = 0x0001;
+		[0x706020] = A;
+		this.L94E927();
+		return;
+	}
+
+	public void L90A8F4()
+	{
+		X = [0x03C7];
+		A = [0x909B23 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += [0x7F055F] + C;
+		[0x7F055F] = A;
+		temp = A - 0x0064;
+
+		if (C == 0)
+			return this.L90A91D();
+
+		C = 1;
+		A -= 0x0064 - !C;
+		[0x7F055F] = A;
+		A = [0x7F055D];
+		A++;
+		[0x7F055D] = A;
+	}
+
+	public void L90A91D()
+	{
+		A = [0x03C5];
+		C = 0;
+		A += [0x7F055D] + C;
+		[0x7F055D] = A;
+		temp = A - 0x003C;
+
+		if (C == 0)
+			return this.L90A93F();
+
+		C = 1;
+		A -= 0x003C - !C;
+		[0x7F055D] = A;
+		A = [0x7F055B];
+		A++;
+		[0x7F055B] = A;
+	}
+
+	public void L90A93F()
+	{
+		A = [0x03C3];
+		C = 0;
+		A += [0x7F055B] + C;
+		temp = A - 0x003C;
+
+		if (C == 0)
+			return this.L90A95A();
+
+		A = 0x0063;
+		[0x7F055F] = A;
+		A = 0x003B;
+		[0x7F055D] = A;
+	}
+
+	public void L90A95A()
+	{
+		[0x7F055B] = A;
+		this.L94E927();
+		return;
+	}
+
+	public void L90A963()
+	{
+		[0x12] = 0;
+		[0x14] = 0;
+		A = [0x7F0527];
+		[0x12] = A;
+		A = [0x03F6];
+
+		if (N == 1)
+			return this.L90A974();
+
+		[0x12]++;
+	}
+
+	public void L90A974()
+	{
+		A = [0x03F8];
+
+		if (N == 1)
+			return this.L90A97B();
+
+		[0x12]++;
+	}
+
+	public void L90A97B()
+	{
+		A = [0x7FE717];
+		[0x14] = A;
+		A = [0x7FE71F];
+
+		if (N == 1)
+			return this.L90A989();
+
+		[0x14]++;
+	}
+
+	public void L90A989()
+	{
+		A = [0x7FE721];
+
+		if (N == 1)
+			return this.L90A991();
+
+		[0x14]++;
+	}
+
+	public void L90A991()
+	{
+		A = [0x14];
+		temp = A - [0x12];
+
+		if (Z == 0)
+			return this.L90A9A6();
+
+		A = [0x7FE719];
+		C = 1;
+		A -= [0x03FE] - !C;
+		temp = A - 0x0002;
+
+		if (C == 1)
+			return this.L90A9A6();
+
+		C = 0;
+		return;
+	}
+
+	public void L90A9A6()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L90A9A8()
+	{
+		A = [0x0365];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x9C28 + X];
+		[0x0367] = A;
+		A = [0x9C2A + X];
+		[0x14D6] = A;
+		A = [0x0367];
+		temp = A - 0x0009;
+
+		if (Z == 0)
+			return this.L90A9CE();
+
+		A = [0x7F052B];
+
+		if (Z == 1)
+			return this.L90A9CE();
+
+		A = 0x0004;
+		[0x0367] = A;
+	}
+
+	public void L90A9CE()
+	{
+		return;
+	}
+
+	public void L90AAFB()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		A = [0x038D];
+
+		if (N == 0)
+			return this.L90AB09();
+
+	}
+
+	public void L90AB06()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90AB09()
+	{
+		A <<= 1;
+		X = A;
+		P |= 0x20;
+		A = [0x4A];
+		A &= 0xF9;
+		[0x4A] = A;
+		P &= ~0x20;
+		A = 0x4000;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		[0x038D]++;
+		A = [0x038F];
+
+		if (Z == 1)
+			return this.L90AB5A();
+
+		A = [0xABB9 + X];
+		temp = A - 0x8000;
+
+		if (Z == 1)
+			return this.L90AB92();
+
+		[0x0117] = A;
+		[0x7F0002] = A;
+		A = [0xABEB + X];
+
+		if (Z == 0)
+			return this.L90ABA8();
+
+		P |= 0x20;
+		A = 0x3F;
+		[0x012B] = A;
+		A = 0x3F;
+		[0x012E] = A;
+		[0x012D] = 0;
+		[0x012C] = 0;
+		A = 0x20;
+		[0x011F] = A;
+		[0x0120] = 0;
+		A = 0xFF;
+		[0x0121] = A;
+		P &= ~0x20;
+		return this.L90AB06();
+	}
+
+	public void L90AB5A()
+	{
+		A = [0xAC1D + X];
+		temp = A - 0x8000;
+
+		if (Z == 1)
+			return this.L90AB92();
+
+		[0x0117] = A;
+		[0x7F0002] = A;
+		A = [0xAC3F + X];
+
+		if (Z == 0)
+			return this.L90ABA8();
+
+		P |= 0x20;
+		A = 0x3F;
+		[0x012B] = A;
+		A = 0xF0;
+		[0x012E] = A;
+		[0x012D] = 0;
+		[0x012C] = 0;
+		A = 0x20;
+		[0x011F] = A;
+		[0x0120] = 0;
+		A = 0xFF;
+		[0x0121] = A;
+		P &= ~0x20;
+		return this.L90AB06();
+	}
+
+	public void L90AB92()
+	{
+		A = 0xFFFF;
+		[0x038D] = A;
+		[0x0117] = 0;
+		A = 0x0000;
+		[0x7F0002] = A;
+		A = 0x4000;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+	}
+
+	public void L90ABA8()
+	{
+		P |= 0x20;
+		A = 0x3F;
+		[0x012B] = A;
+		A = 0xE0;
+		[0x012C] = A;
+		P &= ~0x20;
+		return this.L90AB06();
+	}
+
+	public void L90AC9A()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0367];
+		temp = A - 0x0007;
+
+		if (Z == 0)
+			return this.L90ACAF();
+
+		A = 0x0001;
+		[0x001C6A] = A;
+		return this.L90ACD1();
+	}
+
+	public void L90ACAF()
+	{
+		temp = A - 0x0004;
+
+		if (Z == 0)
+			return this.L90ACBD();
+
+		A = 0x0001;
+		[0x001C4E] = A;
+		return this.L90ACD1();
+	}
+
+	public void L90ACBD()
+	{
+		temp = A - 0x000F;
+
+		if (Z == 0)
+			return this.L90ACD1();
+
+		A = [0x0371];
+		temp = A - 0x0004;
+
+		if (Z == 0)
+			return this.L90ACD1();
+
+		A = 0x0001;
+		[0x001C4E] = A;
+	}
+
+	public void L90ACD1()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90ACD4()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x026B] = A;
+		A = [0x0367];
+		temp = A - 0x000E;
+
+		if (Z == 1)
+			return this.L90ACEC();
+
+	}
+
+	public void L90ACE6()
+	{
+		[0x026D]++;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90ACEC()
+	{
+		A = [0x7F052B];
+		[0x7FE725] = A;
+		return this.L90ACE6();
+	}
+
+	public void L90C047()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+	}
+
+	public void L90C04B()
+	{
+		A = [0x7FB3F1];
+
+		if (N == 0)
+			return this.L90C054();
+
+		return this.L90C0DA();
+	}
+
+	public void L90C054()
+	{
+		X = A;
+		A = [0x7FB3F5];
+		[0x03E6] = A;
+		A = [0xC104 + X];
+		temp = A - 0x8000;
+
+		if (Z == 1)
+			return this.L90C0DD();
+
+		temp = A - 0x8001;
+
+		if (Z == 1)
+			return this.L90C0E6();
+
+		temp = A - 0x8002;
+
+		if (Z == 0)
+			return this.L90C071();
+
+		return this.L90C0F9();
+	}
+
+	public void L90C071()
+	{
+		A &= 0x0F00;
+
+		if (Z == 1)
+			return this.L90C0A0();
+
+		A = 0x0001;
+		[0x7FB3F5] = A;
+		P |= 0x20;
+		A = 0x20;
+		[0x012E] = A;
+		A = 0xCF;
+		[0x012D] = A;
+		[0x012C] = A;
+		A = 0x00;
+		[0x012A] = A;
+		A = 0xBF;
+		[0x012B] = A;
+		A = [0x4A];
+		A &= 0xFC;
+		[0x4A] = A;
+		P &= ~0x20;
+		return this.L90C0BA();
+	}
+
+	public void L90C0A0()
+	{
+		A = 0x0000;
+		[0x7FB3F5] = A;
+		P |= 0x20;
+		A = 0xB3;
+		[0x012B] = A;
+		A = 0x12;
+		[0x012A] = A;
+		A = 0xE0;
+		[0x012C] = A;
+		P &= ~0x20;
+	}
+
+	public void L90C0BA()
+	{
+		A = [0xC104 + X];
+
+		if (N == 1)
+			return this.L90C0C4();
+
+		A &= 0x000F;
+		return this.L90C0C7();
+	}
+
+	public void L90C0C4()
+	{
+		A |= 0x0F00;
+	}
+
+	public void L90C0C7()
+	{
+		[0x0117] = A;
+		[0x7F0002] = A;
+		A = [0x7FB3F1];
+		C = 0;
+		A += 0x0002 + C;
+		[0x7FB3F1] = A;
+	}
+
+	public void L90C0DA()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90C0DD()
+	{
+		A = 0xFFFF;
+		[0x7FB3F1] = A;
+		return this.L90C0DA();
+	}
+
+	public void L90C0E6()
+	{
+		A = [0x7FB3F1];
+		C = 0;
+		A += 0x0002 + C;
+		[0x7FB3F1] = A;
+		[0x7FB3F3] = A;
+		return this.L90C04B();
+	}
+
+	public void L90C0F9()
+	{
+		A = [0x7FB3F3];
+		[0x7FB3F1] = A;
+		return this.L90C04B();
+	}
+
+	public void L90C72F()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+	}
+
+	public void L90C733()
+	{
+		A = [0x7F1EEF];
+
+		if (N == 0)
+			return this.L90C746();
+
+		A = 0x0000;
+		[0x0117] = A;
+		[0x7F0002] = A;
+		return this.L90C779();
+	}
+
+	public void L90C746()
+	{
+		X = A;
+		A = [0xC7A3 + X];
+		temp = A - 0x8000;
+
+		if (Z == 1)
+			return this.L90C77C();
+
+		temp = A - 0x8001;
+
+		if (Z == 1)
+			return this.L90C785();
+
+		temp = A - 0x8002;
+
+		if (Z == 1)
+			return this.L90C798();
+
+		A = [0xC7A3 + X];
+
+		if (N == 1)
+			return this.L90C763();
+
+		A &= 0x000F;
+		return this.L90C766();
+	}
+
+	public void L90C763()
+	{
+		A |= 0x0F00;
+	}
+
+	public void L90C766()
+	{
+		[0x0117] = A;
+		[0x7F0002] = A;
+		A = [0x7F1EEF];
+		C = 0;
+		A += 0x0002 + C;
+		[0x7F1EEF] = A;
+	}
+
+	public void L90C779()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90C77C()
+	{
+		A = 0xFFFF;
+		[0x7F1EEF] = A;
+		return this.L90C779();
+	}
+
+	public void L90C785()
+	{
+		A = [0x7F1EEF];
+		C = 0;
+		A += 0x0002 + C;
+		[0x7F1EEF] = A;
+		[0x7F1EF1] = A;
+		return this.L90C733();
+	}
+
+	public void L90C798()
+	{
+		A = [0x7F1EF1];
+		[0x7F1EEF] = A;
+		return this.L90C733();
+	}
+
+	public void L90CF85()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+	}
+
+	public void L90CF89()
+	{
+		A = [0x7F2CC3];
+
+		if (N == 0)
+			return this.L90CFAB();
+
+		P |= 0x20;
+		A = 0xE0;
+		[0x012E] = A;
+		[0x012D] = A;
+		[0x012C] = A;
+		P &= ~0x20;
+		A = 0x0000;
+		[0x0117] = A;
+		[0x7F0002] = A;
+		return this.L90D031();
+	}
+
+	public void L90CFAB()
+	{
+		X = A;
+		A = [0x7F2CC5];
+		[0x03E6] = A;
+		A = [0xD05B + X];
+		temp = A - 0x8000;
+
+		if (Z == 1)
+			return this.L90D034();
+
+		temp = A - 0x8001;
+
+		if (Z == 1)
+			return this.L90D03D();
+
+		temp = A - 0x8002;
+
+		if (Z == 0)
+			return this.L90CFC8();
+
+		return this.L90D050();
+	}
+
+	public void L90CFC8()
+	{
+		A &= 0x0F00;
+
+		if (Z == 1)
+			return this.L90CFF7();
+
+		A = 0x0001;
+		[0x7F2CC5] = A;
+		P |= 0x20;
+		A = 0x20;
+		[0x012E] = A;
+		A = 0xCF;
+		[0x012D] = A;
+		[0x012C] = A;
+		A = 0x00;
+		[0x012A] = A;
+		A = 0xBF;
+		[0x012B] = A;
+		A = [0x4A];
+		A &= 0xFC;
+		[0x4A] = A;
+		P &= ~0x20;
+		return this.L90D011();
+	}
+
+	public void L90CFF7()
+	{
+		A = 0x0000;
+		[0x7F2CC5] = A;
+		P |= 0x20;
+		A = 0xB3;
+		[0x012B] = A;
+		A = 0x12;
+		[0x012A] = A;
+		A = 0xE0;
+		[0x012C] = A;
+		P &= ~0x20;
+	}
+
+	public void L90D011()
+	{
+		A = [0xD05B + X];
+
+		if (N == 1)
+			return this.L90D01B();
+
+		A &= 0x000F;
+		return this.L90D01E();
+	}
+
+	public void L90D01B()
+	{
+		A |= 0x0F00;
+	}
+
+	public void L90D01E()
+	{
+		[0x0117] = A;
+		[0x7F0002] = A;
+		A = [0x7F2CC3];
+		C = 0;
+		A += 0x0002 + C;
+		[0x7F2CC3] = A;
+	}
+
+	public void L90D031()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90D034()
+	{
+		A = 0xFFFF;
+		[0x7F2CC3] = A;
+		return this.L90D031();
+	}
+
+	public void L90D03D()
+	{
+		A = [0x7F2CC3];
+		C = 0;
+		A += 0x0002 + C;
+		[0x7F2CC3] = A;
+		[0x7F2CC7] = A;
+		return this.L90CF89();
+	}
+
+	public void L90D050()
+	{
+		A = [0x7F2CC7];
+		[0x7F2CC3] = A;
+		return this.L90CF89();
+	}
+
+	public void L90D15F()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0371];
+		temp = A - 0x0004;
+
+		if (Z == 1)
+			return this.L90D175();
+
+		temp = A - 0x0003;
+
+		if (Z == 0)
+			return this.L90D17D();
+
+		A = [0x0369];
+
+		if (Z == 1)
+			return this.L90D17D();
+
+	}
+
+	public void L90D175()
+	{
+		[0x026D]++;
+		[0x035D] = 0;
+		return this.L90D1B3();
+	}
+
+	public void L90D17D()
+	{
+		A = [0x0367];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xD1B6 + X)]();
+	}
+
+	public void L90D1B3()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90EEAE()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x12] = A;
+		A &= 0xFFFF;
+
+		if (N == 0)
+			return this.L90EEBC();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90EEBC()
+	{
+		Y = 0x0005;
+		X = 0x0008;
+	}
+
+	public void L90EEC2()
+	{
+		A = [0x7F051B + X];
+		[0x7F051D + X] = A;
+		X--;
+		X--;
+		Y--;
+
+		if (Z == 0)
+			return this.L90EEC2();
+
+		A = [0x12];
+		[0x7F051B] = A;
+		A = [0x7F0527];
+		A++;
+		[0x7F0527] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90EF07()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x7F0527];
+		A <<= 1;
+		X = A;
+		A = 0xFFFF;
+	}
+
+	public void L90EF14()
+	{
+		temp = X - 0x000C;
+
+		if (N == 0)
+			return this.L90EF21();
+
+		[0x7F051B + X] = A;
+		X++;
+		X++;
+		return this.L90EF14();
+	}
+
+	public void L90EF21()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90EF24()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x03F8];
+		this.L90EEAE();
+		A = [0x03F6];
+		this.L90EEAE();
+		A = 0xFFFF;
+		[0x03F6] = A;
+		[0x03F8] = A;
+		this.L90EF07();
+		A = [0x0381];
+
+		if (Z == 0)
+			return this.L90EF6A();
+
+		A = [0x7F0527];
+		temp = A - 0x0003;
+
+		if (C == 1)
+			return this.L90EF6A();
+
+		A = [0x7F051B];
+		[0x03F6] = A;
+		A = [0x7F051D];
+		[0x03F8] = A;
+		A = 0x0000;
+		[0x7F0527] = A;
+		this.L90EF07();
+	}
+
+	public void L90EF6A()
+	{
+		this.L90955E();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L90EF71()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x12] = A;
+		[0x18] = 0;
+		A = [0x7F0527];
+		[0x16] = A;
+		Y = A;
+
+		if (Z == 1)
+			return this.L90EF91();
+
+		X = 0x0000;
+	}
+
+	public void L90EF85()
+	{
+		A = [0x7F051B + X];
+		this.L90F05A();
+		X++;
+		X++;
+		Y--;
+
+		if (Z == 0)
+			return this.L90EF85();
+
+	}
+
+	public void L90EF91()
+	{
+		A = [0x03F6];
+
+		if (N == 1)
+			return this.L90EF9B();
+
+		this.L90F05A();
+		[0x16]++;
+	}
+
+	public void L90EF9B()
+	{
+		A = [0x03F8];
+
+		if (N == 1)
+			return this.L90EFA5();
+
+		this.L90F05A();
+		[0x16]++;
+	}
+
+	public void L90EFA5()
+	{
+		X = 0x0000;
+		P |= 0x20;
+	}
+
+	public void L90EFAA()
+	{
+		A = [0xF0DA + X];
+		temp = A - 0xFF;
+
+		if (Z == 1)
+			return this.L90EFC1();
+
+		temp = A - [0x12];
+
+		if (Z == 1)
+			return this.L90EFC5();
+
+	}
+
+	public void L90EFB5()
+	{
+		P &= ~0x20;
+		A = X;
+		C = 0;
+		A += 0x0009 + C;
+		X = A;
+		P |= 0x20;
+		return this.L90EFAA();
+	}
+
+	public void L90EFC1()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		C = 1;
+		return;
+	}
+
+	public void L90EFC5()
+	{
+		A = [0xF0DB + X];
+
+		if (N == 1)
+			return this.L90EFDF();
+
+		temp = A - [0x03C3];
+
+		if (Z == 1)
+			return this.L90EFD3();
+
+
+		if (C == 0)
+			return this.L90EFDF();
+
+		return this.L90EFB5();
+	}
+
+	public void L90EFD3()
+	{
+		A = [0xF0DC + X];
+		temp = A - [0x03C5];
+
+		if (Z == 1)
+			return this.L90EFDF();
+
+
+		if (C == 0)
+			return this.L90EFDF();
+
+		return this.L90EFB5();
+	}
+
+	public void L90EFDF()
+	{
+		A = [0xF0DD + X];
+
+		if (N == 1)
+			return this.L90EFF7();
+
+		temp = A - [0x03C3];
+
+		if (Z == 1)
+			return this.L90EFED();
+
+
+		if (C == 1)
+			return this.L90EFF7();
+
+		return this.L90EFB5();
+	}
+
+	public void L90EFED()
+	{
+		A = [0xF0DE + X];
+		temp = A - [0x03C5];
+
+		if (C == 1)
+			return this.L90EFF7();
+
+		return this.L90EFB5();
+	}
+
+	public void L90EFF7()
+	{
+		A = [0x7F052B];
+		temp = A - [0xF0DF + X];
+
+		if (C == 1)
+			return this.L90F002();
+
+		return this.L90EFB5();
+	}
+
+	public void L90F002()
+	{
+		A = [0x7F052B];
+		temp = A - [0xF0E0 + X];
+
+		if (Z == 1)
+			return this.L90F00F();
+
+
+		if (C == 0)
+			return this.L90F00F();
+
+		return this.L90EFB5();
+	}
+
+	public void L90F00F()
+	{
+		A = [0xF0E1 + X];
+		temp = A - 0xFF;
+
+		if (Z == 1)
+			return this.L90F01D();
+
+		temp = A - [0x036D];
+
+		if (Z == 1)
+			return this.L90F01D();
+
+		return this.L90EFB5();
+	}
+
+	public void L90F01D()
+	{
+		A = [0xF0E2 + X];
+		[0x14] = A;
+		temp = A - 0x03;
+
+		if (Z == 0)
+			return this.L90F02F();
+
+		A = [0x03FE];
+		temp = A - 0x05;
+
+		if (Z == 0)
+			return this.L90F04B();
+
+		return this.L90EFB5();
+	}
+
+	public void L90F02F()
+	{
+		A = [0x18];
+
+		if (Z == 0)
+			return this.L90F042();
+
+		A = [0x16];
+		temp = A - 0x05;
+
+		if (C == 0)
+			return this.L90F04B();
+
+		A = [0x14];
+		temp = A - 0x0E;
+
+		if (Z == 1)
+			return this.L90F042();
+
+		return this.L90EFB5();
+	}
+
+	public void L90F042()
+	{
+		A = [0x16];
+		temp = A - 0x06;
+
+		if (C == 0)
+			return this.L90F04B();
+
+		return this.L90EFB5();
+	}
+
+	public void L90F04B()
+	{
+		P &= ~0x20;
+		A = [0x14];
+		A &= 0x00FF;
+		[0x7F0529] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		C = 0;
+		return;
+	}
+
+	public void L90F05A()
+	{
+		temp = A - 0x000E;
+
+		if (Z == 0)
+			return this.L90F061();
+
+		[0x18]++;
+	}
+
+	public void L90F061()
+	{
+		return;
+	}
+
+	public void L918054()
+	{
+		Stack.Push(P);
+		P |= 0x20;
+		A = 0x01;
+		[0x7FE75E] = A;
+		P &= ~0x20;
+		A = 0x0000;
+		[0x7FE751] = A;
+		A = [0x00];
+		[0x7FE753] = A;
+		A = [0x01];
+		[0x7FE754] = A;
+		A = 0x0002;
+		[0x7FE756] = A;
+		[0x7FE758] = A;
+		A = 0x0000;
+		[0x7FE74F] = A;
+		[0x7FE75A] = A;
+		[0x7FE75C] = A;
+		[0x7FE815] = A;
+		[0x7FE817] = A;
+		A = 0x9500;
+		[0x7FE765] = A;
+		A = 0xAE80;
+		[0x7FE764] = A;
+		A = 0x9100;
+		[0x7FE768] = A;
+		A = 0x8BF1;
+		[0x7FE767] = A;
+		X = 0x0000;
+		A = 0x0000;
+	}
+
+	public void L9180B6()
+	{
+		[0x7FE76E + X] = A;
+		X++;
+		X++;
+		temp = X - 0x0010;
+
+		if (C == 0)
+			return this.L9180B6();
+
+		A = 0x7E00;
+		[0x7FE80F] = A;
+		A = 0x3154;
+		[0x7FE80E] = A;
+		A = 0x0808;
+		[0x7FE813] = A;
+		A = 0x0000;
+		[0x7FE827] = A;
+		A = 0x7E00;
+		[0x7FE80F] = A;
+		A = 0x3210;
+		[0x7FE80E] = A;
+		A = 0x1C00;
+		[0x7FE811] = A;
+		A = 0x0810;
+		[0x7FE813] = A;
+		A = 0x2180;
+		[0x7FE760] = A;
+		A = 0x0080;
+		[0x7FE762] = A;
+		A = 0xFFFF;
+		[0x7FE81C] = A;
+		[0x7FE81E] = A;
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L918C64()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x03AB] = 0;
+		A = [0x026D];
+		A++;
+		[0x12] = A;
+		A = 0xC000;
+		[0x14] = A;
+		A = [0x0367];
+		temp = A - 0x000D;
+
+		if (Z == 0)
+			return this.L918C83();
+
+		A = 0x0093;
+		[0x12] = A;
+	}
+
+	public void L918C83()
+	{
+		A = [0x0381];
+
+		if (Z == 0)
+			return this.L918C99();
+
+		A = [0x0367];
+		temp = A - 0x000E;
+
+		if (Z == 0)
+			return this.L918C99();
+
+		A = [0x7F052B];
+		A--;
+
+		if (Z == 0)
+			return this.L918C99();
+
+		[0x14] = 0;
+	}
+
+	public void L918C99()
+	{
+		A = [0x036F];
+		A--;
+
+		if (Z == 0)
+			return this.L918CA2();
+
+		return this.L918D1E();
+	}
+
+	public void L918CA2()
+	{
+		A = [0x0371];
+		temp = A - 0x0002;
+
+		if (C == 1)
+			return this.L918D17();
+
+		A = [0x14];
+		[0x03AB] = A;
+	}
+
+	public void L918CAF()
+	{
+		A = [0x7F052B];
+
+		if (Z == 0)
+			return this.L918D04();
+
+		A = [0x0367];
+		A <<= 1;
+		C = 0;
+		A += [0x0367] + C;
+		X = A;
+		A = [0x0381];
+
+		if (Z == 1)
+			return this.L918CC9();
+
+		A = X;
+		C = 0;
+		A += 0x0030 + C;
+		X = A;
+	}
+
+	public void L918CC9()
+	{
+		A = [0x8D26 + X];
+		[0x00] = A;
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L918CF9();
+
+		A = [0x8D27 + X];
+		[0x01] = A;
+	}
+
+	public void L918CD8()
+	{
+		A = [0x12];
+		[0x03A1] = A;
+		A = 0x0053;
+		[0x026D] = A;
+		this.L918054();
+	}
+
+	public void L918CE7()
+	{
+		P |= 0x20;
+		A = [0x0101];
+		A &= 0xE7;
+		[0x0101] = A;
+		P &= ~0x20;
+		this.L91A8EC();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L918CF9()
+	{
+		A = [0x03AB];
+		A |= 0x0200;
+		[0x03AB] = A;
+		return this.L918CD8();
+	}
+
+	public void L918D04()
+	{
+		this.L918D86();
+
+		if (C == 1)
+			return this.L918CF9();
+
+		A = [(0x03)];
+
+		if (Z == 1)
+			return this.L918CF9();
+
+		[0x00] = A;
+		[0x03]++;
+		A = [(0x03)];
+		[0x01] = A;
+		return this.L918CD8();
+	}
+
+	public void L918D17()
+	{
+		A = [0x12];
+		[0x026D] = A;
+		return this.L918CE7();
+	}
+
+	public void L918D1E()
+	{
+		A = 0xC200;
+		[0x03AB] = A;
+		return this.L918CAF();
+	}
+
+	public void L918D86()
+	{
+		A = [0x0367];
+		A <<= 1;
+		X = A;
+		A = [0x0381];
+
+		if (Z == 0)
+			return this.L918D9B();
+
+		A = [0x8DE0 + X];
+	}
+
+	public void L918D93()
+	{
+		[0x03] = A;
+		[0x06] = A;
+
+		if (Z == 0)
+			return this.L918DA0();
+
+		C = 1;
+		return;
+	}
+
+	public void L918D9B()
+	{
+		A = [0x8E63 + X];
+		return this.L918D93();
+	}
+
+	public void L918DA0()
+	{
+		A = [0x7F052B];
+		[0x0337] = A;
+	}
+
+	public void L918DA7()
+	{
+		this.L918DB9();
+		[0x0337]--;
+
+		if (Z == 0)
+			return this.L918DA7();
+
+		A = [0x03];
+		C = 1;
+		A -= 0x0003 - !C;
+		[0x03] = A;
+		C = 0;
+		return;
+	}
+
+	public void L918DB9()
+	{
+		A = [(0x03)];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L918DCE();
+
+		temp = A - 0xFFFE;
+
+		if (Z == 1)
+			return this.L918DDA();
+
+		A = [0x03];
+		C = 0;
+		A += 0x0003 + C;
+		[0x03] = A;
+		return;
+	}
+
+	public void L918DCE()
+	{
+		A = [0x03];
+		C = 0;
+		A += 0x0002 + C;
+		[0x03] = A;
+		[0x06] = A;
+		return this.L918DB9();
+	}
+
+	public void L918DDA()
+	{
+		A = [0x06];
+		[0x03] = A;
+		return this.L918DB9();
+	}
+
+	public void L918EC2()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0371];
+		temp = A - 0x0002;
+
+		if (C == 1)
+			return this.L918F3B();
+
+		A = [0x036F];
+		A--;
+
+		if (Z == 1)
+			return this.L918F40();
+
+		A = [0x0367];
+		A <<= 1;
+		C = 0;
+		A += [0x0367] + C;
+		X = A;
+		A = [0x0381];
+
+		if (Z == 1)
+			return this.L918EE8();
+
+		A = X;
+		C = 0;
+		A += 0x0030 + C;
+		X = A;
+	}
+
+	public void L918EE8()
+	{
+		A = [0x8F56 + X];
+		[0x00] = A;
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L918F3B();
+
+		A = [0x8F57 + X];
+		[0x01] = A;
+	}
+
+	public void L918EF7()
+	{
+		A = [0x026D];
+		A++;
+		[0x03A1] = A;
+		A = 0x0053;
+		[0x026D] = A;
+		this.L918054();
+		A = [0x0367];
+		A <<= 1;
+		X = A;
+		A = [0x8FB6 + X];
+		[0x03AB] = A;
+		A = [0x0367];
+		A <<= 1;
+		X = A;
+		A = [0x8FD6 + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L918F23();
+
+		[0x02EB] = A;
+	}
+
+	public void L918F23()
+	{
+		this.L91A8EC();
+		A = 0xFFFF;
+		[0x02F3] = A;
+		P |= 0x20;
+		A = [0x0101];
+		A &= 0xE7;
+		[0x0101] = A;
+		P &= ~0x20;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L918F3B()
+	{
+		[0x026D]++;
+		return this.L918F23();
+	}
+
+	public void L918F40()
+	{
+		this.L918FF6();
+
+		if (C == 1)
+			return this.L918F3B();
+
+		A = [0x0367];
+		temp = A - 0x0005;
+
+		if (Z == 0)
+			return this.L918F54();
+
+		A = 0x803D;
+		[0x02EB] = A;
+	}
+
+	public void L918F54()
+	{
+		return this.L918EF7();
+	}
+
+	public void L918FF6()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0367];
+		A <<= 1;
+		X = A;
+		A = [0x0381];
+
+		if (Z == 0)
+			return this.L919009();
+
+		A = [0x9046 + X];
+		return this.L91900C();
+	}
+
+	public void L919009()
+	{
+		A = [0x9066 + X];
+	}
+
+	public void L91900C()
+	{
+
+		if (Z == 1)
+			return this.L919042();
+
+		this.L90EF71();
+
+		if (C == 1)
+			return this.L919042();
+
+		C = 1;
+		A -= 0x0003 - !C;
+		[0x12] = A;
+		A <<= 1;
+		C = 0;
+		A += [0x12] + C;
+		X = A;
+		A = [0x0381];
+
+		if (Z == 0)
+			return this.L919032();
+
+		A = [0x918001 + X];
+		[0x01] = A;
+		A = [0x918000 + X];
+		[0x00] = A;
+		return this.L91903E();
+	}
+
+	public void L919032()
+	{
+		A = [0x91802B + X];
+		[0x01] = A;
+		A = [0x91802A + X];
+		[0x00] = A;
+	}
+
+	public void L91903E()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		C = 0;
+		return;
+	}
+
+	public void L919042()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		C = 1;
+		return;
+	}
+
+	public void L91A8EC()
+	{
+		this.L908453();
+		A = [0x03AB];
+		A &= 0x1000;
+
+		if (Z == 0)
+			return this.L91A8FE();
+
+		this.L80A10A();
+		return this.L91A902();
+	}
+
+	public void L91A8FE()
+	{
+		this.L9084BD();
+	}
+
+	public void L91A902()
+	{
+		A = [0x03AB];
+		A &= 0x0800;
+
+		if (Z == 1)
+			return this.L91A90E();
+
+		this.L818001();
+	}
+
+	public void L91A90E()
+	{
+		A = [0x03AB];
+		A &= 0x2000;
+
+		if (Z == 1)
+			return this.L91A91A();
+
+		this.L908479();
+	}
+
+	public void L91A91A()
+	{
+		A = [0x03AB];
+		A &= 0x0080;
+
+		if (Z == 1)
+			return this.L91A926();
+
+		this.L90C72F();
+	}
+
+	public void L91A926()
+	{
+		A = [0x03AB];
+		A &= 0x0040;
+
+		if (Z == 1)
+			return this.L91A932();
+
+		this.L90CF85();
+	}
+
+	public void L91A932()
+	{
+		A = [0x03AB];
+		A &= 0x0020;
+
+		if (Z == 1)
+			return this.L91A93E();
+
+		this.L94B8B0();
+	}
+
+	public void L91A93E()
+	{
+		return;
+	}
+
+	public void L91AA56()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0xFFFF;
+		[0x09FC] = A;
+		[0x09FE] = A;
+		[0x09FA] = 0;
+		X = 0x0000;
+	}
+
+	public void L91AA69()
+	{
+		[0x0A01 + X] = 0;
+		X++;
+		X++;
+		temp = X - 0x001E;
+
+		if (C == 0)
+			return this.L91AA69();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91AA76()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x09FC];
+		temp = A - [0x09FE];
+
+		if (Z == 0)
+			return this.L91AABA();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L91AAB1();
+
+		A = [0x0A79];
+
+		if (Z == 1)
+			return this.L91AA9D();
+
+		X = [0x09FA];
+		A = 0x0000;
+	}
+
+	public void L91AA92()
+	{
+		A |= [0x0A01 + X];
+
+		if (Z == 0)
+			return this.L91AA9D();
+
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L91AA92();
+
+		return this.L91AAB4();
+	}
+
+	public void L91AA9D()
+	{
+		X = [0x09FA];
+	}
+
+	public void L91AAA0()
+	{
+		A = [0x0A01 + X];
+
+		if (Z == 1)
+			return this.L91AAAD();
+
+		A = [0x0A1F + X];
+
+		if (Z == 1)
+			return this.L91AAE7();
+
+		[0x0A1F + X]--;
+	}
+
+	public void L91AAAD()
+	{
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L91AAA0();
+
+	}
+
+	public void L91AAB1()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91AAB4()
+	{
+		A = 0xFFFF;
+		[0x09FC] = A;
+	}
+
+	public void L91AABA()
+	{
+		A = [0x09FC];
+		[0x09FE] = A;
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L91AAB1();
+
+		A <<= 1;
+		C = 0;
+		A += [0x09FC] + C;
+		X = A;
+		this.L91AAD1();
+		return this.L91AA9D();
+	}
+
+	public void L91AAD1()
+	{
+		A = [0xE3F6 + X];
+		[0x00] = A;
+		P |= 0x20;
+		A = [0xE3F8 + X];
+		[0x02] = A;
+		[0x0A00] = A;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		return [[0x0000]]();    //24-Bit Address
+	}
+
+	public void L91AAE7()
+	{
+		P |= 0x20;
+		A = [0x0A00];
+		[0x02] = A;
+		P &= ~0x20;
+		A = [0x0A3D + X];
+		[0x00] = A;
+		A = [[0x00]];
+		A &= 0x00FF;
+		temp = A & 0x0080;
+
+		if (Z == 1)
+			return this.L91AB02();
+
+		return this.L91AB74();
+	}
+
+	public void L91AB02()
+	{
+		temp = A - 0x0001;
+
+		if (Z == 0)
+			return this.L91AB0A();
+
+		return this.L91AB80();
+	}
+
+	public void L91AB0A()
+	{
+		temp = A - 0x0014;
+
+		if (Z == 0)
+			return this.L91AB12();
+
+		return this.L91AB86();
+	}
+
+	public void L91AB12()
+	{
+		temp = A - 0x0015;
+
+		if (Z == 0)
+			return this.L91AB1A();
+
+		return this.L91ABBD();
+	}
+
+	public void L91AB1A()
+	{
+		temp = A - 0x0002;
+
+		if (Z == 0)
+			return this.L91AB22();
+
+		return this.L91ACE4();
+	}
+
+	public void L91AB22()
+	{
+		temp = A - 0x0006;
+
+		if (Z == 0)
+			return this.L91AB2A();
+
+		return this.L91AC1E();
+	}
+
+	public void L91AB2A()
+	{
+		temp = A - 0x0008;
+
+		if (Z == 0)
+			return this.L91AB32();
+
+		return this.L91AC62();
+	}
+
+	public void L91AB32()
+	{
+		temp = A - 0x000A;
+
+		if (Z == 0)
+			return this.L91AB3A();
+
+		return this.L91AC7D();
+	}
+
+	public void L91AB3A()
+	{
+		temp = A - 0x000B;
+
+		if (Z == 0)
+			return this.L91AB42();
+
+		return this.L91ACE7();
+	}
+
+	public void L91AB42()
+	{
+		temp = A - 0x000C;
+
+		if (Z == 0)
+			return this.L91AB4A();
+
+		return this.L91AD1A();
+	}
+
+	public void L91AB4A()
+	{
+		temp = A - 0x0007;
+
+		if (Z == 0)
+			return this.L91AB52();
+
+		return this.L91AC3E();
+	}
+
+	public void L91AB52()
+	{
+		temp = A - 0x0004;
+
+		if (Z == 0)
+			return this.L91AB5A();
+
+		return this.L91ACC6();
+	}
+
+	public void L91AB5A()
+	{
+		temp = A - 0x0005;
+
+		if (Z == 0)
+			return this.L91AB62();
+
+		return this.L91ACDB();
+	}
+
+	public void L91AB62()
+	{
+		temp = A - 0x0009;
+
+		if (Z == 0)
+			return this.L91AB6A();
+
+		return this.L91AC9C();
+	}
+
+	public void L91AB6A()
+	{
+		temp = A - 0x0016;
+
+		if (Z == 0)
+			return this.L91AB72();
+
+		return this.L91AD44();
+	}
+
+	public void L91AB72()
+	{
+		return this.L91AB72();
+	}
+
+	public void L91AB74()
+	{
+		A &= 0x007F;
+		[0x0A1F + X] = A;
+		[0x0A3D + X]++;
+		return this.L91AAA0();
+	}
+
+	public void L91AB80()
+	{
+		[0x0A01 + X] = 0;
+		return this.L91AAAD();
+	}
+
+	public void L91AB86()
+	{
+		Stack.Push(X);
+		A = [0x09FF];
+		[0x04] = A;
+		Y = 0x0001;
+		A = [[0x00] + Y];
+		[0x03] = A;
+		Y++;
+		Y++;
+		A = [[0x00] + Y];
+		X = A;
+		Y++;
+		Y++;
+		A = 0x7E00;
+		[0x07] = A;
+		A = [[0x00] + Y];
+		[0x06] = A;
+		Y = 0x0000;
+	}
+
+	public void L91ABA6()
+	{
+		A = [[0x03] + Y];
+		[[0x06] +Y] = A;
+		Y++;
+		Y++;
+		X--;
+
+		if (Z == 0)
+			return this.L91ABA6();
+
+		X = Stack.Pop();
+		A = [0x0A3D + X];
+		C = 0;
+		A += 0x0007 + C;
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91ABBD()
+	{
+		Stack.Push(X);
+		A = [0x09FF];
+		[0x04] = A;
+		Y = 0x0001;
+		A = [[0x00] + Y];
+		[0x03] = A;
+		Y++;
+		Y++;
+		A = [[0x00] + Y];
+		A &= 0x00FF;
+		[0x0A7B] = A;
+		X = A;
+		Y++;
+		A = [[0x00] + Y];
+		A &= 0x00FF;
+		[0x0A7D] = A;
+		Y++;
+		A = 0x7E00;
+		[0x07] = A;
+		A = [[0x00] + Y];
+		[0x06] = A;
+		Y = 0x0000;
+	}
+
+	public void L91ABEB()
+	{
+		A = [[0x03] + Y];
+		[[]] = A;
+		[0xE6] <<= 1;
+		[0xE6] <<= 1;
+		[0xC8] <<= 1;
+		Y++;
+		X--;
+
+		if (N == 0)
+			return this.L91ABEB();
+
+		X = [0x0A7B];
+		A = [0x06];
+		C = 0;
+		A += 0x003E + C;
+		C = 1;
+		A -= [0x0A7B] - !C;
+		C = 1;
+		A -= [0x0A7B] - !C;
+		[0x06] = A;
+		[0x0A7D]--;
+
+		if (N == 0)
+			return this.L91ABEB();
+
+		X = Stack.Pop();
+		A = [0x0A3D + X];
+		C = 0;
+		A += 0x0007 + C;
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91AC1E()
+	{
+		Y = 0x0001;
+		A = 0x7E00;
+		[0x04] = A;
+		A = [[0x00] + Y];
+		[0x03] = A;
+		Y = 0x0003;
+		A = [[0x00] + Y];
+		[[]] = A;
+		A |= [0xBD];
+		A &= [0x180A + X];
+		A += 0x0005 + C;
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91AC3E()
+	{
+		Y = 0x0001;
+		A = 0x7E00;
+		[0x04] = A;
+		A = [[0x00] + Y];
+		[0x03] = A;
+		Y = 0x0003;
+		A = [[0x00] + Y];
+		[0x06] = A;
+		A = [(0x06)];
+		[[]] = A;
+		A |= [0xBD];
+		A &= [0x180A + X];
+		A += 0x0005 + C;
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91AC62()
+	{
+		Y = 0x0001;
+		A = [[0x00] + Y];
+		[0x03] = A;
+		Y = 0x0003;
+		A = [[0x00] + Y];
+		[(0x03)] = A;
+		A = [0x0A3D + X];
+		C = 0;
+		A += 0x0005 + C;
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91AC7D()
+	{
+		Y = 0x0001;
+		A = [[0x00] + Y];
+		[0x03] = A;
+		Y = 0x0003;
+		A = [[0x00] + Y];
+		P |= 0x20;
+		[(0x03)] = A;
+		P &= ~0x20;
+		A = [0x0A3D + X];
+		C = 0;
+		A += 0x0004 + C;
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91AC9C()
+	{
+		Y = 0x0001;
+		A = [[0x00] + Y];
+		[0x03] = A;
+		Y = 0x0003;
+		A = [[0x00] + Y];
+		[0x06] = A;
+		A = [(0x03)];
+		[(0x06)] = A;
+		A = [0x0A3D + X];
+		C = 0;
+		A += 0x0005 + C;
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91ACC6()
+	{
+		A = [0x0A3D + X];
+		C = 0;
+		A += 0x0003 + C;
+		[0x0A5B + X] = A;
+		Y = 0x0001;
+		A = [[0x00] + Y];
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91ACDB()
+	{
+		A = [0x0A5B + X];
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91ACE4()
+	{
+		return this.L91AAB4();
+	}
+
+	public void L91ACE7()
+	{
+		Y = 0x0001;
+		A = 0x7E00;
+		[0x04] = A;
+		A = [[0x00] + Y];
+		[0x03] = A;
+		Y = 0x0003;
+		A = [[0x00] + Y];
+		A &= 0x00FF;
+		C = 0;
+		A += 0x00A0 + C;
+		A |= 0x2000;
+		[[]] = A;
+		A |= [0x18];
+		A += 0x0010 + C;
+		Y = 0x0040;
+		[[0x03] +Y] = A;
+		A = [0x0A3D + X];
+		C = 0;
+		A += 0x0004 + C;
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91AD1A()
+	{
+		Y = 0x0001;
+		A = 0x7E00;
+		[0x04] = A;
+		A = [[0x00] + Y];
+		[0x03] = A;
+		Y = 0x0003;
+		A = [[0x00] + Y];
+		A &= 0x00FF;
+		C = 0;
+		A += 0x0090 + C;
+		A |= 0x2000;
+		[[]] = A;
+		A |= [0xBD];
+		A &= [0x180A + X];
+		A += 0x0004 + C;
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91AD44()
+	{
+		Y = 0x0001;
+		A = [[0x00] + Y];
+		[0x03] = A;
+		A = [(0x03)];
+
+		if (N == 0)
+			return this.L91AD5A();
+
+		Y = 0x0003;
+		A = [[0x00] + Y];
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91AD5A()
+	{
+		A = [0x0A3D + X];
+		C = 0;
+		A += 0x0005 + C;
+		[0x0A3D + X] = A;
+		return this.L91AAA0();
+	}
+
+	public void L91AD68()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0xFFFF;
+		[0x0AB5] = A;
+		[0x0AB7] = A;
+		[0x0AFB] = A;
+		X = 0x0000;
+	}
+
+	public void L91AD7B()
+	{
+		[0x0ABB + X] = 0;
+		[0x0ADF + X] = 0;
+		X++;
+		X++;
+		temp = X - 0x0006;
+
+		if (C == 0)
+			return this.L91AD7B();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B06F()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		A = 0xFFFF;
+		[0x0B00] = A;
+		[0x0B02] = A;
+		X = 0x0000;
+	}
+
+	public void L91B081()
+	{
+		[0x0B04 + X] = 0;
+		[0x0B1C + X] = 0;
+		X++;
+		X++;
+		temp = X - 0x000C;
+
+		if (C == 0)
+			return this.L91B081();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
 		return;
 	}
 
@@ -28859,4 +33061,17803 @@ public class SnesRom
 		return this.L91B0C5();
 	}
 
+	public byte[] FunctionPointerTable91B2A5 = new byte[]
+	{
+		0x44, 0xBF, 0x91,
+		0x58, 0xCE, 0x91,
+		0xAB, 0xCE, 0x91,
+		0xF4, 0xD8, 0x91,
+		0x36, 0xD9, 0x91,
+		0xFD, 0xDA, 0x91,
+		0x11, 0xB3, 0x91,
+		0x15, 0xDC, 0x91,
+		0xE5, 0xDC, 0x91,
+		0x12, 0xB3, 0x91,
+		0x13, 0xB3, 0x91,
+		0x28, 0xDF, 0x91,
+		0x2A, 0xB4, 0x91,
+		0xAA, 0xDF, 0x91,
+		0xAA, 0xDF, 0x91,
+		0xAA, 0xDF, 0x91,
+		0xAA, 0xDF, 0x91,
+		0xA2, 0xB3, 0x91,
+		0xE6, 0xB3, 0x91,
+		0xF3, 0xE0, 0x91,
+		0x5D, 0xB4, 0x91,
+		0xAF, 0xB4, 0x91,
+		0x0D, 0xB5, 0x91,
+		0x6B, 0xB5, 0x91,
+		0x8D, 0xB5, 0x91,
+		0xD3, 0xB5, 0x91,
+		0x82, 0xB8, 0x91,
+		0xDE, 0xB7, 0x91,
+		0x0C, 0xB8, 0x91,
+		0x02, 0xB9, 0x91,
+		0x74, 0xBA, 0x91,
+		0x40, 0xBC, 0x91,
+		0x7D, 0xBC, 0x91,
+		0xB1, 0xBC, 0x91,
+		0x7D, 0xBE, 0x91,
+		0xC7, 0xBB, 0x91,
+		//0x6B, 0x6B, 0x8B,
+		//0x08, 0x4B, 0xAB,
+		//0xA9, 0x01, 0x00,
+		//0x8D, 0x04, 0x0B,
+		//0xA9, 0x3B, 0xB3,
+	}
+
+	public byte[] FunctionPointerTable91E3F6 = new byte[]
+	{
+		0x23, 0xE4, 0x91,
+		0x5A, 0xE4, 0x91,
+		0x52, 0xF0, 0x91,
+		0x52, 0xF0, 0x91,
+		0x91, 0xE4, 0x91,
+		0x52, 0xF0, 0x91,
+		0x52, 0xF0, 0x91,
+		0x52, 0xF0, 0x91,
+		0x52, 0xF0, 0x91,
+		0x0D, 0xF3, 0x91,
+		0x60, 0xF4, 0x91,
+		0xF2, 0xF3, 0x91,
+		0x29, 0xF4, 0x91,
+		0x52, 0xF0, 0x91,
+		0x71, 0xF3, 0x91,
+		//0x8B, 0x08, 0x4B,
+		//0xAB, 0xA9, 0x00,
+		//0x00, 0x8D, 0xFA,
+		//0x09, 0xA9, 0x01,
+	}
+
+	public void L91B311()
+	{
+		return;
+	}
+
+	public void L91B312()
+	{
+		return;
+	}
+
+	public void L91B313()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xB33B;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xB36C;
+		[0x0B12] = A;
+		[0x0B08] = 0;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B3A2()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B0E] = A;
+		A = 0xB3B5;
+		[0x0B1A] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B3E6()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B0E] = A;
+		A = 0xB3F9;
+		[0x0B1A] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B42A()
+	{
+		A |= [(0x81 + X)];
+		A -= [0x0001] - !C;
+		Cpu.Break();
+	}
+
+	public void L91B45D()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xB49A;
+		[0x0B10] = A;
+		[0x0B06] = 0;
+		A = 0x0001;
+		[0x0B08] = A;
+		A = 0xB613;
+		[0x0B14] = A;
+		A = 0x0001;
+		[0x0B0A] = A;
+		A = 0xB63A;
+		[0x0B16] = A;
+		A = 0x0001;
+		[0x0B0C] = A;
+		A = 0xB67F;
+		[0x0B18] = A;
+		[0x0B0E] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B4AF()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xB4CE;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B0E] = A;
+		A = 0xB5D4;
+		[0x0B1A] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B50D()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xB52C;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B0E] = A;
+		A = 0xB5D4;
+		[0x0B1A] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B56B()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xB6BE;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xB74B;
+		[0x0B12] = A;
+		[0x0B0E] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B58D()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xB6BE;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xB74B;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B08] = A;
+		A = 0xB613;
+		[0x0B14] = A;
+		A = 0x0001;
+		[0x0B0A] = A;
+		A = 0xB63A;
+		[0x0B16] = A;
+		A = 0x0001;
+		[0x0B0C] = A;
+		A = 0xB67F;
+		[0x0B18] = A;
+		[0x0B0E] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B5D3()
+	{
+		return;
+	}
+
+	public void L91B7DE()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xB7FD;
+		[0x0B10] = A;
+		[0x0B06] = 0;
+		[0x0B08] = 0;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B80C()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xB82B;
+		[0x0B10] = A;
+		[0x0B06] = 0;
+		[0x0B08] = 0;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B882()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xB8A1;
+		[0x0B10] = A;
+		[0x0B06] = 0;
+		[0x0B08] = 0;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91B902()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xB921;
+		[0x0B10] = A;
+		[0x0B06] = 0;
+		[0x0B08] = 0;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91BA74()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xBABA;
+		[0x0B10] = A;
+		A = 0xFFFF;
+		[0x0B06] = A;
+		A = 0xBAD5;
+		[0x0B12] = A;
+		A = 0xFFFF;
+		[0x0B08] = A;
+		A = 0xBAFC;
+		[0x0B14] = A;
+		A = 0x0001;
+		[0x0B0A] = A;
+		A = 0xBB61;
+		[0x0B16] = A;
+		A = 0x0001;
+		[0x0B0C] = A;
+		A = 0xBBA0;
+		[0x0B18] = A;
+		[0x0B0E] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91BBC7()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xBBF2;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xBC19;
+		[0x0B12] = A;
+		[0x0B08] = 0;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		[0x0B0E] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91BC40()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xBD00;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xBD33;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B08] = A;
+		A = 0xBD42;
+		[0x0B14] = A;
+		A = 0x0001;
+		[0x0B0A] = A;
+		A = 0xBDB1;
+		[0x0B16] = A;
+		[0x0B0C] = 0;
+		[0x0B0E] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91BC7D()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xBD00;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xBD33;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B08] = A;
+		A = 0xBD42;
+		[0x0B14] = A;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		[0x0B0E] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91BCB1()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xBD00;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xBD33;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B08] = A;
+		A = 0xBD42;
+		[0x0B14] = A;
+		A = 0x0001;
+		[0x0B0A] = A;
+		A = 0xBE08;
+		[0x0B16] = A;
+		A = 0x0001;
+		[0x0B0C] = A;
+		A = 0xBE2F;
+		[0x0B18] = A;
+		A = 0x0001;
+		[0x0B0E] = A;
+		A = 0xBE56;
+		[0x0B1A] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91BE7D()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xBEBA;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xBEE1;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B08] = A;
+		A = 0xBEF0;
+		[0x0B14] = A;
+		A = 0x0001;
+		[0x0B0A] = A;
+		A = 0xBF2F;
+		[0x0B16] = A;
+		[0x0B0C] = 0;
+		[0x0B0E] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91BF44()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xBF75;
+		[0x0B10] = A;
+		A = 0xFFFF;
+		[0x0B06] = A;
+		A = 0xC0EC;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B08] = A;
+		A = 0xCE25;
+		[0x0B14] = A;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91CE58()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x0B04] = 0;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xCE77;
+		[0x0B12] = A;
+		[0x0B08] = 0;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91CEAB()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0xFFFF;
+		[0x0B04] = A;
+		A = 0xCEDC;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xD7FB;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B08] = A;
+		A = 0xD8BE;
+		[0x0B14] = A;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91D8F4()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xD913;
+		[0x0B10] = A;
+		[0x0B06] = 0;
+		[0x0B08] = 0;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91D936()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xD979;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xDA25;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B08] = A;
+		A = 0xDA7C;
+		[0x0B14] = A;
+		A = 0x0001;
+		[0x0B0A] = A;
+		A = 0xDAAF;
+		[0x0B16] = A;
+		A = 0x0001;
+		[0x0B0C] = A;
+		A = 0xDAD6;
+		[0x0B18] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91DAFD()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xDB25;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xDBEE;
+		[0x0B12] = A;
+		[0x0B08] = 0;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91DC15()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xDC4F;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xDC5E;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B08] = A;
+		A = 0xDC79;
+		[0x0B14] = A;
+		A = 0x0001;
+		[0x0B0A] = A;
+		A = 0xDC9A;
+		[0x0B16] = A;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91DCE5()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xDD0D;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xDE68;
+		[0x0B12] = A;
+		[0x0B08] = 0;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91DF28()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xDF47;
+		[0x0B10] = A;
+		[0x0B06] = 0;
+		[0x0B08] = 0;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91DFAA()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0001;
+		[0x0B04] = A;
+		A = 0xB42A;
+		[0x0B10] = A;
+		A = 0x0001;
+		[0x0B06] = A;
+		A = 0xDFDB;
+		[0x0B12] = A;
+		A = 0x0001;
+		[0x0B08] = A;
+		A = 0xE0C0;
+		[0x0B14] = A;
+		[0x0B0A] = 0;
+		[0x0B0C] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91E0F3()
+	{
+		Stack.Push(D);
+		A -= [(0x91 + X)] - !C;
+		A += [0x91E1 + Y] + C;
+		A |= 0x91E2;
+		Cpu.CLV();
+		A -= [0x91] - !C;
+		Cpu.ROR(0xE3 + X);
+		[(0x8F) +Y] = A;
+		P |= 0x91;
+		Y = [0xE2 + X];
+		[(0x20) +Y] = A;
+		A -= [0x91] - !C;
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x0AFE] = A;
+		A = 0x0000;
+		[0x0AFD] = A;
+		A = [0x0371];
+		A--;
+
+		if (Z == 1)
+			return this.L91E12F();
+
+		A = 0x0001;
+		[0x0ABB] = A;
+		A = 0xE13B;
+		[0x0AC7] = A;
+		return this.L91E132();
+	}
+
+	public void L91E12F()
+	{
+		[0x0ABB] = 0;
+	}
+
+	public void L91E132()
+	{
+		[0x0ABD] = 0;
+		[0x0ABF] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91E423()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x09FA] = A;
+		A = 0x0001;
+		[0x0A01] = A;
+		A = 0xE43C;
+		[0x0A3D] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91E45A()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x09FA] = A;
+		A = 0x0001;
+		[0x0A01] = A;
+		A = 0xE473;
+		[0x0A3D] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91E491()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0018;
+		[0x09FA] = A;
+		A = [0x1BC7];
+		A--;
+
+		if (Z == 1)
+			return this.L91E4AF();
+
+		A = 0x0001;
+		[0x0A01] = A;
+		A = 0xE60D;
+		[0x0A3D] = A;
+		return this.L91E4BB();
+	}
+
+	public void L91E4AF()
+	{
+		A = 0x0001;
+		[0x0A01] = A;
+		A = 0xE6FB;
+		[0x0A3D] = A;
+	}
+
+	public void L91E4BB()
+	{
+		A = [0x1BC7];
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L91E4D1();
+
+		A = 0x0001;
+		[0x0A03] = A;
+		A = 0xE77C;
+		[0x0A3F] = A;
+		return this.L91E4D4();
+	}
+
+	public void L91E4D1()
+	{
+		[0x0A03] = 0;
+	}
+
+	public void L91E4D4()
+	{
+		A = [0x1BC7];
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L91E509();
+
+		A = [0x03C1];
+		A &= 0x8000;
+
+		if (Z == 1)
+			return this.L91E509();
+
+		A = [0x7F055B];
+		temp = A - 0x000A;
+
+		if (C == 1)
+			return this.L91E4FB();
+
+		A = 0x0001;
+		[0x0A05] = A;
+		A = 0xE880;
+		[0x0A41] = A;
+		return this.L91E50C();
+	}
+
+	public void L91E4FB()
+	{
+		A = 0x0001;
+		[0x0A05] = A;
+		A = 0xE884;
+		[0x0A41] = A;
+		return this.L91E50C();
+	}
+
+	public void L91E509()
+	{
+		[0x0A05] = 0;
+	}
+
+	public void L91E50C()
+	{
+		A = 0x0001;
+		[0x0A07] = A;
+		A = 0xE9E7;
+		[0x0A43] = A;
+		A = 0x0001;
+		[0x0A09] = A;
+		A = 0xEA47;
+		[0x0A45] = A;
+		A = [0x036F];
+		A--;
+
+		if (Z == 1)
+			return this.L91E54A();
+
+		A = [0x0371];
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L91E54A();
+
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L91E54A();
+
+		temp = A - 0x0004;
+
+		if (Z == 1)
+			return this.L91E54A();
+
+		A = 0x0001;
+		[0x0A0B] = A;
+		A = 0xEAD8;
+		[0x0A47] = A;
+		return this.L91E55B();
+	}
+
+	public void L91E54A()
+	{
+		A = 0x0001;
+		[0x0A0B] = A;
+		A = [0x036D];
+		A <<= 1;
+		X = A;
+		A = [0xE5F1 + X];
+		[0x0A47] = A;
+	}
+
+	public void L91E55B()
+	{
+		A = [0x1BC7];
+
+		if (Z == 0)
+			return this.L91E573();
+
+		A = 0x0001;
+		[0x0A0D] = A;
+		A = [0x036F];
+		A <<= 1;
+		X = A;
+		A = [0xE5F9 + X];
+		[0x0A49] = A;
+		return this.L91E57F();
+	}
+
+	public void L91E573()
+	{
+		A = 0x0001;
+		[0x0A0D] = A;
+		A = 0xEB25;
+		[0x0A49] = A;
+	}
+
+	public void L91E57F()
+	{
+		A = 0x0001;
+		[0x0A0F] = A;
+		A = [0x0381];
+		A <<= 1;
+		X = A;
+		A = [0xE5FF + X];
+		[0x0A4B] = A;
+		A = [0x0371];
+		A--;
+
+		if (Z == 1)
+			return this.L91E5A9();
+
+		A = 0x0001;
+		[0x0A11] = A;
+		A = [0x0381];
+		A <<= 1;
+		X = A;
+		A = [0xE605 + X];
+		[0x0A4D] = A;
+		return this.L91E5AC();
+	}
+
+	public void L91E5A9()
+	{
+		[0x0A11] = 0;
+	}
+
+	public void L91E5AC()
+	{
+		A = 0x0001;
+		[0x0A13] = A;
+		A = [0x0381];
+		A <<= 1;
+		X = A;
+		A = [0xE609 + X];
+		[0x0A4F] = A;
+		A = 0x0001;
+		[0x0A15] = A;
+		A = 0xED2C;
+		[0x0A51] = A;
+		A = [0x0371];
+		temp = A - 0x0002;
+
+		if (Z == 0)
+			return this.L91E5DF();
+
+		A = 0x0001;
+		[0x0A17] = A;
+		A = 0xEEE4;
+		[0x0A53] = A;
+		return this.L91E5E2();
+	}
+
+	public void L91E5DF()
+	{
+		[0x0A17] = 0;
+	}
+
+	public void L91E5E2()
+	{
+		A = 0x0001;
+		[0x0A19] = A;
+		A = 0xEF8A;
+		[0x0A55] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91F052()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0002;
+		[0x09FA] = A;
+		A = 0x0001;
+		[0x0A01] = A;
+		A = 0xF09B;
+		[0x0A3D] = A;
+		A = [0x7F0527];
+		temp = A - 0x0001;
+
+		if (C == 0)
+			return this.L91F085();
+
+		A = 0x0001;
+		[0x0A03] = A;
+		A = [0x7F0527];
+		A <<= 1;
+		X = A;
+		A = [0xF08B + X];
+		[0x0A3F] = A;
+		return this.L91F088();
+	}
+
+	public void L91F085()
+	{
+		[0x0A05] = 0;
+	}
+
+	public void L91F088()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91F30D()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x09FA] = A;
+		A = 0x0001;
+		[0x0A01] = A;
+		A = 0xF326;
+		[0x0A3D] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91F371()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x09FA] = A;
+		A = 0x0001;
+		[0x0A01] = A;
+		A = 0xF38A;
+		[0x0A3D] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91F3F2()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x09FA] = A;
+		A = 0x0001;
+		[0x0A01] = A;
+		A = 0xF40B;
+		[0x0A3D] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91F429()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x09FA] = A;
+		A = 0x0001;
+		[0x0A01] = A;
+		A = 0xF442;
+		[0x0A3D] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L91F460()
+	{
+		Cpu.Break();
+	}
+
+	public void L94817D()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P |= 0x20;
+		A = 0x81;
+		[0x03D5] = A;
+		P &= ~0x20;
+		A = [0x0410];
+
+		if (Z == 1)
+			return this.L9481AF();
+
+		A = [0x0498];
+
+		if (Z == 1)
+			return this.L9481AC();
+
+
+		if (N == 1)
+			return this.L9481AC();
+
+		A = [0x0416];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x825B + X)]();
+	}
+
+	public void L9481AC()
+	{
+		[0x0410] = 0;
+	}
+
+	public void L9481AF()
+	{
+		A = [0x0412];
+
+		if (Z == 1)
+			return this.L9481D4();
+
+		A = [0x049A];
+
+		if (Z == 1)
+			return this.L9481D1();
+
+
+		if (N == 1)
+			return this.L9481D1();
+
+		A = [0x0418];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x825F + X)]();
+	}
+
+	public void L9481D1()
+	{
+		[0x0412] = 0;
+	}
+
+	public void L9481D4()
+	{
+		A = [0x0414];
+
+		if (Z == 1)
+			return this.L948218();
+
+		A = [0x049C];
+
+		if (Z == 1)
+			return this.L948215();
+
+
+		if (N == 1)
+			return this.L948215();
+
+		A = [0x041A];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x8263 + X)]();
+	}
+
+	public void L948215()
+	{
+		[0x0414] = 0;
+	}
+
+	public void L948218()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L948267()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P |= 0x20;
+		A = 0x80;
+		[0x03D5] = A;
+		P &= ~0x20;
+		A = [0x0367];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x8282 + X)]();
+	}
+
+	public void L948AD5()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0498];
+
+		if (Z == 0)
+			return this.L948AE0();
+
+		return this.L948B2F();
+	}
+
+	public void L948AE0()
+	{
+		A = [0x045A];
+		A |= [0x045C];
+
+		if (Z == 1)
+			return this.L948B2F();
+
+		A = [0x0434];
+		C = 0;
+		A += [0x045A] + C;
+		[0x0434] = A;
+		A = [0x0436];
+		[0x0438] = A;
+		A += [0x045C] + C;
+		[0x0436] = A;
+		A = [0x045C];
+
+		if (N == 0)
+			return this.L948B08();
+
+		this.L948B32();
+		return this.L948B0B();
+	}
+
+	public void L948B08()
+	{
+		this.L948B8E();
+	}
+
+	public void L948B0B()
+	{
+		A = [0x0436];
+		A &= 0x01FF;
+		[0x010F] = A;
+		A = [0x0438];
+		A ^= [0x0436];
+		A &= 0xFFF0;
+
+		if (Z == 1)
+			return this.L948B2F();
+
+		A = [0x0436];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		[0x042E] = A;
+		A = 0x0001;
+		[0x0410] = A;
+	}
+
+	public void L948B2F()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L948B32()
+	{
+		A = 0x0000;
+		[0x0416] = A;
+		A = [0x049E];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x8B44 + X)]();
+	}
+
+	public void L948B8E()
+	{
+		A = 0x0001;
+		[0x0416] = A;
+		A = [0x049E];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x8BA0 + X)]();
+	}
+
+	public void L948BEB()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x049A];
+
+		if (Z == 0)
+			return this.L948BF6();
+
+		return this.L948C45();
+	}
+
+	public void L948BF6()
+	{
+		A = [0x0462];
+		A |= [0x0464];
+
+		if (Z == 1)
+			return this.L948C45();
+
+		A = [0x043E];
+		C = 0;
+		A += [0x0462] + C;
+		[0x043E] = A;
+		A = [0x0440];
+		[0x0442] = A;
+		A += [0x0464] + C;
+		[0x0440] = A;
+		A = [0x0464];
+
+		if (N == 0)
+			return this.L948C1E();
+
+		this.L948C48();
+		return this.L948C21();
+	}
+
+	public void L948C1E()
+	{
+		this.L948C9A();
+	}
+
+	public void L948C21()
+	{
+		A = [0x0440];
+		A &= 0x01FF;
+		[0x0113] = A;
+		A = [0x0442];
+		A ^= [0x0440];
+		A &= 0xFFF0;
+
+		if (Z == 1)
+			return this.L948C45();
+
+		A = [0x0440];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		[0x0430] = A;
+		A = 0x0001;
+		[0x0412] = A;
+	}
+
+	public void L948C45()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L948C48()
+	{
+		A = 0x0000;
+		[0x0418] = A;
+		A = [0x04A0];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x8C5A + X)]();
+	}
+
+	public void L948C9A()
+	{
+		A = 0x0001;
+		[0x0418] = A;
+		A = [0x04A0];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x8CAC + X)]();
+	}
+
+	public void L948CE0()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x049C];
+
+		if (Z == 0)
+			return this.L948CEB();
+
+		return this.L948D3B();
+	}
+
+	public void L948CEB()
+	{
+		A = [0x046A];
+		A |= [0x046C];
+
+		if (Z == 1)
+			return this.L948D3B();
+
+		A = [0x0448];
+		C = 0;
+		A += [0x046A] + C;
+		[0x0448] = A;
+		A = [0x044A];
+		[0x044C] = A;
+		A += [0x046C] + C;
+		[0x044A] = A;
+		A = [0x046C];
+
+		if (N == 0)
+			return this.L948D13();
+
+		this.L948D3E();
+		return this.L948D16();
+	}
+
+	public void L948D13()
+	{
+		this.L948D61();
+	}
+
+	public void L948D16()
+	{
+		A = [0x044A];
+		A &= 0x01FF;
+		[0x7F000A] = A;
+		A = [0x044C];
+		A ^= [0x044A];
+		A &= 0xFFF0;
+
+		if (Z == 1)
+			return this.L948D3B();
+
+		A = [0x044A];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		[0x0432] = A;
+		A = 0x0001;
+		[0x0414] = A;
+	}
+
+	public void L948D3B()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L948D3E()
+	{
+		A = 0x0000;
+		[0x041A] = A;
+		A = [0x04A2];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x8D50 + X)]();
+	}
+
+	public void L948D61()
+	{
+		A = 0x0001;
+		[0x041A] = A;
+		A = [0x04A2];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x8D73 + X)]();
+	}
+
+	public void L948D87()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x040C];
+		C = 0;
+		A += [0x0408] + C;
+		[0x040C] = A;
+		A = [0x040E];
+		A += [0x040A] + C;
+		[0x040E] = A;
+		A = [0x040E];
+		A &= [0x0406];
+		A <<= 1;
+		X = A;
+		A = [0x7FB361 + X];
+		[0x7FB3E1] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L949269()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x03E8];
+
+		if (Z == 1)
+			return this.L94927E();
+
+		[0x0458] = 0;
+		[0x0456] = 0;
+		[0x0454] = 0;
+		[0x0452] = 0;
+	}
+
+	public void L94927E()
+	{
+		this.L949287();
+		this.L94953B();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L949287()
+	{
+		A = [0x0456];
+		[0x14] = A;
+		A = [0x0458];
+		[0x12] = A;
+
+		if (N == 1)
+			return this.L949306();
+
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE727] = A;
+		A = [0x14];
+		[0x7FE729] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE72B] = A;
+		A = [0x14];
+		[0x7FE72D] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE72F] = A;
+		A = [0x14];
+		[0x7FE731] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE733] = A;
+		A = [0x14];
+		[0x7FE735] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE737] = A;
+		A = [0x14];
+		[0x7FE739] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE73B] = A;
+		A = [0x14];
+		[0x7FE73D] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE73F] = A;
+		A = [0x14];
+		[0x7FE741] = A;
+		return this.L949417();
+	}
+
+	public void L949306()
+	{
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L94931C();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L949321();
+
+	}
+
+	public void L94931C()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L949321()
+	{
+		A = [0x12];
+		[0x7FE727] = A;
+		A = [0x14];
+		[0x7FE729] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L949343();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L949348();
+
+	}
+
+	public void L949343()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L949348()
+	{
+		A = [0x12];
+		[0x7FE72B] = A;
+		A = [0x14];
+		[0x7FE72D] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L94936A();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L94936F();
+
+	}
+
+	public void L94936A()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L94936F()
+	{
+		A = [0x12];
+		[0x7FE72F] = A;
+		A = [0x14];
+		[0x7FE731] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L949391();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L949396();
+
+	}
+
+	public void L949391()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L949396()
+	{
+		A = [0x12];
+		[0x7FE733] = A;
+		A = [0x14];
+		[0x7FE735] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L9493B8();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L9493BD();
+
+	}
+
+	public void L9493B8()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L9493BD()
+	{
+		A = [0x12];
+		[0x7FE737] = A;
+		A = [0x14];
+		[0x7FE739] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L9493DF();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L9493E4();
+
+	}
+
+	public void L9493DF()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L9493E4()
+	{
+		A = [0x12];
+		[0x7FE73B] = A;
+		A = [0x14];
+		[0x7FE73D] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L949406();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L94940B();
+
+	}
+
+	public void L949406()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L94940B()
+	{
+		A = [0x12];
+		[0x7FE73F] = A;
+		A = [0x14];
+		[0x7FE741] = A;
+	}
+
+	public void L949417()
+	{
+		A = [0x0458];
+		[0x12] = A;
+		A = [0x0456];
+		[0x14] = A;
+		[0x14] <<= 1;
+		Cpu.ROL(0x12);
+		A = [0x12];
+		[0x7FE749] = A;
+		A = [0x14];
+		[0x7FE747] = A;
+		[0x14] <<= 1;
+		Cpu.ROL(0x12);
+		A = [0x12];
+		[0x7FE74D] = A;
+		A = [0x14];
+		[0x7FE74B] = A;
+		A = [0x0458];
+		[0x12] = A;
+		A = [0x0456];
+		[0x14] = A;
+		A = [0x0367];
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		Y = A;
+		X = Y;
+		return [(0x94BB + X)]();
+	}
+
+	public void L94953B()
+	{
+		A = [0x0452];
+		[0x14] = A;
+		A = [0x0454];
+		[0x12] = A;
+
+		if (N == 0)
+			return this.L94954A();
+
+		return this.L9495D9();
+	}
+
+	public void L94954A()
+	{
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE727] = A;
+		A = [0x14];
+		[0x7FE729] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE72B] = A;
+		A = [0x14];
+		[0x7FE72D] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE72F] = A;
+		A = [0x14];
+		[0x7FE731] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE733] = A;
+		A = [0x14];
+		[0x7FE735] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE737] = A;
+		A = [0x14];
+		[0x7FE739] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE73B] = A;
+		A = [0x14];
+		[0x7FE73D] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE73F] = A;
+		A = [0x14];
+		[0x7FE741] = A;
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		[0x12] >>= 1;
+		Cpu.ROR(0x14);
+		A = [0x12];
+		[0x7FE743] = A;
+		A = [0x14];
+		[0x7FE745] = A;
+		return this.L9496F3();
+	}
+
+	public void L9495D9()
+	{
+		A = [0x0367];
+		temp = A - 0x0007;
+
+		if (Z == 0)
+			return this.L9495E2();
+
+		return;
+	}
+
+	public void L9495E2()
+	{
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L9495F8();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L9495FD();
+
+	}
+
+	public void L9495F8()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L9495FD()
+	{
+		A = [0x12];
+		[0x7FE727] = A;
+		A = [0x14];
+		[0x7FE729] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L94961F();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L949624();
+
+	}
+
+	public void L94961F()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L949624()
+	{
+		A = [0x12];
+		[0x7FE72B] = A;
+		A = [0x14];
+		[0x7FE72D] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L949646();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L94964B();
+
+	}
+
+	public void L949646()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L94964B()
+	{
+		A = [0x12];
+		[0x7FE72F] = A;
+		A = [0x14];
+		[0x7FE731] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L94966D();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L949672();
+
+	}
+
+	public void L94966D()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L949672()
+	{
+		A = [0x12];
+		[0x7FE733] = A;
+		A = [0x14];
+		[0x7FE735] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L949694();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L949699();
+
+	}
+
+	public void L949694()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L949699()
+	{
+		A = [0x12];
+		[0x7FE737] = A;
+		A = [0x14];
+		[0x7FE739] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L9496BB();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L9496C0();
+
+	}
+
+	public void L9496BB()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L9496C0()
+	{
+		A = [0x12];
+		[0x7FE73B] = A;
+		A = [0x14];
+		[0x7FE73D] = A;
+		A = [0x14];
+		C = 0;
+		A += 0x0001 + C;
+		[0x14] = A;
+		A = [0x12];
+		C = 0;
+		A += 0x0000 + C;
+		[0x12] = A;
+
+		if (Z == 0)
+			return this.L9496E2();
+
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L9496E7();
+
+	}
+
+	public void L9496E2()
+	{
+		C = 1;
+		Cpu.ROR(0x12);
+		Cpu.ROR(0x14);
+	}
+
+	public void L9496E7()
+	{
+		A = [0x12];
+		[0x7FE73F] = A;
+		A = [0x14];
+		[0x7FE741] = A;
+	}
+
+	public void L9496F3()
+	{
+		A = [0x0454];
+		[0x12] = A;
+		A = [0x0452];
+		[0x14] = A;
+		[0x12] <<= 1;
+		Cpu.ROL(0x14);
+		A = [0x12];
+		[0x7FE749] = A;
+		A = [0x14];
+		[0x7FE747] = A;
+		[0x12] <<= 1;
+		Cpu.ROL(0x14);
+		A = [0x12];
+		[0x7FE74D] = A;
+		A = [0x14];
+		[0x7FE74B] = A;
+		A = [0x0454];
+		[0x12] = A;
+		A = [0x0452];
+		[0x14] = A;
+		A = [0x0367];
+		A <<= 1;
+		[0x16] = A;
+		A <<= 1;
+		C = 0;
+		A += [0x16] + C;
+		Y = A;
+		X = Y;
+		return [(0x9763 + X)]();
+	}
+
+	public void L949B0B()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		X = [0x0367];
+
+		if (Z == 1)
+			return this.L949B1E();
+
+	}
+
+	public void L949B17()
+	{
+		C = 0;
+		A += 0x0020 + C;
+		X--;
+
+		if (Z == 0)
+			return this.L949B17();
+
+	}
+
+	public void L949B1E()
+	{
+		X = A;
+		A = [0x94990B + X];
+		[0x1BA3] = A;
+		A = [0x94990D + X];
+		[0x049E] = A;
+		A = [0x94990F + X];
+		[0x0498] = A;
+		A = [0x949911 + X];
+		[0x0481] = A;
+		A <<= 1;
+		[0x047B] = A;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		[0x0487] = A;
+		A = [0x949913 + X];
+		[0x041C] = A;
+		A = [0x949915 + X];
+		[0x0428] = A;
+		A = [0x949917 + X];
+		[0x04A0] = A;
+		A = [0x949919 + X];
+		[0x049A] = A;
+		A = [0x94991B + X];
+		[0x0483] = A;
+		A <<= 1;
+		[0x047D] = A;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		[0x0489] = A;
+		A = [0x94991D + X];
+		[0x041E] = A;
+		A = [0x94991F + X];
+		[0x042A] = A;
+		A = [0x949921 + X];
+		[0x04A2] = A;
+		A = [0x949923 + X];
+		[0x049C] = A;
+		A = [0x949925 + X];
+		[0x0485] = A;
+		A <<= 1;
+		[0x047F] = A;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		[0x048B] = A;
+		A = [0x949927 + X];
+		[0x0420] = A;
+		A = [0x949929 + X];
+		[0x042C] = A;
+		A = 0xFFFF;
+		[0x7FE4E3] = A;
+		A = [0x0367];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0x9BC2 + X)]();
+	}
+
+	public void L94B383()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x7F0000] = A;
+		[0x7F0002] = A;
+		A = 0x0100;
+		[0x7F0004] = A;
+		A = [0x0367];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xB3A7 + X)]();
+	}
+
+	public void L94B8B0()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0367];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xB8C8 + X)]();
+	}
+
+	public void L94BC35()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0000;
+		[0x0387] = A;
+		A = [0x26];
+
+		if (N == 1)
+			return this.L94BC79();
+
+		temp = A - 0x0100;
+
+		if (N == 0)
+			return this.L94BC79();
+
+		A = [0x28];
+
+		if (N == 1)
+			return this.L94BC79();
+
+		temp = A - 0x00A8;
+
+		if (N == 0)
+			return this.L94BC79();
+
+		A = [0x0367];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xBC7E + X)]();
+	}
+
+	public void L94BC79()
+	{
+		[0x2A] = 0;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L94C700()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x035D];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		return [(0xC722 + X)]();
+	}
+
+	public void L94E927()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P |= 0x20;
+		P &= ~0x10;
+		Y = 0x0017;
+		X = 0x0000;
+	}
+
+	public void L94E935()
+	{
+		A = [0xE90F + X];
+		[0x706002 + X] = A;
+		X++;
+		Y--;
+
+		if (N == 0)
+			return this.L94E935();
+
+		P &= ~0x20;
+		this.L94E9F3();
+		A = [0x12];
+		[0x706000] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L94E94E()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P |= 0x20;
+		Y = 0x0017;
+		X = 0x0000;
+	}
+
+	public void L94E95A()
+	{
+		A = [0x706002 + X];
+		temp = A - [0xE90F + X];
+
+		if (Z == 0)
+			return this.L94E974();
+
+		X++;
+		Y--;
+
+		if (N == 0)
+			return this.L94E95A();
+
+		P &= ~0x20;
+		this.L94E9F3();
+		A = [0x12];
+		temp = A - [0x706000];
+
+		if (Z == 1)
+			return this.L94E977();
+
+	}
+
+	public void L94E974()
+	{
+		this.L94E97A();
+	}
+
+	public void L94E977()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L94E97A()
+	{
+		P |= 0x20;
+		Y = 0x0387;
+		X = 0x0000;
+	}
+
+	public void L94E982()
+	{
+		A = 0xFF;
+		[0x706002 + X] = A;
+		X++;
+		Y--;
+
+		if (N == 0)
+			return this.L94E982();
+
+		Y = 0x0017;
+		X = 0x0000;
+	}
+
+	public void L94E992()
+	{
+		A = [0xE90F + X];
+		[0x706002 + X] = A;
+		X++;
+		Y--;
+
+		if (N == 0)
+			return this.L94E992();
+
+		A = 0x00;
+		[0x706058] = A;
+		[0x706059] = A;
+		[0x706057] = A;
+		A = 0x07;
+		[0x706056] = A;
+		Y = 0x001F;
+		X = 0x0000;
+		A = 0x00;
+	}
+
+	public void L94E9B9()
+	{
+		[0x706028 + X] = A;
+		[0x706090 + X] = A;
+		X++;
+		Y--;
+
+		if (N == 0)
+			return this.L94E9B9();
+
+		P &= ~0x20;
+		A = 0x001F;
+		[0x70601A] = A;
+		A = 0x0000;
+		[0x70601E] = A;
+		[0x70601C] = A;
+		[0x706020] = A;
+		[0x706022] = A;
+		[0x706024] = A;
+		[0x706026] = A;
+		this.L94E9F3();
+		A = [0x12];
+		[0x706000] = A;
+		return;
+	}
+
+	public void L94E9F3()
+	{
+		Stack.Push(P);
+		P &= ~0x20;
+		[0x12] = 0;
+		P |= 0x20;
+		Y = 0x0387;
+		X = 0x0000;
+	}
+
+	public void L94EA00()
+	{
+		A = [0x706002 + X];
+		C = 0;
+		A += [0x12] + C;
+		[0x12] = A;
+		A = [0x13];
+		A += 0x00 + C;
+		[0x13] = A;
+		X++;
+		Y--;
+
+		if (N == 0)
+			return this.L94EA00();
+
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L94EB88()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0371];
+
+		if (Z == 0)
+			return this.L94EBBE();
+
+		A = [0x0367];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x7060B5 + X];
+		A &= 0x00FF;
+		[0x26] = A;
+		A = [0x7060B6 + X];
+		A &= 0x00FF;
+		[0x28] = A;
+		A = [0x7060B7 + X];
+		A &= 0x00FF;
+		[0x2A] = A;
+		A = [0x7060B8 + X];
+		A &= 0x00FF;
+		[0x2C] = A;
+	}
+
+	public void L94EBBB()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L94EBBE()
+	{
+		A = [0x0369];
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += [0x0365] + C;
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x7060F5 + X];
+		A &= 0x00FF;
+		[0x26] = A;
+		A = [0x7060F6 + X];
+		A &= 0x00FF;
+		[0x28] = A;
+		A = [0x7060F7 + X];
+		A &= 0x00FF;
+		[0x2A] = A;
+		A = [0x7060F8 + X];
+		A &= 0x00FF;
+		[0x2C] = A;
+		return this.L94EBBB();
+	}
+
+	public void L94EC82()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0371];
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L94ECD2();
+
+		temp = A - 0x0004;
+
+		if (Z == 1)
+			return this.L94ECD2();
+
+		A = [0x0367];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		P |= 0x20;
+		A = [0x26];
+		[0x7060B5 + X] = A;
+		A = [0x28];
+		[0x7060B6 + X] = A;
+		A = [0x2A];
+		[0x7060B7 + X] = A;
+		A = [0x2C];
+		[0x7060B8 + X] = A;
+		P &= ~0x20;
+		A = X;
+		A >>= 1;
+		X = A;
+		A = [0x0371];
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L94ED07();
+
+	}
+
+	public void L94ECC0()
+	{
+		A = [0x32];
+		[0x7F0533 + X] = A;
+		this.L94E9F3();
+		A = [0x12];
+		[0x706000] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L94ECD2()
+	{
+		A = [0x0369];
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += [0x0365] + C;
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		P |= 0x20;
+		A = [0x26];
+		[0x7060F5 + X] = A;
+		A = [0x28];
+		[0x7060F6 + X] = A;
+		A = [0x2A];
+		[0x7060F7 + X] = A;
+		A = [0x2C];
+		[0x7060F8 + X] = A;
+		P &= ~0x20;
+		A = X;
+		A >>= 1;
+		X = A;
+		A = [0x0371];
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L94ED07();
+
+		return this.L94ECC0();
+	}
+
+	public void L94ED07()
+	{
+		A = [0x036B];
+
+		if (Z == 1)
+			return this.L94ECC0();
+
+		A = [0x0369];
+
+		if (Z == 1)
+			return this.L94ECC0();
+
+		A = [0x32];
+
+		if (Z == 1)
+			return this.L94ECC0();
+
+		A = [0x7F052B + X];
+		temp = A - [0x32];
+
+		if (C == 0)
+			return this.L94ECC0();
+
+		A++;
+		temp = A - 0x0006;
+
+		if (C == 0)
+			return this.L94ED26();
+
+		A = 0x0000;
+	}
+
+	public void L94ED26()
+	{
+		[0x7F052B + X] = A;
+		return this.L94ECC0();
+	}
+
+	public void L94EDAC()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		A = [0x036D];
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		C = 1;
+		A -= [0x036D] - !C;
+		C = 1;
+		A -= [0x036D] - !C;
+		X = A;
+		[0x03] = A;
+		C = 0;
+		A += 0x001E + C;
+		[0x16] = A;
+		A = 0x0001;
+		[0x18] = A;
+		P |= 0x20;
+	}
+
+	public void L94EDD2()
+	{
+		A = [0x70611D + X];
+		temp = A - [0x26];
+
+		if (Z == 1)
+			return this.L94EDDE();
+
+
+		if (C == 1)
+			return this.L94EE14();
+
+		return this.L94EDF2();
+	}
+
+	public void L94EDDE()
+	{
+		A = [0x70611E + X];
+		temp = A - [0x28];
+
+		if (Z == 1)
+			return this.L94EDEA();
+
+
+		if (C == 1)
+			return this.L94EE14();
+
+		return this.L94EDF2();
+	}
+
+	public void L94EDEA()
+	{
+		A = [0x70611F + X];
+		temp = A - [0x2A];
+
+		if (C == 1)
+			return this.L94EE14();
+
+	}
+
+	public void L94EDF2()
+	{
+		A = X;
+		C = 0;
+		A += 0x06 + C;
+		temp = A - [0x16];
+
+		if (C == 1)
+			return this.L94EDFF();
+
+		X = A;
+		[0x18]++;
+		return this.L94EDD2();
+	}
+
+	public void L94EDFF()
+	{
+		P &= ~0x20;
+		A = 0x0000;
+		[0x7F052F] = A;
+	}
+
+	public void L94EE08()
+	{
+		this.L94E9F3();
+		A = [0x12];
+		[0x706000] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L94EE14()
+	{
+		P &= ~0x20;
+		A = [0x18];
+		[0x7F052F] = A;
+		Y = 0x0006;
+		A = 0x7000;
+		[0x01] = A;
+		A = 0x611D;
+		[0x00] = A;
+		this.L94F2E2();
+		P |= 0x20;
+		A = [0x26];
+		[0x70611D + X] = A;
+		A = [0x28];
+		[0x70611E + X] = A;
+		A = [0x2A];
+		[0x70611F + X] = A;
+		A = [0x2C];
+		[0x706120 + X] = A;
+		A = [0x2E];
+		[0x706121 + X] = A;
+		A = [0x30];
+		[0x706122 + X] = A;
+		P &= ~0x20;
+		return this.L94EE08();
+	}
+
+	public void L94EE56()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		[0x26] = 0;
+		[0x28] = 0;
+		[0x2A] = 0;
+		[0x2C] = 0;
+		Y = 0x000F;
+		X = 0x0000;
+	}
+
+	public void L94EE6A()
+	{
+		A = [0x7060B5 + X];
+		A &= 0x00FF;
+		temp = A - 0x00FF;
+
+		if (Z == 1)
+			return this.L94EEBD();
+
+		C = 0;
+		A += [0x26] + C;
+		[0x26] = A;
+		A = [0x7060B6 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += [0x28] + C;
+		[0x28] = A;
+		A = [0x7060B7 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += [0x2A] + C;
+		[0x2A] = A;
+		A = [0x7060B8 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += [0x2C] + C;
+		[0x2C] = A;
+		A = [0x2A];
+		temp = A - 0x0064;
+
+		if (C == 0)
+			return this.L94EEAE();
+
+		C = 1;
+		A -= 0x0064 - !C;
+		[0x2A] = A;
+		[0x28]++;
+	}
+
+	public void L94EEAE()
+	{
+		A = [0x28];
+		temp = A - 0x003C;
+
+		if (C == 0)
+			return this.L94EEBD();
+
+		C = 1;
+		A -= 0x003C - !C;
+		[0x28] = A;
+		[0x26]++;
+	}
+
+	public void L94EEBD()
+	{
+		X++;
+		X++;
+		X++;
+		X++;
+		Y--;
+
+		if (N == 0)
+			return this.L94EE6A();
+
+		A = [0x26];
+		temp = A - 0x00F0;
+
+		if (C == 0)
+			return this.L94EEDA();
+
+		A = 0x00EF;
+		[0x26] = A;
+		A = 0x003B;
+		[0x28] = A;
+		A = 0x0063;
+		[0x2A] = A;
+	}
+
+	public void L94EEDA()
+	{
+		A = [0x2C];
+		temp = A - 0x0063;
+
+		if (C == 0)
+			return this.L94EEE6();
+
+		A = 0x0063;
+		[0x2C] = A;
+	}
+
+	public void L94EEE6()
+	{
+		A = [0x0381];
+		[0x2E] = A;
+		this.L94FBA9();
+		X = [0x30];
+		P |= 0x20;
+		A = [0x706028 + X];
+		temp = A - 0x63;
+
+		if (Z == 1)
+			return this.L94EEFC();
+
+		A++;
+	}
+
+	public void L94EEFC()
+	{
+		[0x706028 + X] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = [0x26];
+		[0x7060B0] = A;
+		A = [0x28];
+		[0x7060B1] = A;
+		A = [0x2A];
+		[0x7060B2] = A;
+		A = [0x2C];
+		[0x7060B3] = A;
+		A = [0x30];
+		[0x7060B4] = A;
+		P &= ~0x20;
+		this.L94EDAC();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L94F255()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		P &= ~0x30;
+		A = 0x0001;
+		[0x32] = A;
+		A = [0x0367];
+		A <<= 1;
+		A <<= 1;
+		[0x14] = A;
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += [0x14] + C;
+		X = A;
+		[0x03] = A;
+		C = 0;
+		A += 0x0014 + C;
+		[0x16] = A;
+		P |= 0x20;
+	}
+
+	public void L94F277()
+	{
+		A = [0x706249 + X];
+		temp = A - [0x26];
+
+		if (Z == 1)
+			return this.L94F283();
+
+
+		if (C == 1)
+			return this.L94F2B4();
+
+		return this.L94F297();
+	}
+
+	public void L94F283()
+	{
+		A = [0x70624A + X];
+		temp = A - [0x28];
+
+		if (Z == 1)
+			return this.L94F28F();
+
+
+		if (C == 1)
+			return this.L94F2B4();
+
+		return this.L94F297();
+	}
+
+	public void L94F28F()
+	{
+		A = [0x70624B + X];
+		temp = A - [0x2A];
+
+		if (C == 1)
+			return this.L94F2B4();
+
+	}
+
+	public void L94F297()
+	{
+		[0x32]++;
+		A = X;
+		C = 0;
+		A += 0x04 + C;
+		temp = A - [0x16];
+
+		if (C == 1)
+			return this.L94F2A4();
+
+		X = A;
+		return this.L94F277();
+	}
+
+	public void L94F2A4()
+	{
+		[0x32] = 0;
+	}
+
+	public void L94F2A6()
+	{
+		P &= ~0x20;
+		this.L94E9F3();
+		A = [0x12];
+		[0x706000] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L94F2B4()
+	{
+		P &= ~0x20;
+		Y = 0x0004;
+		A = 0x7000;
+		[0x01] = A;
+		A = 0x6249;
+		[0x00] = A;
+		this.L94F2E2();
+		P |= 0x20;
+		A = [0x26];
+		[0x706249 + X] = A;
+		A = [0x28];
+		[0x70624A + X] = A;
+		A = [0x2A];
+		[0x70624B + X] = A;
+		A = [0x2E];
+		[0x70624C + X] = A;
+		return this.L94F2A6();
+	}
+
+	public void L94F2E2()
+	{
+		P &= ~0x10;
+		P |= 0x20;
+		A = [0x02];
+		[0x05] = A;
+		P &= ~0x20;
+		A = X;
+		C = 0;
+		A += [0x00] + C;
+		[0x06] = A;
+		A = Y;
+		A <<= 1;
+		A <<= 1;
+		A--;
+		C = 0;
+		A += [0x00] + C;
+		C = 0;
+		A += [0x03] + C;
+		[0x03] = A;
+		A = [0x06];
+		temp = A - [0x03];
+
+		if (N == 0)
+			return this.L94F316();
+
+	}
+
+	public void L94F304()
+	{
+		P |= 0x20;
+		A = [[0x03]];
+		[[0x03] +Y] = A;
+		P &= ~0x20;
+		A = [0x03];
+		temp = A - [0x06];
+
+		if (Z == 1)
+			return this.L94F316();
+
+		[0x03]--;
+		return this.L94F304();
+	}
+
+	public void L94F316()
+	{
+		return;
+	}
+
+	public void L94FBA9()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		Stack.Push(X);
+		[0x12] = 0;
+		P |= 0x20;
+		A = [0x26];
+		[0x211B] = A;
+		A = [0x27];
+		[0x211B] = 0;
+		A = 0x3C;
+		[0x211C] = A;
+		A = [0x2134];
+		[0x12] = A;
+		A = [0x2135];
+		[0x13] = A;
+		A = [0x2136];
+		P &= ~0x20;
+		A = [0x12];
+		C = 0;
+		A += [0x28] + C;
+		[0x12] = A;
+		A = [0x0371];
+
+		if (Z == 0)
+			return this.L94FBEE();
+
+		A = [0x036D];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0xFC38 + X];
+		[0x14] = A;
+		A = [0xFC3A + X];
+		[0x16] = A;
+		return this.L94FC1B();
+	}
+
+	public void L94FBEE()
+	{
+		A = [0x036D];
+		A--;
+		A <<= 1;
+		X = A;
+		A = [0x036F];
+
+		if (Z == 0)
+			return this.L94FC0B();
+
+		A = [0xFC48 + X];
+		A &= 0x00FF;
+		[0x14] = A;
+		A = [0xFC49 + X];
+		A &= 0x00FF;
+		[0x16] = A;
+		return this.L94FC1B();
+	}
+
+	public void L94FC0B()
+	{
+		A = [0xFC4E + X];
+		A &= 0x00FF;
+		[0x14] = A;
+		A = [0xFC4F + X];
+		A &= 0x00FF;
+		[0x16] = A;
+	}
+
+	public void L94FC1B()
+	{
+		X = 0x0000;
+	}
+
+	public void L94FC1E()
+	{
+		A = [0x12];
+		temp = A - [0x14];
+
+		if (C == 0)
+			return this.L94FC31();
+
+		A = [0x14];
+		C = 0;
+		A += [0x16] + C;
+		[0x14] = A;
+		X++;
+		temp = X - 0x001F;
+
+		if (C == 0)
+			return this.L94FC1E();
+
+	}
+
+	public void L94FC31()
+	{
+		A = X;
+		[0x30] = A;
+		X = Stack.Pop();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L94FC54()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x2E] = 0;
+		[0x2C] = 0;
+		Y = 0x0013;
+		X = 0x0000;
+	}
+
+	public void L94FC62()
+	{
+		Stack.Push(X);
+		A = [0x70611D + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L94FC81();
+
+		[0x2E]++;
+		A = [0x706122 + X];
+		A &= 0x00FF;
+		X = A;
+		A = [0xFCF5 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += [0x2C] + C;
+		[0x2C] = A;
+	}
+
+	public void L94FC81()
+	{
+		A = Stack.Pop();
+		C = 0;
+		A += 0x0006 + C;
+		X = A;
+		Y--;
+
+		if (N == 0)
+			return this.L94FC62();
+
+		Y = 0x001D;
+		X = 0x0000;
+	}
+
+	public void L94FC90()
+	{
+		Stack.Push(X);
+		A = [0x706195 + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L94FCAF();
+
+		[0x2E]++;
+		A = [0x70619A + X];
+		A &= 0x00FF;
+		X = A;
+		A = [0xFCF5 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += [0x2C] + C;
+		[0x2C] = A;
+	}
+
+	public void L94FCAF()
+	{
+		A = Stack.Pop();
+		C = 0;
+		A += 0x0006 + C;
+		X = A;
+		Y--;
+
+		if (N == 0)
+			return this.L94FC90();
+
+		A = [0x2E];
+
+		if (Z == 1)
+			return this.L94FCE9();
+
+		this.L8086B1();
+		A = [0x2C];
+		C = 0;
+		A += [0x70601C] + C;
+		temp = A - 0x00F8;
+
+		if (C == 0)
+			return this.L94FCCF();
+
+		A = 0x00F8;
+	}
+
+	public void L94FCCF()
+	{
+		[0x70601E] = A;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		[0x12] = A;
+		A = 0x001F;
+		C = 1;
+		A -= [0x12] - !C;
+	}
+
+	public void L94FCDE()
+	{
+		[0x70601A] = A;
+		this.L94E927();
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L94FCE9()
+	{
+		A = 0x0000;
+		[0x70601E] = A;
+		A = 0x001F;
+		return this.L94FCDE();
+	}
+
+	public void L968144()
+	{
+		this.L9681D4();
+		this.L9694A7();
+		A = 0x0000;
+		[0x1B3F] = A;
+		[0x1B75] = A;
+		[0x1B65] = A;
+		[0x1B79] = A;
+		[0x1B7B] = A;
+		[0x1B81] = A;
+		[0x1B2B] = A;
+		[0x1B41] = A;
+		[0x1B25] = A;
+		[0x1B27] = A;
+		[0x1B23] = A;
+		[0x1B29] = A;
+		[0x1B43] = A;
+		[0x1B13] = A;
+		[0x1B15] = A;
+		[0x1B17] = A;
+		[0x1B1B] = A;
+		[0x1B1D] = A;
+		[0x1B19] = A;
+		[0x1B1F] = A;
+		[0x1B21] = A;
+		[0x1B23] = A;
+		[0x1B2D] = A;
+		[0x1B2F] = A;
+		[0x1B31] = A;
+		[0x1B33] = A;
+		[0x1B99] = A;
+		[0x1B9B] = A;
+		[0x1B9D] = A;
+		[0x1B9F] = A;
+		[0x1BA1] = A;
+		A = 0xFFFF;
+		[0x1B45] = A;
+		[0x1B47] = A;
+		[0x1B49] = A;
+		[0x1B4B] = A;
+		[0x1B8F] = A;
+		[0x1B91] = A;
+		[0x1B93] = A;
+		[0x1B95] = A;
+		[0x1B97] = A;
+		A = 0x0120;
+		[0x1BA3] = A;
+		[0x026D]++;
+		return;
+	}
+
+	public void L9681D4()
+	{
+		X = 0x00E2;
+	}
+
+	public void L9681D7()
+	{
+		A = [0x8000 + X];
+		[0x7F0861 + X] = A;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L9681D7();
+
+		X = 0x001E;
+	}
+
+	public void L9681E5()
+	{
+		A = [0x80E6 + X];
+		[0x7F0F61 + X] = A;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L9681E5();
+
+		X = 0x003E;
+	}
+
+	public void L9681F3()
+	{
+		A = [0x8104 + X];
+		[0x7F0FC1 + X] = A;
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L9681F3();
+
+		return;
+	}
+
+	public void L9681FF()
+	{
+		Stack.Push(P);
+		P |= 0x20;
+		A = 0x10;
+		[0x012A] = A;
+		P &= ~0x20;
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L968269()
+	{
+		A = [0x1866];
+
+		if (N == 1)
+			return this.L968277();
+
+		A = [0x1968];
+
+		if (N == 1)
+			return this.L968277();
+
+		this.L968453();
+	}
+
+	public void L968277()
+	{
+		return;
+	}
+
+	public void L968278()
+	{
+		P &= ~0x30;
+		this.L9682B5();
+
+		if (C == 1)
+			return this.L9682A4();
+
+		this.L97F92E();
+		this.L97FE35();
+		this.L9683E9();
+		this.L9685AF();
+		this.L96865D();
+		this.L97E57E();
+		this.L969CD8();
+		this.L969901();
+		this.L969EE3();
+	}
+
+	public void L9682A4()
+	{
+		this.L96EF01();
+		this.L97A2EE();
+		this.L97AA48();
+		this.L96EA80();
+		return;
+	}
+
+	public void L9682B5()
+	{
+		A = [0x1866];
+
+		if (N == 1)
+			return this.L9682C1();
+
+		A = [0x1968];
+
+		if (N == 1)
+			return this.L9682C1();
+
+		C = 0;
+		return;
+	}
+
+	public void L9682C1()
+	{
+		A = [0x1B79];
+
+		if (Z == 1)
+			return this.L9682D0();
+
+		P |= 0x20;
+		A = [0x4A];
+		A &= 0xF9;
+		[0x4A] = A;
+		P &= ~0x20;
+	}
+
+	public void L9682D0()
+	{
+		A = [0x1B7B];
+
+		if (Z == 0)
+			return this.L9682DC();
+
+		A = [0x1B2B];
+
+		if (Z == 0)
+			return this.L9682DC();
+
+		return this.L9682E6();
+	}
+
+	public void L9682DC()
+	{
+		P |= 0x20;
+		A = [0x4A];
+		A &= 0xFD;
+		[0x4A] = A;
+		P &= ~0x20;
+	}
+
+	public void L9682E6()
+	{
+		[0x1B65] = 0;
+		[0x1B7B] = 0;
+		[0x1B79] = 0;
+		[0x1B81] = 0;
+		[0x1B9D] = 0;
+		this.L9689E3();
+		[0x1B25] = 0;
+		C = 1;
+		return;
+	}
+
+	public void L9682FE()
+	{
+		A = [0x12];
+		A >>= 1;
+		A >>= 1;
+		A &= 0xFFFE;
+		X = A;
+		return [(0x8309 + X)]();
+	}
+
+	public void L968395()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x28];
+		[0x30] = A;
+		A = [0x26];
+		temp = A - 0x007F;
+
+		if (C == 1)
+			return this.L9683AC();
+
+		A = [0x26];
+		this.L9683C4();
+	}
+
+	public void L9683A9()
+	{
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9683AC()
+	{
+		A = 0x0078;
+		this.L9683C4();
+		A = [0x30];
+		C = 0;
+		A += [0x2C] + C;
+		[0x30] = A;
+		A = [0x26];
+		C = 1;
+		A -= 0x0078 - !C;
+		this.L9683C4();
+		return this.L9683A9();
+	}
+
+	public void L9683C4()
+	{
+		X = [0x00];
+		A |= [0x2A];
+		[0x7E0000 + X] = A;
+		X++;
+		A = [0x30];
+		[0x7E0000 + X] = A;
+		A = [0x00];
+		C = 0;
+		A += 0x0003 + C;
+		[0x00] = A;
+		return;
+	}
+
+	public void L9683DC()
+	{
+		P |= 0x20;
+		[0x014F] = 0;
+	}
+
+	public void L9683E1()
+	{
+		A = [0x014F];
+
+		if (Z == 1)
+			return this.L9683E1();
+
+		P &= ~0x20;
+		return;
+	}
+
+	public void L9683E9()
+	{
+		this.L9688BA();
+		this.L96892E();
+
+		if (C == 1)
+			return this.L96840B();
+
+		A = [0x5A];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L96840B();
+
+		A = [0x03FC];
+		[0x20] = A;
+		this.L9095BA();
+		A = [0x03FC];
+		temp = A - [0x20];
+
+		if (Z == 1)
+			return this.L96840B();
+
+		this.L96840C();
+	}
+
+	public void L96840B()
+	{
+		return;
+	}
+
+	public void L96840C()
+	{
+		this.L9688BA();
+		this.L9688AB();
+		A = [0x968B7D + X];
+		[0x1B1F] = A;
+		this.L9689E3();
+		A = 0x0000;
+		[0x1B29] = A;
+		A++;
+		[0x1B21] = A;
+		A = [0x1B1B];
+
+		if (Z == 1)
+			return this.L96843D();
+
+		A = [0x1B1B];
+		A &= 0x00FF;
+		A = (A >> 4) | (A << 4);
+		A |= 0x00F8;
+		this.L8094E2();
+		[0x1B1B] = 0;
+	}
+
+	public void L96843D()
+	{
+		A = [0x03FC];
+		A <<= 1;
+		X = A;
+		A = [0x96844B + X];
+		this.L809492();
+		return;
+	}
+
+	public void L968453()
+	{
+		A = [0x1B43];
+		temp = A & 0x8002;
+
+		if (Z == 0)
+			return this.L96847C();
+
+		A = [0x14D6];
+		temp = A - 0x000E;
+
+		if (Z == 0)
+			return this.L968476();
+
+		A = [0x026B];
+
+		if (Z == 0)
+			return this.L96847C();
+
+		A = [0x7F2873];
+
+		if (Z == 1)
+			return this.L96847C();
+
+		A = [0x1B43];
+		temp = A & 0x0E00;
+
+		if (Z == 0)
+			return this.L96847C();
+
+	}
+
+	public void L968476()
+	{
+		this.L96847D();
+		this.L9684B6();
+	}
+
+	public void L96847C()
+	{
+		return;
+	}
+
+	public void L96847D()
+	{
+		A = [0x1B21];
+
+		if (Z == 0)
+			return this.L9684B1();
+
+		A = [0x1B29];
+
+		if (Z == 0)
+			return this.L9684B1();
+
+		A = [0x026B];
+
+		if (Z == 0)
+			return this.L968497();
+
+		A = [0x52];
+		temp = A & 0x2000;
+
+		if (Z == 1)
+			return this.L968497();
+
+		A = [0x52];
+		return this.L968499();
+	}
+
+	public void L968497()
+	{
+		A = [0x5A];
+	}
+
+	public void L968499()
+	{
+		temp = A & 0x8000;
+
+		if (Z == 1)
+			return this.L9684B2();
+
+		A = [0x1B25];
+
+		if (Z == 0)
+			return this.L9684B1();
+
+		A = [0x1B27];
+		temp = A - 0x0030;
+
+		if (C == 1)
+			return this.L9684B1();
+
+		A = 0x0001;
+		[0x1B25] = A;
+	}
+
+	public void L9684B1()
+	{
+		return;
+	}
+
+	public void L9684B2()
+	{
+		[0x1B27] = 0;
+		return;
+	}
+
+	public void L9684B6()
+	{
+		A = [0x14D6];
+		A <<= 1;
+		X = A;
+		A = [0x96857B + X];
+
+		if (Z == 1)
+			return this.L968524();
+
+		A = [0x1B25];
+
+		if (Z == 1)
+			return this.L968524();
+
+		A--;
+		A <<= 1;
+		C = 0;
+		A += [0x96857B + X] + C;
+		X = A;
+		A = [0x96857B + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L968525();
+
+		A = 0x2000;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		P |= 0x20;
+		A = [0x96857B + X];
+		[0x012D] = A;
+		[0x2132] = A;
+		A = [0x96857C + X];
+		[0x012C] = A;
+		[0x2132] = A;
+		A = 0x20;
+		[0x011F] = A;
+		A = 0x00;
+		[0x0120] = A;
+		A = 0xFF;
+		[0x0121] = A;
+		A = [0x1B7B];
+
+		if (Z == 0)
+			return this.L96850C();
+
+		[0x012E] = 0;
+		return this.L968517();
+	}
+
+	public void L96850C()
+	{
+		A = [0x012D];
+		A &= 0xDF;
+		[0x012D] = A;
+		[0x2132] = A;
+	}
+
+	public void L968517()
+	{
+		P &= ~0x20;
+		[0x1B25]++;
+		A = [0x14D6];
+		A <<= 1;
+		X = A;
+		return [(0x8532 + X)]();
+	}
+
+	public void L968524()
+	{
+		return;
+	}
+
+	public void L968525()
+	{
+		A = 0x0000;
+		[0x1B25] = A;
+		A = 0x2000;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L9685AF()
+	{
+		A = [0x1B21];
+
+		if (Z == 1)
+			return this.L9685B9();
+
+		[0x1B21]--;
+		return this.L9685F1();
+	}
+
+	public void L9685B9()
+	{
+		A = [0x52];
+		A ^= 0xFFFF;
+		temp = A & 0x00FF;
+
+		if (Z == 0)
+			return this.L9685F1();
+
+		this.L96891F();
+		temp = A & 0x8000;
+
+		if (Z == 1)
+			return this.L9685F1();
+
+		this.L96895A();
+
+		if (C == 1)
+			return this.L9685F1();
+
+		A = [0x0257];
+
+		if (Z == 0)
+			return this.L9685F5();
+
+		[0x1B27] = 0;
+		A = [0x0261];
+		[0x1B35] = A;
+		A = [0x0263];
+		[0x1B37] = A;
+		A = [0x1B29];
+
+		if (Z == 1)
+			return this.L9685ED();
+
+		[0x1B29]--;
+		return;
+	}
+
+	public void L9685ED()
+	{
+		this.L968601();
+		return;
+	}
+
+	public void L9685F1()
+	{
+		[0x1B29] = 0;
+		return;
+	}
+
+	public void L9685F5()
+	{
+		A = [0x1B29];
+
+		if (Z == 1)
+			return this.L9685FD();
+
+		[0x1B29]--;
+	}
+
+	public void L9685FD()
+	{
+		[0x1B27]++;
+		return;
+	}
+
+	public void L968601()
+	{
+		this.L97D6DE();
+
+		if (C == 1)
+			return this.L96862B();
+
+		this.L9688AB();
+		A = [0x968B85 + X];
+		A <<= 1;
+		X = A;
+		return [(0x8613 + X)]();
+	}
+
+	public void L96862B()
+	{
+		this.L9688AB();
+		this.L968A21();
+		A = [0x968B7B + X];
+		[0x1B29] = A;
+		return;
+	}
+
+	public void L96865D()
+	{
+		A = [0x1B21];
+
+		if (Z == 0)
+			return this.L968693();
+
+		A = [0x1B29];
+
+		if (Z == 0)
+			return this.L968693();
+
+		A = [0x1B1F];
+
+		if (Z == 1)
+			return this.L968671();
+
+		[0x1B1F]--;
+		return this.L968693();
+	}
+
+	public void L968671()
+	{
+		this.L9688AB();
+		A = [0x0267];
+		temp = A & 0x4000;
+
+		if (Z == 1)
+			return this.L968690();
+
+		A = [0x1B17];
+
+		if (Z == 1)
+			return this.L968690();
+
+		A = [0x968B77 + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L968690();
+
+		this.L968A21();
+		return this.L968693();
+	}
+
+	public void L968690()
+	{
+		this.L9686A0();
+	}
+
+	public void L968693()
+	{
+		A = [0x1B13];
+		[0x0393] = A;
+		A = [0x1B17];
+		[0x0395] = A;
+		return;
+	}
+
+	public void L9686A0()
+	{
+		A = [0x968B87 + X];
+
+		if (N == 1)
+			return this.L9686F3();
+
+		A = [0x1B1B];
+
+		if (Z == 0)
+			return this.L9686B8();
+
+		A = [0x1B13];
+		A |= [0x1B15];
+
+		if (Z == 0)
+			return this.L9686B8();
+
+		Stack.Push(X);
+		this.L968834();
+		X = Stack.Pop();
+	}
+
+	public void L9686B8()
+	{
+		A = [0x968B81 + X];
+
+		if (Z == 1)
+			return this.L9686C3();
+
+		temp = A - [0x1B17];
+
+		if (Z == 1)
+			return this.L9686F2();
+
+	}
+
+	public void L9686C3()
+	{
+		this.L9686F8();
+		C = 0;
+		A = [0x1B15];
+		A += [0x1C] + C;
+		[0x1B15] = A;
+		A = [0x1B13];
+		[0x12] = A;
+		A += [0x1E] + C;
+		[0x1B13] = A;
+		A = [0x1B13];
+		temp = A - 0x0060;
+
+		if (N == 1)
+			return this.L9686F2();
+
+		A = 0x0060;
+		[0x1B13] = A;
+		temp = A - [0x12];
+
+		if (Z == 1)
+			return this.L9686EE();
+
+		this.L9687AC();
+	}
+
+	public void L9686EE()
+	{
+		this.L968777();
+	}
+
+	public void L9686F2()
+	{
+		return;
+	}
+
+	public void L9686F3()
+	{
+		[0x1B1B] = 0;
+		return;
+	}
+
+	public void L9686F8()
+	{
+		Stack.Push(X);
+		A = [0x1B1D];
+		A <<= 1;
+		X = A;
+		return [(0x8701 + X)]();
+	}
+
+	public void L968777()
+	{
+		A = [0x968B81 + X];
+
+		if (Z == 1)
+			return this.L9687A7();
+
+		A = [0x1B19];
+
+		if (Z == 1)
+			return this.L968787();
+
+		[0x1B19]--;
+		return this.L9687A7();
+	}
+
+	public void L968787()
+	{
+		C = 0;
+		A = [0x1B17];
+		A += [0x968B83 + X] + C;
+		[0x1B17] = A;
+		A = [0x1B17];
+		temp = A - [0x968B81 + X];
+
+		if (N == 1)
+			return this.L9687A3();
+
+		A = [0x968B81 + X];
+		[0x1B17] = A;
+		return;
+	}
+
+	public void L9687A3()
+	{
+		this.L968A21();
+	}
+
+	public void L9687A7()
+	{
+		return;
+	}
+
+	public void L9687AC()
+	{
+		Stack.Push(X);
+		A = [0x1B1D];
+		A <<= 1;
+		X = A;
+		A = [0x1B13];
+
+		if (Z == 1)
+			return this.L9687BC();
+
+		A = [0x1B17];
+		A++;
+		A <<= 1;
+	}
+
+	public void L9687BC()
+	{
+		C = 0;
+		A += [0x9687E2 + X] + C;
+		X = A;
+		A = [0x9687E2 + X];
+		[0x1B1B] = A;
+		temp = A - 0x00E9;
+
+		if (C == 1)
+			return this.L9687D8();
+
+		A = [0x9687E2 + X];
+		this.L809492();
+		return this.L9687E0();
+	}
+
+	public void L9687D8()
+	{
+		A = [0x9687E2 + X];
+		this.L8094BA();
+	}
+
+	public void L9687E0()
+	{
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L968834()
+	{
+		Stack.Push(X);
+		A = [0x1B1D];
+		A <<= 1;
+		X = A;
+		A = [0x1B17];
+		A <<= 1;
+		C = 0;
+		A += [0x968855 + X] + C;
+		X = A;
+		A = [0x968855 + X];
+		[0x1B1B] = A;
+		A = [0x968855 + X];
+		this.L809492();
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L9688AB()
+	{
+		A = [0x1B1D];
+		A <<= 1;
+		X = A;
+		A = [0x968B73 + X];
+		X = A;
+		return;
+	}
+
+	public void L9688B6()
+	{
+		this.L9688BA();
+		return;
+	}
+
+	public void L9688BA()
+	{
+		A = [0x1BC7];
+
+		if (Z == 0)
+			return this.L9688D5();
+
+	}
+
+	public void L9688BF()
+	{
+		A = [0x03FA];
+
+		if (Z == 1)
+			return this.L9688CE();
+
+		A <<= 1;
+		X = A;
+		A = [0x9688E7 + X];
+		[0x1B1D] = A;
+		return;
+	}
+
+	public void L9688CE()
+	{
+		A = [0x0381];
+		[0x1B1D] = A;
+		return;
+	}
+
+	public void L9688D5()
+	{
+		A = [0x03FA];
+
+		if (Z == 0)
+			return this.L9688BF();
+
+		A = [0x1BC9];
+		A <<= 1;
+		X = A;
+		A = [0x968907 + X];
+		[0x1B1D] = A;
+		return;
+	}
+
+	public void L96891F()
+	{
+		A = [0x52];
+		temp = A & 0x2000;
+
+		if (Z == 1)
+			return this.L96892A();
+
+		A = [0x0267];
+		return;
+	}
+
+	public void L96892A()
+	{
+		A = [0x0265];
+		return;
+	}
+
+	public void L96892E()
+	{
+		A = [0x1B23];
+
+		if (Z == 0)
+			return this.L968958();
+
+		A = [0x1BC7];
+
+		if (Z == 1)
+			return this.L96893D();
+
+		A = [0x1BD3];
+
+		if (Z == 0)
+			return this.L968958();
+
+	}
+
+	public void L96893D()
+	{
+		A = [0x1B7B];
+
+		if (Z == 0)
+			return this.L968958();
+
+		A = [0x1B79];
+
+		if (Z == 0)
+			return this.L968958();
+
+		A = [0x1B81];
+
+		if (Z == 0)
+			return this.L968958();
+
+		A = [0x1B41];
+
+		if (Z == 0)
+			return this.L968958();
+
+		A = [0x1B75];
+
+		if (Z == 0)
+			return this.L968958();
+
+		C = 0;
+		return;
+	}
+
+	public void L968958()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L96895A()
+	{
+		A = [0x1B81];
+
+		if (Z == 0)
+			return this.L968987();
+
+		A = [0x1BC7];
+
+		if (Z == 1)
+			return this.L968969();
+
+		A = [0x1BD3];
+
+		if (Z == 0)
+			return this.L968987();
+
+	}
+
+	public void L968969()
+	{
+		A = [0x1B1D];
+
+		if (Z == 1)
+			return this.L968985();
+
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L968985();
+
+		A = [0x0381];
+		temp = A - 0x0001;
+
+		if (Z == 0)
+			return this.L968983();
+
+		A = [0x0267];
+		temp = A & 0x4000;
+
+		if (Z == 0)
+			return this.L968985();
+
+	}
+
+	public void L968983()
+	{
+		return this.L968989();
+	}
+
+	public void L968985()
+	{
+		C = 0;
+		return;
+	}
+
+	public void L968987()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L968989()
+	{
+		A = [0x1B3F];
+
+		if (Z == 0)
+			return this.L9689DA();
+
+		A = [0x1B41];
+
+		if (Z == 0)
+			return this.L9689DA();
+
+		A = [0x117C];
+		temp = A - 0x0018;
+
+		if (Z == 1)
+			return this.L9689DA();
+
+		temp = A - 0x000D;
+
+		if (Z == 1)
+			return this.L9689DA();
+
+		temp = A - 0x0002;
+
+		if (C == 0)
+			return this.L9689D8();
+
+		temp = A - 0x0008;
+
+		if (C == 0)
+			return this.L9689DA();
+
+		A = [0x117E];
+		temp = A - 0x0018;
+
+		if (Z == 1)
+			return this.L9689DA();
+
+		temp = A - 0x000D;
+
+		if (Z == 1)
+			return this.L9689DA();
+
+		temp = A - 0x0002;
+
+		if (C == 0)
+			return this.L9689D8();
+
+		temp = A - 0x0008;
+
+		if (C == 0)
+			return this.L9689DA();
+
+		A = [0x1180];
+		temp = A - 0x0018;
+
+		if (Z == 1)
+			return this.L9689DA();
+
+		temp = A - 0x000D;
+
+		if (Z == 1)
+			return this.L9689DA();
+
+		temp = A - 0x0002;
+
+		if (C == 0)
+			return this.L9689D8();
+
+		temp = A - 0x0008;
+
+		if (C == 0)
+			return this.L9689DA();
+
+	}
+
+	public void L9689D8()
+	{
+		C = 0;
+		return;
+	}
+
+	public void L9689DA()
+	{
+		A = 0x00E3;
+		this.L8094BA();
+		C = 1;
+		return;
+	}
+
+	public void L9689E3()
+	{
+		A = [0x0381];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x1B17];
+		C = 1;
+		A -= [0x968A97 + X] - !C;
+
+		if (N == 0)
+			return this.L9689F6();
+
+		A = 0x0000;
+	}
+
+	public void L9689F6()
+	{
+		[0x1B17] = A;
+		A = 0x0000;
+		[0x1B15] = A;
+		A = [0x1B13];
+		C = 1;
+		A -= [0x968A99 + X] - !C;
+
+		if (N == 0)
+			return this.L968A0C();
+
+		A = 0x0000;
+	}
+
+	public void L968A0C()
+	{
+		[0x1B13] = A;
+		this.L9688AB();
+		A = [0x968B7D + X];
+		[0x1B1F] = A;
+		A = [0x968B7F + X];
+		[0x1B19] = A;
+		return;
+	}
+
+	public void L968A21()
+	{
+		A = 0x0000;
+		[0x1B13] = A;
+		[0x1B15] = A;
+		A = [0x968B7D + X];
+		[0x1B1F] = A;
+		A = [0x968B7F + X];
+		[0x1B19] = A;
+		return;
+	}
+
+	public void L968A39()
+	{
+		A = [0x1B1B];
+
+		if (Z == 1)
+			return this.L968A4F();
+
+		A = [0x1B1B];
+		A &= 0x00FF;
+		A = (A >> 4) | (A << 4);
+		A |= 0x00F8;
+		this.L8094E2();
+		[0x1B1B] = 0;
+	}
+
+	public void L968A4F()
+	{
+		X = [0x14];
+		A = [0x1238 + X];
+		A &= 0x0007;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		[0x20] = A;
+		A = [0x0381];
+		A <<= 1;
+		X = A;
+		A = [0x968A9F + X];
+		C = 0;
+		A += [0x20] + C;
+		X = A;
+		A = [0x1B17];
+		C = 1;
+		A -= [0x968A9F + X] - !C;
+
+		if (N == 0)
+			return this.L968A76();
+
+		A = 0x0000;
+	}
+
+	public void L968A76()
+	{
+		[0x1B17] = A;
+		A = 0x0000;
+		[0x1B15] = A;
+		A = [0x1B13];
+		C = 1;
+		A -= [0x968AA3 + X] - !C;
+
+		if (N == 0)
+			return this.L968A8C();
+
+		A = 0x0000;
+	}
+
+	public void L968A8C()
+	{
+		[0x1B13] = A;
+		A = [0x968AA5 + X];
+		[0x1B21] = A;
+		return;
+	}
+
+	public void L9694A7()
+	{
+		this.L9698CF();
+		P |= 0x20;
+		A = 0x41;
+		[0x4320] = A;
+		A = 0x26;
+		[0x4321] = A;
+		A = 0xD8;
+		[0x4322] = A;
+		A = 0x61;
+		[0x4323] = A;
+		A = 0x7E;
+		[0x4324] = A;
+		A = 0x7E;
+		[0x4327] = A;
+		P &= ~0x20;
+		return;
+	}
+
+	public void L9694CE()
+	{
+		return;
+	}
+
+	public void L9694CF()
+	{
+		this.L96989E();
+		this.L9698C9();
+
+		if (C == 1)
+			return this.L9694CE();
+
+		Stack.Push(B);
+		Stack.Push(X);
+		Stack.Push(Y);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L969509();
+		this.L96953F();
+		this.L969596();
+		this.L9695FA();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9694EC()
+	{
+		this.L96989E();
+		this.L9698C9();
+
+		if (C == 1)
+			return this.L9694CE();
+
+		Stack.Push(B);
+		Stack.Push(X);
+		Stack.Push(Y);
+		Stack.Push(K);
+		B = Stack.Pop();
+		this.L969509();
+		this.L96953F();
+		this.L9696D0();
+		this.L969734();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L969509()
+	{
+		A = [0x16];
+		A &= 0xFFFE;
+		[0x16] = A;
+		X = A;
+		A = [0xA0C7 + X];
+		[0x1B83] = A;
+		X = A;
+		A = [0xA0C7 + X];
+		[0x1B85] = A;
+		[0x1B89] = A;
+		[0x1A] = A;
+		A <<= 1;
+		[0x1C] = A;
+		A = [0xA0C9 + X];
+		[0x1E] = A;
+		A <<= 1;
+		[0x1B87] = A;
+		[0x18] = 0;
+		A = [0x014C];
+		temp = A & 0x0001;
+
+		if (Z == 0)
+			return this.L96953E();
+
+		A = 0x0200;
+		[0x18] = A;
+	}
+
+	public void L96953E()
+	{
+		return;
+	}
+
+	public void L96953F()
+	{
+		A = [0x16];
+		temp = A - [0x14];
+
+		if (C == 0)
+			return this.L969560();
+
+		A = [0x14];
+		temp = A - [0x1E];
+
+		if (C == 0)
+			return this.L969555();
+
+		A = [0x14];
+		C = 1;
+		A -= [0x1E] - !C;
+		[0x1B85] = A;
+		return this.L969560();
+	}
+
+	public void L969555()
+	{
+		A = [0x1E];
+		C = 0;
+		A += [0x14] + C;
+		[0x1B87] = A;
+		[0x1B85] = 0;
+	}
+
+	public void L969560()
+	{
+		A = [0x16];
+		C = 0;
+		A += [0x14] + C;
+		temp = A - 0x00BB;
+
+		if (C == 0)
+			return this.L969595();
+
+		A = [0x14];
+		C = 0;
+		A += [0x1E] + C;
+		temp = A - 0x00BB;
+
+		if (C == 1)
+			return this.L969582();
+
+		A = 0x00BB;
+		C = 1;
+		A -= [0x14] - !C;
+		C = 1;
+		A -= [0x1E] - !C;
+		[0x1B89] = A;
+		return this.L969595();
+	}
+
+	public void L969582()
+	{
+		A = [0x1B87];
+		C = 1;
+		A -= [0x14] - !C;
+		C = 1;
+		A += [0x1E] + C;
+		C = 0;
+		A += [0x1B89] + C;
+		[0x1B87] = A;
+		[0x1B89] = 0;
+	}
+
+	public void L969595()
+	{
+		return;
+	}
+
+	public void L969596()
+	{
+		A = 0x0001;
+		[0x7E6A76] = A;
+		A = [0x18];
+		[0x1B8B] = A;
+		A = [0x1B85];
+		C = 0;
+		A += [0x1B89] + C;
+		A--;
+		A <<= 1;
+		C = 0;
+		A += [0x18] + C;
+		[0x1B8D] = A;
+		A = [0x1A];
+		C = 1;
+		A -= [0x1B85] - !C;
+		[0x20] = A;
+		A = [0x1A];
+		C = 1;
+		A -= [0x1B89] - !C;
+		[0x22] = A;
+		Y = [0x20];
+		temp = Y - [0x22];
+
+		if (C == 0)
+			return this.L9695C9();
+
+		Y = [0x22];
+	}
+
+	public void L9695C9()
+	{
+		this.L96981C();
+		temp = Y - [0x20];
+
+		if (C == 0)
+			return this.L9695DD();
+
+		X = [0x1B8B];
+		[0x7E6218 + X] = A;
+		[0x1B8B]++;
+		[0x1B8B]++;
+	}
+
+	public void L9695DD()
+	{
+		temp = Y - [0x22];
+
+		if (C == 0)
+			return this.L9695EE();
+
+		X = [0x1B8D];
+		[0x7E6218 + X] = A;
+		[0x1B8D]--;
+		[0x1B8D]--;
+	}
+
+	public void L9695EE()
+	{
+		Y++;
+		temp = Y - [0x1A];
+
+		if (N == 1)
+			return this.L9695C9();
+
+		X = [0x18];
+		[0x7E6416 + X] = A;
+		return;
+	}
+
+	public void L9695FA()
+	{
+		A = [0x18];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		C = 0;
+		A += 0x61D8 + C;
+		[0x00] = A;
+		A = [0x14];
+		C = 1;
+		A -= [0x16] - !C;
+
+		if (C == 0)
+			return this.L969625();
+
+
+		if (Z == 0)
+			return this.L969610();
+
+		A++;
+	}
+
+	public void L969610()
+	{
+		[0x26] = A;
+		A = 0x0000;
+		[0x2A] = A;
+		A = 0x6A76;
+		[0x28] = A;
+		A = 0x0000;
+		[0x2C] = A;
+		this.L968395();
+	}
+
+	public void L969625()
+	{
+		A = [0x1B85];
+
+		if (Z == 1)
+			return this.L969642();
+
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0x6218;
+		C = 0;
+		A += [0x18] + C;
+		[0x28] = A;
+		A = 0x00F0;
+		[0x2C] = A;
+		this.L968395();
+	}
+
+	public void L969642()
+	{
+		A = [0x1B87];
+
+		if (Z == 1)
+			return this.L96965F();
+
+		[0x26] = A;
+		A = 0x0000;
+		[0x2A] = A;
+		A = 0x6416;
+		C = 0;
+		A += [0x18] + C;
+		[0x28] = A;
+		A = 0x0000;
+		[0x2C] = A;
+		this.L968395();
+	}
+
+	public void L96965F()
+	{
+		A = [0x1B89];
+
+		if (Z == 1)
+			return this.L96967D();
+
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0x6218;
+		C = 0;
+		A += [0x1B8B] + C;
+		[0x28] = A;
+		A = 0x00F0;
+		[0x2C] = A;
+		this.L968395();
+	}
+
+	public void L96967D()
+	{
+		X = [0x00];
+		A = 0x0001;
+		[0x7E0000 + X] = A;
+		A = 0x6A76;
+		[0x7E0001 + X] = A;
+		P |= 0x20;
+		A = 0x00;
+		[0x7E0003 + X] = A;
+		P &= ~0x20;
+		A = [0x18];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		C = 0;
+		A += 0x61D8 + C;
+		[0x18] = A;
+		P |= 0x20;
+		A = 0x41;
+		[0x4320] = A;
+		A = 0x26;
+		[0x4321] = A;
+		A = [0x18];
+		[0x4322] = A;
+		A = [0x19];
+		[0x4323] = A;
+		A = 0x7E;
+		[0x4324] = A;
+		A = 0x7E;
+		[0x4327] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x04;
+		A |= [0x4A];
+		[0x4A] = A;
+		P &= ~0x20;
+		return;
+	}
+
+	public void L9696D0()
+	{
+		A = 0x0001;
+		[0x7E6A76] = A;
+		A = [0x18];
+		[0x1B8B] = A;
+		A = [0x1B85];
+		C = 0;
+		A += [0x1B89] + C;
+		A--;
+		A <<= 1;
+		C = 0;
+		A += [0x18] + C;
+		[0x1B8D] = A;
+		A = [0x1A];
+		C = 1;
+		A -= [0x1B85] - !C;
+		[0x20] = A;
+		A = [0x1A];
+		C = 1;
+		A -= [0x1B89] - !C;
+		[0x22] = A;
+		Y = [0x20];
+		temp = Y - [0x22];
+
+		if (C == 0)
+			return this.L969703();
+
+		Y = [0x22];
+	}
+
+	public void L969703()
+	{
+		this.L96981C();
+		temp = Y - [0x20];
+
+		if (C == 0)
+			return this.L969717();
+
+		X = [0x1B8B];
+		[0x7E6658 + X] = A;
+		[0x1B8B]++;
+		[0x1B8B]++;
+	}
+
+	public void L969717()
+	{
+		temp = Y - [0x22];
+
+		if (C == 0)
+			return this.L969728();
+
+		X = [0x1B8D];
+		[0x7E6658 + X] = A;
+		[0x1B8D]--;
+		[0x1B8D]--;
+	}
+
+	public void L969728()
+	{
+		Y++;
+		temp = Y - [0x1A];
+
+		if (N == 1)
+			return this.L969703();
+
+		X = [0x18];
+		[0x7E6856 + X] = A;
+		return;
+	}
+
+	public void L969734()
+	{
+		A = [0x18];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		C = 0;
+		A += 0x6618 + C;
+		[0x00] = A;
+		A = [0x14];
+		C = 1;
+		A -= [0x16] - !C;
+
+		if (C == 0)
+			return this.L96975F();
+
+
+		if (Z == 0)
+			return this.L96974A();
+
+		A++;
+	}
+
+	public void L96974A()
+	{
+		[0x26] = A;
+		A = 0x0000;
+		[0x2A] = A;
+		A = 0x6A76;
+		[0x28] = A;
+		A = 0x0000;
+		[0x2C] = A;
+		this.L968395();
+	}
+
+	public void L96975F()
+	{
+		A = [0x1B85];
+
+		if (Z == 1)
+			return this.L96977C();
+
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0x6658;
+		C = 0;
+		A += [0x18] + C;
+		[0x28] = A;
+		A = 0x00F0;
+		[0x2C] = A;
+		this.L968395();
+	}
+
+	public void L96977C()
+	{
+		A = [0x1B87];
+
+		if (Z == 1)
+			return this.L969799();
+
+		[0x26] = A;
+		A = 0x0000;
+		[0x2A] = A;
+		A = 0x6856;
+		C = 0;
+		A += [0x18] + C;
+		[0x28] = A;
+		A = 0x0000;
+		[0x2C] = A;
+		this.L968395();
+	}
+
+	public void L969799()
+	{
+		A = [0x1B89];
+
+		if (Z == 1)
+			return this.L9697B7();
+
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0x6658;
+		C = 0;
+		A += [0x1B8B] + C;
+		[0x28] = A;
+		A = 0x00F0;
+		[0x2C] = A;
+		this.L968395();
+	}
+
+	public void L9697B7()
+	{
+		X = [0x00];
+		A = 0x0001;
+		[0x7E0000 + X] = A;
+		A = 0x6A76;
+		[0x7E0001 + X] = A;
+		P |= 0x20;
+		A = 0x00;
+		[0x7E0003 + X] = A;
+		P &= ~0x20;
+		A = [0x18];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		C = 0;
+		A += 0x6618 + C;
+		[0x18] = A;
+		P |= 0x20;
+		A = 0x41;
+		[0x4310] = A;
+		[0x0950] = A;
+		A = 0x28;
+		[0x4311] = A;
+		[0x0951] = A;
+		A = [0x18];
+		[0x4312] = A;
+		[0x0952] = A;
+		A = [0x19];
+		[0x4313] = A;
+		[0x0953] = A;
+		A = 0x7E;
+		[0x4314] = A;
+		[0x0954] = A;
+		A = 0x7E;
+		[0x4317] = A;
+		[0x0955] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x02;
+		A |= [0x4A];
+		[0x4A] = A;
+		P &= ~0x20;
+		return;
+	}
+
+	public void L96981C()
+	{
+		A = Y;
+		C = 0;
+		A += [0x1B83] + C;
+		X = A;
+		P |= 0x20;
+		A = [0xA0CB + X];
+		C = 0;
+		A += [0x12] + C;
+
+		if (C == 0)
+			return this.L96982E();
+
+		A = 0xFF;
+	}
+
+	public void L96982E()
+	{
+		A = (A >> 4) | (A << 4);
+		A = [0xA0CB + X];
+		A ^= 0xFF;
+		A++;
+		C = 0;
+		A += [0x12] + C;
+
+		if (C == 1)
+			return this.L96983C();
+
+		A = 0x00;
+	}
+
+	public void L96983C()
+	{
+		P &= ~0x20;
+		return;
+	}
+
+	public void L96989E()
+	{
+		A = [0x12];
+
+		if (N == 1)
+			return this.L9698A9();
+
+		temp = A - 0x0100;
+
+		if (C == 1)
+			return this.L9698AE();
+
+		return this.L9698B1();
+	}
+
+	public void L9698A9()
+	{
+		A = 0x0000;
+		return this.L9698B1();
+	}
+
+	public void L9698AE()
+	{
+		A = 0x00FF;
+	}
+
+	public void L9698B1()
+	{
+		[0x12] = A;
+		A = [0x14];
+
+		if (N == 1)
+			return this.L9698BE();
+
+		temp = A - 0x0100;
+
+		if (C == 1)
+			return this.L9698C3();
+
+		return this.L9698C6();
+	}
+
+	public void L9698BE()
+	{
+		A = 0x0000;
+		return this.L9698C6();
+	}
+
+	public void L9698C3()
+	{
+		A = 0x00FF;
+	}
+
+	public void L9698C6()
+	{
+		[0x14] = A;
+		return;
+	}
+
+	public void L9698C9()
+	{
+		A = [0x16];
+		temp = A - 0x00FF;
+		return;
+	}
+
+	public void L9698CF()
+	{
+		A = 0x0000;
+		[0x7E61D8] = A;
+		A = 0x0000;
+		[0x7E61F8] = A;
+		P |= 0x20;
+		A = [0x4A];
+		A &= 0xFB;
+		[0x4A] = A;
+		P &= ~0x20;
+		return;
+	}
+
+	public void L9698E8()
+	{
+		A = 0x0000;
+		[0x7E6618] = A;
+		A = 0x0000;
+		[0x7E6638] = A;
+		P |= 0x20;
+		A = [0x4A];
+		A &= 0xFD;
+		[0x4A] = A;
+		P &= ~0x20;
+		return;
+	}
+
+	public void L969901()
+	{
+		A = [0x1B79];
+
+		if (Z == 0)
+			return this.L969907();
+
+		return;
+	}
+
+	public void L969907()
+	{
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0800;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		P |= 0x20;
+		[0x012E] = 0;
+		A = 0x02;
+		temp = A & [0x012A];[0x012A] &= ~A;
+		A = 0x33;
+		[0x012B] = A;
+		A = [0x011F];
+		A |= 0x20;
+		A &= 0x6F;
+		[0x011F] = A;
+		A = 0x00;
+		[0x0120] = A;
+		A = 0xFF;
+		[0x0121] = A;
+		P &= ~0x20;
+		this.L9699A0();
+		A = [0x0381];
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += [0x0381] + C;
+		A += [0x0381] + C;
+		X = A;
+		Stack.Push(X);
+		this.L969A9C();
+		X = Stack.Pop();
+		C = 1;
+		A = [0x1966];
+		A -= [0x968B29 + X] - !C;
+		[0x1966] = A;
+		A = [0x1968];
+		A -= [0x968B2B + X] - !C;
+		[0x1968] = A;
+		A = [0x968B2F + X];
+		temp = A - [0x1968];
+
+		if (C == 0)
+			return this.L96999E();
+
+		A = 0x0000;
+		[0x1B79] = A;
+		[0x0117] = A;
+		[0x7F0002] = A;
+		A = 0x0000;
+		[0x7E6618] = A;
+		P |= 0x20;
+		A = [0x4A];
+		A &= 0xFD;
+		[0x4A] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = [0x4A];
+		A &= 0xFB;
+		[0x4A] = A;
+		P &= ~0x20;
+		A = [0x02F9];
+		this.L809517();
+		A = 0x0800;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+	}
+
+	public void L96999E()
+	{
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9699A0()
+	{
+		[0x1B79]++;
+	}
+
+	public void L9699A3()
+	{
+		A = [0x1B79];
+		A <<= 1;
+		X = A;
+		A = [0x99C0 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L9699B8();
+
+		[0x0117] = A;
+		[0x7F0002] = A;
+		return;
+	}
+
+	public void L9699B8()
+	{
+		A = 0x0069;
+		[0x1B79] = A;
+		return this.L9699A3();
+	}
+
+	public void L969A9C()
+	{
+		A = [0x1B79];
+		temp = A - 0x0053;
+
+		if (C == 0)
+			return this.L969AA7();
+
+		return this.L969B48();
+	}
+
+	public void L969AA7()
+	{
+		A = [0x1B79];
+		A <<= 1;
+		[0x12] = A;
+		A = 0x61D8;
+		[0x00] = A;
+		A = [0x12];
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBCBB;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x00A6;
+		C = 1;
+		A -= [0x12] - !C;
+		[0x26] = A;
+		A = 0x0000;
+		[0x2A] = A;
+		A = 0xBE2B;
+		[0x28] = A;
+		A = 0x0000;
+		[0x2C] = A;
+		this.L968395();
+		X = [0x00];
+		A = 0x0000;
+		[0x7E0000 + X] = A;
+		A = 0x6618;
+		[0x00] = A;
+		A = 0x00A6;
+		C = 1;
+		A -= [0x12] - !C;
+		[0x26] = A;
+		A = 0x0000;
+		[0x2A] = A;
+		A = 0xBE2B;
+		[0x28] = A;
+		A = 0x0000;
+		[0x2C] = A;
+		this.L968395();
+		A = [0x12];
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBD73;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0001;
+		[0x26] = A;
+		A = 0x0000;
+		[0x2A] = A;
+		A = 0xBE2B;
+		[0x28] = A;
+		A = 0x0000;
+		[0x2C] = A;
+		this.L968395();
+		X = [0x00];
+		A = 0x0000;
+		[0x7E0000 + X] = A;
+		return this.L969C6D();
+	}
+
+	public void L969B48()
+	{
+		A = [0x968B2D + X];
+		temp = A - [0x1968];
+
+		if (C == 0)
+			return this.L969B6C();
+
+		A = [0x014C];
+		A ^= 0xFFFF;
+		A &= 0x000F;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		[0x12] = A;
+		A = [0x014C];
+		A &= 0x000F;
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		[0x14] = A;
+		return this.L969B7F();
+	}
+
+	public void L969B6C()
+	{
+		A = [0x014C];
+		A ^= 0xFFFF;
+		A &= 0x003F;
+		[0x12] = A;
+		A = [0x014C];
+		A &= 0x003F;
+		[0x14] = A;
+	}
+
+	public void L969B7F()
+	{
+		A = 0x61D8;
+		[0x00] = A;
+		A = 0x0040;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBCBB;
+		C = 0;
+		A += [0x12] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0040;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBCBB;
+		C = 0;
+		A += [0x12] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0026;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBCBB;
+		C = 0;
+		A += [0x12] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0001;
+		[0x26] = A;
+		A = 0x0000;
+		[0x2A] = A;
+		A = 0xBE2B;
+		[0x28] = A;
+		A = 0x0000;
+		[0x2C] = A;
+		this.L968395();
+		X = [0x00];
+		A = 0x0000;
+		[0x7E0000 + X] = A;
+		A = 0x6618;
+		[0x00] = A;
+		A = 0x0040;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBD73;
+		C = 0;
+		A += [0x14] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0040;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBD73;
+		C = 0;
+		A += [0x14] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0026;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBD73;
+		C = 0;
+		A += [0x14] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0001;
+		[0x26] = A;
+		A = 0x0000;
+		[0x2A] = A;
+		A = 0xBE2B;
+		[0x28] = A;
+		A = 0x0000;
+		[0x2C] = A;
+		this.L968395();
+		X = [0x00];
+		A = 0x0000;
+		[0x7E0000 + X] = A;
+	}
+
+	public void L969C6D()
+	{
+		P |= 0x20;
+		A = 0x40;
+		[0x4310] = A;
+		[0x0950] = A;
+		A = 0x32;
+		[0x4311] = A;
+		[0x0951] = A;
+		A = 0xD8;
+		[0x4312] = A;
+		[0x0952] = A;
+		A = 0x61;
+		[0x4313] = A;
+		[0x0953] = A;
+		A = 0x7E;
+		[0x4314] = A;
+		[0x0954] = A;
+		A = 0x97;
+		[0x4317] = A;
+		[0x0955] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x02;
+		A |= [0x4A];
+		[0x4A] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x40;
+		[0x4320] = A;
+		A = 0x32;
+		[0x4321] = A;
+		A = 0x18;
+		[0x4322] = A;
+		A = 0x66;
+		[0x4323] = A;
+		A = 0x7E;
+		[0x4324] = A;
+		A = 0x97;
+		[0x4327] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x04;
+		A |= [0x4A];
+		[0x4A] = A;
+		P &= ~0x20;
+		return;
+	}
+
+	public void L969CD8()
+	{
+		A = [0x1B7B];
+
+		if (Z == 0)
+			return this.L969CDE();
+
+		return;
+	}
+
+	public void L969CDE()
+	{
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = 0x0400;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		A = [0x1B7F];
+		this.L969E02();
+		this.L969DD0();
+		A = [0x1B7B];
+		this.L969D11();
+		A = [0x2E];
+		[0x1B7B] = A;
+		A = [0x1B7F];
+
+		if (N == 0)
+			return this.L969D0F();
+
+		A = 0x403C;
+		[0x1B7B] = A;
+		A = 0x0000;
+		[0x1B7F] = A;
+	}
+
+	public void L969D0F()
+	{
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L969D11()
+	{
+		[0x002E] = A;
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L969D27();
+
+		temp = A & 0x4000;
+
+		if (Z == 0)
+			return this.L969D79();
+
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L969D26();
+
+		return this.L969DAF();
+	}
+
+	public void L969D26()
+	{
+		return;
+	}
+
+	public void L969D27()
+	{
+		A &= 0x7FFF;
+
+		if (Z == 1)
+			return this.L969D5D();
+
+		[0x16] = A;
+		A = [0x1B43];
+		temp = A & 0x7002;
+
+		if (Z == 0)
+			return this.L969D52();
+
+		A = 0x0080;
+		[0x12] = A;
+		A = 0x0054;
+		[0x14] = A;
+		this.L9694CF();
+		P |= 0x20;
+		A = [0x011F];
+		A |= 0x30;
+		A &= 0x7F;
+		[0x011F] = A;
+		P &= ~0x20;
+	}
+
+	public void L969D52()
+	{
+		A = [0x002E];
+		C = 1;
+		A -= 0x0008 - !C;
+		[0x002E] = A;
+		return;
+	}
+
+	public void L969D5D()
+	{
+		A = 0x0001;
+		[0x002E] = A;
+		this.L9698CF();
+		P |= 0x20;
+		A = 0x02;
+		temp = A & [0x012A];[0x012A] &= ~A;
+		A = [0x011F];
+		A &= 0xEF;
+		[0x011F] = A;
+		P &= ~0x20;
+		return;
+	}
+
+	public void L969D79()
+	{
+		A--;
+		[0x002E] = A;
+		A &= 0x00FF;
+
+		if (Z == 1)
+			return this.L969D89();
+
+		A = 0x0060;
+		[0x012D] = A;
+		return;
+	}
+
+	public void L969D89()
+	{
+		A = 0x0000;
+		[0x002E] = A;
+		P |= 0x20;
+		A = [0x4A];
+		A &= 0xFD;
+		[0x4A] = A;
+		A = 0x20;
+		[0x012E] = A;
+		A = 0x40;
+		[0x012D] = A;
+		A = 0x80;
+		[0x012C] = A;
+		P &= ~0x20;
+		A = 0x0400;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L969DAF()
+	{
+		X = A;
+		P |= 0x20;
+		A = [0x9DBE + X];
+		[0x012D] = A;
+		P &= ~0x20;
+		[0x002E]--;
+		return;
+	}
+
+	public void L969DD0()
+	{
+		P |= 0x20;
+		A = [0x1B7F];
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x9DF1 + X];
+		[0x012E] = A;
+		temp = A - 0x30;
+
+		if (C == 0)
+			return this.L969DEE();
+
+		A = [0x014C];
+		temp = A & 0x10;
+
+		if (Z == 0)
+			return this.L969DEE();
+
+		A = 0x20;
+		[0x012E] = A;
+	}
+
+	public void L969DEE()
+	{
+		P &= ~0x20;
+		return;
+	}
+
+	public void L969E02()
+	{
+		[0x12] = A;
+		P |= 0x20;
+		A = 0x33;
+		[0x012B] = A;
+		A = 0x80;
+		[0x012C] = A;
+		P &= ~0x20;
+		A = [0x12];
+		temp = A - 0x0010;
+
+		if (C == 1)
+			return this.L969E25();
+
+		A = [0x014C];
+		A &= 0x000F;
+		A <<= 1;
+		A <<= 1;
+		[0x12] = A;
+		return this.L969E2D();
+	}
+
+	public void L969E25()
+	{
+		A = [0x014C];
+		A &= 0x003F;
+		[0x12] = A;
+	}
+
+	public void L969E2D()
+	{
+		A = 0x6618;
+		[0x00] = A;
+		A = 0x0040;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBD73;
+		C = 0;
+		A += [0x12] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0040;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBD73;
+		C = 0;
+		A += [0x12] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0026;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBD73;
+		C = 0;
+		A += [0x12] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0001;
+		[0x26] = A;
+		A = 0x0000;
+		[0x2A] = A;
+		A = 0xBE2C;
+		[0x28] = A;
+		A = 0x0000;
+		[0x2C] = A;
+		this.L968395();
+		X = [0x00];
+		A = 0x0000;
+		[0x7E0000 + X] = A;
+		P |= 0x20;
+		A = 0x40;
+		[0x4310] = A;
+		[0x0950] = A;
+		A = 0x32;
+		[0x4311] = A;
+		[0x0951] = A;
+		A = 0x18;
+		[0x4312] = A;
+		[0x0952] = A;
+		A = 0x66;
+		[0x4313] = A;
+		[0x0953] = A;
+		A = 0x7E;
+		[0x4314] = A;
+		[0x0954] = A;
+		A = 0x97;
+		[0x4317] = A;
+		[0x0955] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x02;
+		A |= [0x4A];
+		[0x4A] = A;
+		P &= ~0x20;
+		return;
+	}
+
+	public void L969EE3()
+	{
+		A = [0x1B81];
+
+		if (Z == 1)
+			return this.L969F0E();
+
+		A = 0x0200;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		P |= 0x20;
+		A = 0xE0;
+		[0x012C] = A;
+		[0x012D] = A;
+		[0x012E] = A;
+		A = 0x20;
+		[0x011F] = A;
+		P &= ~0x20;
+		this.L969F0F();
+		this.L969F88();
+		[0x1B81]++;
+		this.L96A06C();
+	}
+
+	public void L969F0E()
+	{
+		return;
+	}
+
+	public void L969F0F()
+	{
+		A = [0x1B81];
+		temp = A - 0x0001;
+
+		if (Z == 1)
+			return this.L969F2C();
+
+		temp = A - 0x0053;
+
+		if (Z == 1)
+			return this.L969F1F();
+
+		return this.L969F7D();
+	}
+
+	public void L969F1F()
+	{
+		A = 0x0000;
+		[0x1966] = A;
+		A = 0x0080;
+		[0x1968] = A;
+		return;
+	}
+
+	public void L969F2C()
+	{
+		P |= 0x20;
+		A = 0x40;
+		[0x4310] = A;
+		[0x0950] = A;
+		A = 0x32;
+		[0x4311] = A;
+		[0x0951] = A;
+		A = 0x18;
+		[0x4312] = A;
+		[0x0952] = A;
+		A = 0x66;
+		[0x4313] = A;
+		[0x0953] = A;
+		A = 0x7E;
+		[0x4314] = A;
+		[0x0954] = A;
+		A = 0x97;
+		[0x4317] = A;
+		[0x0955] = A;
+		P &= ~0x20;
+		P |= 0x20;
+		A = 0x01;
+		[0x4320] = A;
+		A = 0x26;
+		[0x4321] = A;
+		A = 0x7E;
+		[0x4322] = A;
+		A = 0x9F;
+		[0x4323] = A;
+		A = 0x96;
+		[0x4324] = A;
+		P &= ~0x20;
+	}
+
+	public void L969F7D()
+	{
+		return;
+	}
+
+	public void L969F88()
+	{
+		A = [0x1B81];
+		temp = A - 0x0053;
+
+		if (C == 0)
+			return this.L969F93();
+
+		return this.L969FDF();
+	}
+
+	public void L969F93()
+	{
+		A = [0x1B81];
+		A <<= 1;
+		[0x12] = A;
+		A = [0x014C];
+		A ^= 0xFFFF;
+		A &= 0x003F;
+		[0x14] = A;
+		A = 0x6618;
+		[0x00] = A;
+		A = [0x12];
+
+		if (Z == 1)
+			return this.L969FC5();
+
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBE2D;
+		C = 0;
+		A += [0x14] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+	}
+
+	public void L969FC5()
+	{
+		X = [0x00];
+		A = 0x0001;
+		[0x7E0000 + X] = A;
+		A = 0xBF1D;
+		[0x7E0001 + X] = A;
+		A = 0x0000;
+		[0x7E0003 + X] = A;
+		return this.L96A061();
+	}
+
+	public void L969FDF()
+	{
+		A = [0x014C];
+		A ^= 0xFFFF;
+		A &= 0x003F;
+		[0x12] = A;
+		A = 0x6618;
+		[0x00] = A;
+		A = 0x0026;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBE2D;
+		C = 0;
+		A += [0x12] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0040;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBE2D;
+		C = 0;
+		A += [0x12] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0040;
+		[0x26] = A;
+		A = 0x0080;
+		[0x2A] = A;
+		A = 0xBE2D;
+		C = 0;
+		A += [0x12] + C;
+		[0x28] = A;
+		A = 0x0078;
+		[0x2C] = A;
+		this.L968395();
+		A = 0x0001;
+		[0x26] = A;
+		A = 0x0000;
+		[0x2A] = A;
+		A = 0xBF1D;
+		[0x28] = A;
+		A = 0x0000;
+		[0x2C] = A;
+		this.L968395();
+		X = [0x00];
+		A = 0x0000;
+		[0x7E0000 + X] = A;
+	}
+
+	public void L96A061()
+	{
+		P |= 0x20;
+		A = 0x06;
+		A |= [0x4A];
+		[0x4A] = A;
+		P &= ~0x20;
+		return;
+	}
+
+	public void L96A06C()
+	{
+		A = [0x1B81];
+		temp = A - 0x0053;
+
+		if (C == 0)
+			return this.L96A08C();
+
+		A = [0x0379];
+		temp = A - 0x007F;
+
+		if (C == 0)
+			return this.L96A08C();
+
+		this.L9095E0();
+		A = 0x0000;
+		[0x1B81] = A;
+		A = 0x0200;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+	}
+
+	public void L96A08C()
+	{
+		return;
+	}
+
+	public void L96DC5B()
+	{
+		C = 0;
+		A = [0x13B0 + Y];
+		A += 0xD555 + C;
+		[0x13B0 + Y] = A;
+		A = [0x140E + Y];
+		[0x12] = A;
+		A += 0x0000 + C;
+		[0x140E + Y] = A;
+		temp = A - [0x12];
+
+		if (Z == 1)
+			return this.L96DC7E();
+
+		A = [0x1238 + Y];
+		A &= 0xDFFF;
+		[0x1238 + Y] = A;
+		return;
+	}
+
+	public void L96DC7E()
+	{
+		A = [0x1238 + Y];
+		A |= 0x2000;
+		[0x1238 + Y] = A;
+		return;
+	}
+
+	public void L96DC88()
+	{
+		A = 0x0001;
+		this.L96DD0D();
+		return;
+	}
+
+	public void L96DC8F()
+	{
+		A = 0x0001;
+		this.L96DD0D();
+		return;
+	}
+
+	public void L96DC96()
+	{
+		A = 0x0001;
+		this.L96DD0D();
+		return;
+	}
+
+	public void L96DC9D()
+	{
+		A = 0x0001;
+		this.L96DD0D();
+		return;
+	}
+
+	public void L96DCA4()
+	{
+		A = 0x0001;
+		this.L96DD8A();
+		return;
+	}
+
+	public void L96DCAB()
+	{
+		A = 0x0001;
+		this.L96DD8A();
+		return;
+	}
+
+	public void L96DCB2()
+	{
+		A = 0x0002;
+		this.L96DECB();
+		return;
+	}
+
+	public void L96DCB9()
+	{
+		this.L96E148();
+		return;
+	}
+
+	public void L96DCBD()
+	{
+		this.L96E205();
+		this.L96E275();
+		return;
+	}
+
+	public void L96DCC4()
+	{
+		A = 0x0002;
+		this.L96DD0D();
+		return;
+	}
+
+	public void L96DCCB()
+	{
+		A = 0x0002;
+		this.L96DD0D();
+		return;
+	}
+
+	public void L96DCD2()
+	{
+		A = 0x0002;
+		this.L96DD8A();
+		return;
+	}
+
+	public void L96DCD9()
+	{
+		A = 0x0002;
+		this.L96DD8A();
+		return;
+	}
+
+	public void L96DCE0()
+	{
+		A = 0x0004;
+		this.L96DECB();
+		return;
+	}
+
+	public void L96DCE7()
+	{
+		A = 0x0004;
+		this.L96DECB();
+		return;
+	}
+
+	public void L96DCEE()
+	{
+		A = 0x0002;
+		this.L96DECB();
+		return;
+	}
+
+	public void L96DCF5()
+	{
+		this.L96E148();
+		return;
+	}
+
+	public void L96DCF9()
+	{
+		this.L96E275();
+		return;
+	}
+
+	public void L96DCFD()
+	{
+		this.L96E59B();
+
+		if (C == 1)
+			return this.L96DD05();
+
+		this.L96E275();
+	}
+
+	public void L96DD05()
+	{
+		return;
+	}
+
+	public void L96DD06()
+	{
+		this.L96E205();
+		this.L96E3DC();
+		return;
+	}
+
+	public void L96DD0D()
+	{
+		A <<= 1;
+		X = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += [0xDD3A + X] + C;
+		X = A;
+		A = [0xDD3A + X];
+
+		if (N == 1)
+			return this.L96DD30();
+
+		[0x1296 + Y] = A;
+		A = [0xDD3C + X];
+		[0x0CB6 + Y] = A;
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96DD30()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L96DD8A()
+	{
+		A <<= 1;
+		X = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += [0xDDB7 + X] + C;
+		X = A;
+		A = [0xDDB7 + X];
+
+		if (N == 1)
+			return this.L96DDAD();
+
+		[0x1296 + Y] = A;
+		A = [0xDDB9 + X];
+		[0x0CB6 + Y] = A;
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96DDAD()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L96DECB()
+	{
+		A <<= 1;
+		X = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += [0xDEF8 + X] + C;
+		X = A;
+		A = [0xDEF8 + X];
+
+		if (N == 1)
+			return this.L96DEEE();
+
+		[0x1296 + Y] = A;
+		A = [0xDEFA + X];
+		[0x0CB6 + Y] = A;
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96DEEE()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L96E148()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xE17D + X];
+
+		if (Z == 1)
+			return this.L96E15C();
+
+		[0x12] = A;
+	}
+
+	public void L96E154()
+	{
+		this.L9683DC();
+		[0x12]--;
+
+		if (Z == 0)
+			return this.L96E154();
+
+	}
+
+	public void L96E15C()
+	{
+		A = [0xE1AB + X];
+
+		if (N == 1)
+			return this.L96E173();
+
+		[0x1296 + Y] = A;
+		A = [0xE1D9 + X];
+		[0x0CB6 + Y] = A;
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96E173()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L96E205()
+	{
+		A = [0x1B43];
+		temp = A & 0x0002;
+
+		if (Z == 0)
+			return this.L96E254();
+
+		A = [0x140E + Y];
+		temp = A - 0x000D;
+
+		if (C == 1)
+			return this.L96E254();
+
+		A <<= 1;
+		X = A;
+		P |= 0x20;
+		A = [0xE25B + X];
+		[0x012D] = A;
+		A = [0xE25C + X];
+		[0x012C] = A;
+		A = [0x1B7B];
+
+		if (Z == 0)
+			return this.L96E22F();
+
+		[0x012E] = 0;
+		return this.L96E237();
+	}
+
+	public void L96E22F()
+	{
+		A = [0x012D];
+		A &= 0xDF;
+		[0x012D] = A;
+	}
+
+	public void L96E237()
+	{
+		A = 0x37;
+		[0x012B] = A;
+		A = 0x20;
+		[0x011F] = A;
+		A = 0x00;
+		[0x0120] = A;
+		A = 0xFF;
+		[0x0121] = A;
+		P &= ~0x20;
+		A = 0x1000;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		return;
+	}
+
+	public void L96E254()
+	{
+		A = 0x1000;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L96E275()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xE344 + X];
+
+		if (N == 0)
+			return this.L96E282();
+
+		return this.L96E308();
+	}
+
+	public void L96E282()
+	{
+		[0x1296 + Y] = A;
+		A = [0xE378 + X];
+		[0x0CB6 + Y] = A;
+		A = [0xE312 + X];
+
+		if (Z == 1)
+			return this.L96E29A();
+
+		[0x12] = A;
+	}
+
+	public void L96E292()
+	{
+		this.L9683DC();
+		[0x12]--;
+
+		if (Z == 0)
+			return this.L96E292();
+
+	}
+
+	public void L96E29A()
+	{
+		A = [0x1B9D];
+
+		if (Z == 0)
+			return this.L96E2F3();
+
+		A = [0xE3AA + X];
+		X = A;
+		A = [0x7F0761 + X];
+		[0x7F0683] = A;
+		A = [0x7F0763 + X];
+		[0x7F0685] = A;
+		A = [0x7F0765 + X];
+		[0x7F0687] = A;
+		A = [0x7F0767 + X];
+		[0x7F0689] = A;
+		A = [0x7F0769 + X];
+		[0x7F068B] = A;
+		A = [0x7F1261 + X];
+		[0x7F1183] = A;
+		A = [0x7F1263 + X];
+		[0x7F1185] = A;
+		A = [0x7F1265 + X];
+		[0x7F1187] = A;
+		A = [0x7F1267 + X];
+		[0x7F1189] = A;
+		A = [0x7F1269 + X];
+		[0x7F118B] = A;
+	}
+
+	public void L96E2F3()
+	{
+		A = 0x0200;
+		[0x1352 + Y] = A;
+		A = 0xF1FF;
+		[0x12F4 + Y] = A;
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96E308()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L96E3DC()
+	{
+		A = [0x140E + Y];
+		temp = A - 0x0015;
+
+		if (Z == 0)
+			return this.L96E3EC();
+
+		A = [0x1B8F];
+
+		if (N == 1)
+			return this.L96E45F();
+
+		A = [0x140E + Y];
+	}
+
+	public void L96E3EC()
+	{
+		A <<= 1;
+		X = A;
+		A = [0x96E4D9 + X];
+
+		if (N == 1)
+			return this.L96E455();
+
+		[0x1296 + Y] = A;
+		A = [0x96E499 + X];
+
+		if (Z == 1)
+			return this.L96E407();
+
+		[0x12] = A;
+	}
+
+	public void L96E3FF()
+	{
+		this.L9683DC();
+		[0x12]--;
+
+		if (Z == 0)
+			return this.L96E3FF();
+
+	}
+
+	public void L96E407()
+	{
+		A = [0x96E51B + X];
+		[0x0CB6 + Y] = A;
+		A = [0x1B9D];
+
+		if (Z == 0)
+			return this.L96E440();
+
+		A = [0x96E55B + X];
+		X = A;
+		A = [0x7F0761 + X];
+		[0x7F0683] = A;
+		A = [0x7F0763 + X];
+		[0x7F0685] = A;
+		A = [0x7F0765 + X];
+		[0x7F0687] = A;
+		A = [0x7F0767 + X];
+		[0x7F0689] = A;
+		A = [0x7F0769 + X];
+		[0x7F068B] = A;
+	}
+
+	public void L96E440()
+	{
+		A = 0xF1FF;
+		[0x12F4 + Y] = A;
+		A = 0x0200;
+		[0x1352 + Y] = A;
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96E455()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L96E45F()
+	{
+		this.L96E63E();
+		A = 0x0002;
+		[0x117C + Y] = A;
+		A = 0x0000;
+		[0x111E + Y] = A;
+		A = [0x1004 + Y];
+		[0x0B9C + Y] = A;
+		[0x1004 + Y] = A;
+		A = [0x1062 + Y];
+		[0x0C58 + Y] = A;
+		[0x1062 + Y] = A;
+		A = 0x00F0;
+		[0x0CB6 + Y] = A;
+		A = 0x003C;
+		[0x140E + Y] = A;
+		A = 0x0000;
+		[0x13B0 + Y] = A;
+		A = 0x1C02;
+		[0x1238 + Y] = A;
+		return;
+	}
+
+	public void L96E59B()
+	{
+		A = [0x146C + Y];
+
+		if (Z == 1)
+			return this.L96E5B4();
+
+		this.L80C88D();
+		A = [0x1B9D];
+
+		if (Z == 0)
+			return this.L96E5B2();
+
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+	}
+
+	public void L96E5B2()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L96E5B4()
+	{
+		temp = Y - [0x1B8F];
+
+		if (Z == 1)
+			return this.L96E5BB();
+
+		C = 0;
+		return;
+	}
+
+	public void L96E5BB()
+	{
+		this.L96E63E();
+		A = [0x117C + Y];
+		C = 1;
+		A -= 0x002D - !C;
+		A <<= 1;
+		X = A;
+		A = [0x96E638 + X];
+		A &= 0x00FF;
+		[0x1B9F] = A;
+		A = [0x96E639 + X];
+		A &= 0x00FF;
+		[0x1BA1] = A;
+		A = 0x0001;
+		[0x1B9D] = A;
+		A = 0x0001;
+		[0x146C + Y] = A;
+		A = [0x1238 + Y];
+		A |= 0x0800;
+		[0x1238 + Y] = A;
+		A = 0x00F0;
+		[0x0CB6 + Y] = A;
+		A = 0xFFFF;
+		[0x1296 + Y] = A;
+		[0x11DA + Y] = A;
+		A = [0x1004 + Y];
+		[0x1B35] = A;
+		A = [0x1062 + Y];
+		[0x1B37] = A;
+		A = 0x0046;
+		[0x1B3B] = A;
+		A = [0x117C + Y];
+		C = 1;
+		A -= 0x002D - !C;
+		[0x1B3D] = A;
+		Stack.Push(Y);
+		this.L97E314();
+
+		if (C == 1)
+			return this.L96E62E();
+
+		A = 0xFFFF;
+		[0x12F4 + Y] = A;
+		A = 0x0000;
+		[0x1352 + Y] = A;
+	}
+
+	public void L96E62E()
+	{
+		Y = Stack.Pop();
+		A = 0x0000;
+		this.L97DAE3();
+		C = 1;
+		return;
+	}
+
+	public void L96E63E()
+	{
+		A = [0x1238];
+		temp = A & 0x0800;
+
+		if (Z == 1)
+			return this.L96E64C();
+
+		A = 0xFFFF;
+		[0x117C] = A;
+	}
+
+	public void L96E64C()
+	{
+		A = [0x123A];
+		temp = A & 0x0800;
+
+		if (Z == 1)
+			return this.L96E65A();
+
+		A = 0xFFFF;
+		[0x117E] = A;
+	}
+
+	public void L96E65A()
+	{
+		A = [0x123C];
+		temp = A & 0x0800;
+
+		if (Z == 1)
+			return this.L96E668();
+
+		A = 0xFFFF;
+		[0x1180] = A;
+	}
+
+	public void L96E668()
+	{
+		return;
+	}
+
+	public void L96E669()
+	{
+		A = [0x0CB6 + Y];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x96E678 + X];
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96E69A()
+	{
+		A = [0x0CB6 + Y];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x96E6A9 + X];
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96E6CB()
+	{
+		A = [0x0CB6 + Y];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x96E6DA + X];
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96E6FC()
+	{
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x0CB6 + Y];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A &= 0xFFFE;
+		X = A;
+		return [(0xE70D + X)]();
+	}
+
+	public void L96E7B7()
+	{
+		A = [0x11DA + Y];
+		A = (A >> 4) | (A << 4);
+		A &= 0x00FF;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x96E7CC + X];
+		C = 0;
+		A += [0x146C + Y] + C;
+		[0x146C + Y] = A;
+		return;
+	}
+
+	public void L96E7DE()
+	{
+		A = [0x11DB + Y];
+		A &= 0x00FF;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x96E7F2 + X];
+		C = 0;
+		A += [0x146C + Y] + C;
+		[0x146C + Y] = A;
+		return;
+	}
+
+	public void L96E804()
+	{
+		A = [0x11DB + Y];
+		A &= 0x00FF;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x96E818 + X];
+		C = 0;
+		A += [0x146C + Y] + C;
+		[0x146C + Y] = A;
+		return;
+	}
+
+	public void L96E82A()
+	{
+		A = [0x11DB + Y];
+		A &= 0x00FF;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x96E83E + X];
+		C = 0;
+		A += [0x146C + Y] + C;
+		[0x146C + Y] = A;
+		return;
+	}
+
+	public void L96E850()
+	{
+		A = [0x11DB + Y];
+		A &= 0x00FF;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x96E864 + X];
+		C = 0;
+		A += [0x146C + Y] + C;
+		[0x146C + Y] = A;
+		return;
+	}
+
+	public void L96E89C()
+	{
+		A = [0x11DB + Y];
+		A &= 0x00FF;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x96E8B0 + X];
+		C = 0;
+		A += [0x146C + Y] + C;
+		[0x146C + Y] = A;
+		return;
+	}
+
+	public void L96E8C2()
+	{
+		A = [0x11DB + Y];
+		A &= 0x00FF;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x96E8D6 + X];
+		C = 0;
+		A += [0x146C + Y] + C;
+		[0x146C + Y] = A;
+		return;
+	}
+
+	public void L96E8E8()
+	{
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		[0x12] = A;
+		A = [0x146D + Y];
+		A &= 0x00FF;
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L96E907()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L96E919();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x97BF1E + X];
+		[0x0CB6 + Y] = A;
+		return;
+	}
+
+	public void L96E919()
+	{
+		A = 0xFFFF;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+		return;
+	}
+
+	public void L96E926()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L96E938();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x97BF5E + X];
+		[0x0CB6 + Y] = A;
+		return;
+	}
+
+	public void L96E938()
+	{
+		A = 0xFFFF;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+		return;
+	}
+
+	public void L96E945()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L96E957();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x97BFAE + X];
+		[0x0CB6 + Y] = A;
+		return;
+	}
+
+	public void L96E957()
+	{
+		A = 0xFFFF;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+		return;
+	}
+
+	public void L96E964()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L96E976();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x97C00E + X];
+		[0x0CB6 + Y] = A;
+		return;
+	}
+
+	public void L96E976()
+	{
+		A = 0xFFFF;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+		return;
+	}
+
+	public void L96E983()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L96E995();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x97C08E + X];
+		[0x0CB6 + Y] = A;
+		return;
+	}
+
+	public void L96E995()
+	{
+		A = 0xFFFF;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+		return;
+	}
+
+	public void L96E9A2()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L96E9B4();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x97C12E + X];
+		[0x0CB6 + Y] = A;
+		return;
+	}
+
+	public void L96E9B4()
+	{
+		A = 0xFFFF;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+		return;
+	}
+
+	public void L96E9E0()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L96E9F2();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x97C2CE + X];
+		[0x0CB6 + Y] = A;
+		return;
+	}
+
+	public void L96E9F2()
+	{
+		A = 0xFFFF;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+		return;
+	}
+
+	public void L96E9FF()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L96EA11();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x97C3CE + X];
+		[0x0CB6 + Y] = A;
+		return;
+	}
+
+	public void L96EA11()
+	{
+		A = 0xFFFF;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+		return;
+	}
+
+	public void L96EA80()
+	{
+		A = [0x014C];
+		temp = A & 0x0001;
+
+		if (Z == 0)
+			return this.L96EAE1();
+
+		A &= 0x0006;
+		X = A;
+		A = [0x96EAE2 + X];
+		X = A;
+		A = [0x7F0761 + X];
+		[0x7F06C3] = A;
+		A = [0x7F1261 + X];
+		[0x7F11C3] = A;
+		A = [0x7F0763 + X];
+		[0x7F06C5] = A;
+		A = [0x7F1261 + X];
+		[0x7F11C5] = A;
+		A = [0x7F0765 + X];
+		[0x7F06C7] = A;
+		A = [0x7F1261 + X];
+		[0x7F11C7] = A;
+		A = [0x7F0767 + X];
+		[0x7F06C9] = A;
+		A = [0x7F1261 + X];
+		[0x7F11C9] = A;
+		A = [0x7F0769 + X];
+		[0x7F06CB] = A;
+		A = [0x7F1261 + X];
+		[0x7F11CB] = A;
+	}
+
+	public void L96EAE1()
+	{
+		return;
+	}
+
+	public void L96EAEC()
+	{
+		this.L96F723();
+		this.L96F605();
+		this.L96EFBB();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EB03()
+	{
+		this.L96F723();
+		this.L96F605();
+		this.L96EFE9();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EB1A()
+	{
+		this.L96F019();
+		this.L96DC5B();
+		this.L80C88D();
+		return;
+	}
+
+	public void L96EB26()
+	{
+		this.L96F139();
+		this.L96DC5B();
+		this.L80C88D();
+		return;
+	}
+
+	public void L96EB32()
+	{
+		this.L96F2A5();
+		this.L96DC5B();
+		this.L80C88D();
+		return;
+	}
+
+	public void L96EB3E()
+	{
+		this.L96FF18();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EB4B()
+	{
+		this.L96F723();
+		this.L96F605();
+		this.L96F41C();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EB62()
+	{
+		this.L96F723();
+		this.L96F605();
+		this.L96F460();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EB79()
+	{
+		this.L96F723();
+		this.L96F605();
+		this.L96F4AA();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EB90()
+	{
+		this.L96F594();
+		this.L96FC13();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EBA3()
+	{
+		this.L96F723();
+		this.L96F605();
+		this.L96FBAD();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EBBA()
+	{
+		this.L96F723();
+		this.L96F605();
+		this.L96FBE1();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EBD1()
+	{
+		this.L96F723();
+		this.L96F605();
+		this.L96FC13();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EBE8()
+	{
+		this.L96F723();
+		this.L96F605();
+		this.L96FC53();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EBFF()
+	{
+		this.L96F723();
+		this.L96F605();
+		this.L96FC93();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EC16()
+	{
+		A = 0x0000;
+		[0x11DA + Y] = A;
+		this.L80CE5F();
+		this.L80C88D();
+		A = 0x9600;
+		[0x01] = A;
+		A = 0xEC33;
+		[0x00] = A;
+		this.L96FA29();
+		return;
+	}
+
+	public void L96ECCF()
+	{
+		A = 0x0000;
+		[0x11DA + Y] = A;
+		this.L80CE5F();
+		this.L80C88D();
+		A = 0x9600;
+		[0x01] = A;
+		A = 0xECEC;
+		[0x00] = A;
+		this.L96FA29();
+		return;
+	}
+
+	public void L96EDAC()
+	{
+		A = 0x0000;
+		[0x11DA + Y] = A;
+		this.L80CE5F();
+		this.L80C88D();
+		A = 0x9600;
+		[0x01] = A;
+		A = 0xEDC9;
+		[0x00] = A;
+		this.L96FA29();
+		return;
+	}
+
+	public void L96EEE9()
+	{
+		this.L96F693();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EEF5()
+	{
+		this.L96F6DB();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EF01()
+	{
+		A = [0x014C];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		A &= 0x0006;
+		Y = A;
+		A = [0x1B45 + Y];
+
+		if (N == 1)
+			return this.L96EF16();
+
+		this.L96EF17();
+	}
+
+	public void L96EF16()
+	{
+		return;
+	}
+
+	public void L96EF17()
+	{
+		A = [0x014C];
+		A &= 0x0003;
+
+		if (Z == 1)
+			return this.L96EF20();
+
+		return;
+	}
+
+	public void L96EF20()
+	{
+		A = [0x1B45 + Y];
+		A <<= 1;
+		X = A;
+		A = [0x1726 + X];
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L96EF63();
+
+		A = [0x15A6 + X];
+		C = 0;
+		A += [0x1B4D + Y] + C;
+		[0x1B35] = A;
+		A = [0x15E6 + X];
+		C = 0;
+		A += [0x1B55 + Y] + C;
+		[0x1B37] = A;
+		A = [0x014C];
+		A >>= 1;
+		A >>= 1;
+		A &= 0x001F;
+		A <<= 1;
+		X = A;
+		A = [0x1B5D + Y];
+		C = 0;
+		A += [0x96EF64 + X] + C;
+		A &= 0x001F;
+		[0x1B3D] = A;
+		A = 0x0056;
+		[0x1B3B] = A;
+		this.L97E314();
+	}
+
+	public void L96EF63()
+	{
+		return;
+	}
+
+	public void L96EFA4()
+	{
+		this.L96F605();
+		this.L96FB00();
+		this.L96FB3F();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96EFBB()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xEFD3 + X];
+
+		if (N == 1)
+			return this.L96EFC9();
+
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96EFC9()
+	{
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96EFE9()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xF001 + X];
+
+		if (N == 1)
+			return this.L96EFF7();
+
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96EFF7()
+	{
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96F019()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x0B9C + Y];
+		[0x12] = A;
+		A = [0x0C58 + Y];
+		[0x14] = A;
+		A = [0xF0B7 + X];
+
+		if (Z == 1)
+			return this.L96F042();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L96F08C();
+
+		[0x16] = A;
+		A = [0x1B43];
+		temp = A & 0xFFF3;
+
+		if (Z == 0)
+			return this.L96F08B();
+
+		this.L9694CF();
+		return this.L96F04A();
+	}
+
+	public void L96F042()
+	{
+		A = [0x1B43];
+		temp = A & 0xFFF3;
+
+		if (Z == 0)
+			return this.L96F08B();
+
+	}
+
+	public void L96F04A()
+	{
+		A = 0x0008;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		P |= 0x20;
+		[0x012E] = 0;
+		A = [0xF0F9 + X];
+		[0x012D] = A;
+		A = [0xF0FA + X];
+		[0x012C] = A;
+		A = 0x02;
+		temp = A & [0x012A];[0x012A] &= ~A;
+		A = [0x011F];
+		A |= 0x20;
+		A &= 0x6F;
+		[0x011F] = A;
+		A = 0x37;
+		[0x012B] = A;
+		A = 0x00;
+		[0x0120] = A;
+		A = 0xFF;
+		[0x0121] = A;
+		A = 0x00;
+		[0x0122] = A;
+		A = 0xFF;
+		[0x0123] = A;
+		P &= ~0x20;
+	}
+
+	public void L96F08B()
+	{
+		return;
+	}
+
+	public void L96F08C()
+	{
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		A = [0x1B43];
+		temp = A & 0xFFF3;
+
+		if (Z == 0)
+			return this.L96F0B0();
+
+		this.L9698CF();
+		P |= 0x20;
+		[0x012E] = 0;
+		[0x012D] = 0;
+		A = 0xE0;
+		[0x012C] = A;
+		P &= ~0x20;
+	}
+
+	public void L96F0B0()
+	{
+		A = 0x0008;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L96F139()
+	{
+		A = [0x140E + Y];
+		temp = A - 0x0031;
+
+		if (C == 0)
+			return this.L96F144();
+
+		return this.L96F1B5();
+	}
+
+	public void L96F144()
+	{
+		A <<= 1;
+		X = A;
+		A = [0x0B9C + Y];
+		[0x12] = A;
+		A = [0x0C58 + Y];
+		[0x14] = A;
+		A = [0x96F1E3 + X];
+
+		if (Z == 1)
+			return this.L96F16B();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L96F1B5();
+
+		[0x16] = A;
+		A = [0x1B43];
+		temp = A & 0xFFFB;
+
+		if (Z == 0)
+			return this.L96F1B4();
+
+		this.L9694EC();
+		return this.L96F173();
+	}
+
+	public void L96F16B()
+	{
+		A = [0x1B43];
+		temp = A & 0xFFFB;
+
+		if (Z == 0)
+			return this.L96F1B4();
+
+	}
+
+	public void L96F173()
+	{
+		A = 0x0004;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		P |= 0x20;
+		[0x012E] = 0;
+		A = [0xF245 + X];
+		[0x012D] = A;
+		A = [0xF246 + X];
+		[0x012C] = A;
+		A = 0x02;
+		temp = A & [0x012A];[0x012A] &= ~A;
+		A = [0x011F];
+		A |= 0x80;
+		A &= 0x9F;
+		[0x011F] = A;
+		A = 0x37;
+		[0x012B] = A;
+		A = 0x00;
+		[0x0120] = A;
+		A = 0xFF;
+		[0x0121] = A;
+		A = 0x00;
+		[0x0122] = A;
+		A = 0xFF;
+		[0x0123] = A;
+		P &= ~0x20;
+	}
+
+	public void L96F1B4()
+	{
+		return;
+	}
+
+	public void L96F1B5()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		A = [0x1B43];
+		temp = A & 0xFFFB;
+
+		if (Z == 0)
+			return this.L96F1DC();
+
+		this.L9698E8();
+		P |= 0x20;
+		[0x012E] = 0;
+		[0x012D] = 0;
+		A = 0xE0;
+		[0x012C] = A;
+		P &= ~0x20;
+	}
+
+	public void L96F1DC()
+	{
+		A = 0x0004;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L96F2A5()
+	{
+		A = [0x140E + Y];
+		temp = A - 0x0031;
+
+		if (C == 0)
+			return this.L96F2B0();
+
+		return this.L96F32A();
+	}
+
+	public void L96F2B0()
+	{
+		A <<= 1;
+		X = A;
+
+		if (Z == 0)
+			return this.L96F2E9();
+
+		A = 0x8000;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		P |= 0x20;
+		A = 0x10;
+		[0x012A] = A;
+		A = 0xA0;
+		[0x011F] = A;
+		A = 0x00;
+		[0x0124] = A;
+		[0x0125] = A;
+		A = 0x37;
+		[0x012B] = A;
+		A = 0xFF;
+		[0x0120] = A;
+		A = 0x00;
+		[0x0121] = A;
+		A = 0x00;
+		[0x0122] = A;
+		A = 0xFF;
+		[0x0123] = A;
+		P &= ~0x20;
+	}
+
+	public void L96F2E9()
+	{
+		A = [0x0B9C + Y];
+		[0x12] = A;
+		A = [0x0C58 + Y];
+		[0x14] = A;
+		A = [0x96F341 + X];
+
+		if (Z == 1)
+			return this.L96F311();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L96F32A();
+
+		[0x16] = A;
+		this.L96F403();
+
+		if (C == 1)
+			return this.L96F329();
+
+		A = [0x1B43];
+		temp = A & 0x0002;
+
+		if (Z == 0)
+			return this.L96F329();
+
+		this.L9694EC();
+	}
+
+	public void L96F311()
+	{
+		P |= 0x20;
+		[0x012E] = 0;
+		A = [0xF3A3 + X];
+		[0x012D] = A;
+		A = [0xF3A4 + X];
+		[0x012C] = A;
+		A = 0x37;
+		[0x012B] = A;
+		P &= ~0x20;
+	}
+
+	public void L96F329()
+	{
+		return;
+	}
+
+	public void L96F32A()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		this.L9698E8();
+		A = 0x8000;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L96F403()
+	{
+		A = [0x14D6];
+		temp = A - 0x000F;
+
+		if (Z == 0)
+			return this.L96F41A();
+
+		A = [0x1866];
+
+		if (N == 1)
+			return this.L96F41A();
+
+		A = [0x1B43];
+		temp = A & 0x0E00;
+
+		if (Z == 1)
+			return this.L96F41A();
+
+		C = 1;
+		return;
+	}
+
+	public void L96F41A()
+	{
+		C = 0;
+		return;
+	}
+
+	public void L96F41C()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xF43A + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96F42D();
+
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96F42D()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96F460()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xF47E + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96F471();
+
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96F471()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96F4AA()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xF4CE + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96F4C1();
+
+		[0x1296 + Y] = A;
+		A = [0xF500 + X];
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L96F4C1()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96F594()
+	{
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		[0x12] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xF5C7 + X];
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		A = [0x140E + Y];
+		A &= 0x0003;
+
+		if (Z == 0)
+			return this.L96F5C6();
+
+		A = [0x11DA + Y];
+		A++;
+		A &= 0x001F;
+		[0x11DA + Y] = A;
+	}
+
+	public void L96F5C6()
+	{
+		return;
+	}
+
+	public void L96F605()
+	{
+		A = [0x1238 + Y];
+		A &= 0x2000;
+
+		if (Z == 1)
+			return this.L96F610();
+
+		return this.L96F692();
+	}
+
+	public void L96F610()
+	{
+		C = 0;
+		A = [0x197C];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x12] = A;
+		A = [0x197E];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x14] = A;
+		A = [0x197E];
+
+		if (Z == 1)
+			return this.L96F692();
+
+
+		if (N == 1)
+			return this.L96F65C();
+
+		C = 1;
+		A = [0x0D14 + Y];
+		A -= 0x6000 - !C;
+		[0x0D14 + Y] = A;
+		A = [0x0D72 + Y];
+		A -= 0x0000 - !C;
+		[0x0D72 + Y] = A;
+		C = 1;
+		A = [0x0D14 + Y];
+		A -= [0x12] - !C;
+		[0x88] = A;
+		A = [0x0D72 + Y];
+		A -= [0x14] - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L96F658();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L96F658()
+	{
+
+		if (C == 1)
+			return this.L96F692();
+
+		return this.L96F688();
+	}
+
+	public void L96F65C()
+	{
+		C = 0;
+		A = [0x0D14 + Y];
+		A += 0x6000 + C;
+		[0x0D14 + Y] = A;
+		A = [0x0D72 + Y];
+		A += 0x0000 + C;
+		[0x0D72 + Y] = A;
+		C = 1;
+		A = [0x0D14 + Y];
+		A -= [0x12] - !C;
+		[0x88] = A;
+		A = [0x0D72 + Y];
+		A -= [0x14] - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L96F686();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L96F686()
+	{
+
+		if (C == 0)
+			return this.L96F692();
+
+	}
+
+	public void L96F688()
+	{
+		A = [0x12];
+		[0x0D14 + Y] = A;
+		A = [0x14];
+		[0x0D72 + Y] = A;
+	}
+
+	public void L96F692()
+	{
+		return;
+	}
+
+	public void L96F693()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xF6BD + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96F6B0();
+
+		[0x1296 + Y] = A;
+		A = 0xFFFF;
+		[0x12F4 + Y] = A;
+		A = 0x0000;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L96F6B0()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96F6DB()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xF705 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96F6F8();
+
+		[0x1296 + Y] = A;
+		A = 0xFFFF;
+		[0x12F4 + Y] = A;
+		A = 0x0000;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L96F6F8()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96F723()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xF734 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96F733();
+
+		[0x0EEA + Y] = A;
+	}
+
+	public void L96F733()
+	{
+		return;
+	}
+
+	public void L96F76A()
+	{
+		this.L96F974();
+		this.L80C88D();
+		A = 0x9600;
+		[0x01] = A;
+		A = 0xF781;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L96F7B3()
+	{
+		this.L96F974();
+		this.L80C88D();
+		A = 0x9600;
+		[0x01] = A;
+		A = 0xF7CA;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L96F82E()
+	{
+		this.L96F974();
+		this.L80C88D();
+		A = 0x9600;
+		[0x01] = A;
+		A = 0xF845;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L96F8F9()
+	{
+		this.L96F974();
+		this.L80C88D();
+		A = 0x9600;
+		[0x01] = A;
+		A = 0xF910;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L96F974()
+	{
+		A = [0x0CB6 + Y];
+		X = A;
+		A = [0x15A6 + X];
+		[0x0B9C + Y] = A;
+		A = [0x15E6 + X];
+		[0x0C58 + Y] = A;
+		return;
+	}
+
+	public void L96F985()
+	{
+		A = [0x1004 + Y];
+		C = 1;
+		A -= 0x0080 - !C;
+
+		if (N == 0)
+			return this.L96F992();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L96F992()
+	{
+		temp = A - 0x0100;
+
+		if (C == 1)
+			return this.L96F9B5();
+
+		A = [0x1062 + Y];
+		C = 1;
+		A -= 0x0060 - !C;
+
+		if (N == 0)
+			return this.L96F9A4();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L96F9A4()
+	{
+		temp = A - 0x0100;
+
+		if (C == 1)
+			return this.L96F9B5();
+
+		A = [0x111E + Y];
+
+		if (N == 1)
+			return this.L96F9B5();
+
+
+		if (Z == 1)
+			return this.L96F9BF();
+
+		A--;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L96F9B5()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96F9BF()
+	{
+		Stack.Push(Y);
+		Stack.Push(X);
+		Y = Stack.Pop();
+		X = Stack.Pop();
+	}
+
+	public void L96F9C3()
+	{
+		Y = [0x140E + X];
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		C = 0;
+		A += [0x1004 + X] + C;
+		[0x1B35] = A;
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		C = 0;
+		A += [0x1062 + X] + C;
+		[0x1B37] = A;
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		[0x111E + X] = A;
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		[0x1B3B] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L96FADC();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [[0x00] + Y];
+		[0x26] = A;
+		Y++;
+		Y++;
+		temp = A - 0x0000;
+
+		if (N == 1)
+			return this.L96FA0E();
+
+		Stack.Push(X);
+		Stack.Push(Y);
+		A = [0x1B35];
+		this.L809977();
+		A |= [0x26];
+		this.L8094BA();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+	}
+
+	public void L96FA0E()
+	{
+		A = Y;
+		[0x140E + X] = A;
+		A = [0x111E + X];
+
+		if (Z == 1)
+			return this.L96F9C3();
+
+		temp = A - 0xFFFE;
+
+		if (Z == 1)
+			return this.L96FA21();
+
+	}
+
+	public void L96FA1C()
+	{
+		Stack.Push(Y);
+		Stack.Push(X);
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L96FA21()
+	{
+		[0x140E + X] = 0;
+		[0x111E + X] = 0;
+		return this.L96FA1C();
+	}
+
+	public void L96FA29()
+	{
+		A = [0x1004 + Y];
+		C = 1;
+		A -= 0x0080 - !C;
+
+		if (N == 0)
+			return this.L96FA36();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L96FA36()
+	{
+		temp = A - 0x0100;
+
+		if (C == 1)
+			return this.L96FA59();
+
+		A = [0x1062 + Y];
+		C = 1;
+		A -= 0x0060 - !C;
+
+		if (N == 0)
+			return this.L96FA48();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L96FA48()
+	{
+		temp = A - 0x0100;
+
+		if (C == 1)
+			return this.L96FA59();
+
+		A = [0x111E + Y];
+
+		if (N == 1)
+			return this.L96FA59();
+
+
+		if (Z == 1)
+			return this.L96FA63();
+
+		A--;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L96FA59()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FA63()
+	{
+		Stack.Push(Y);
+		Stack.Push(X);
+		Y = Stack.Pop();
+		X = Stack.Pop();
+	}
+
+	public void L96FA67()
+	{
+		Y = [0x140E + X];
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		C = 0;
+		A += [0x1004 + X] + C;
+		[0x1B35] = A;
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		C = 0;
+		A += [0x1062 + X] + C;
+		[0x1B37] = A;
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		[0x111E + X] = A;
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		[0x1B3B] = A;
+		A = [[0x00] + Y];
+		Y++;
+		Y++;
+		[0x1B3D] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L96FADC();
+
+		if (C == 1)
+			return this.L96FAA3();
+
+		A = [0x1B3D];
+		[0x11DA + Y] = A;
+	}
+
+	public void L96FAA3()
+	{
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [[0x00] + Y];
+		[0x26] = A;
+		Y++;
+		Y++;
+		temp = A - 0x0000;
+
+		if (N == 1)
+			return this.L96FAC1();
+
+		Stack.Push(X);
+		Stack.Push(Y);
+		A = [0x1B35];
+		this.L809977();
+		A |= [0x26];
+		this.L8094BA();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+	}
+
+	public void L96FAC1()
+	{
+		A = Y;
+		[0x140E + X] = A;
+		A = [0x111E + X];
+
+		if (Z == 1)
+			return this.L96FA67();
+
+		temp = A - 0xFFFE;
+
+		if (Z == 1)
+			return this.L96FAD4();
+
+	}
+
+	public void L96FACF()
+	{
+		Stack.Push(Y);
+		Stack.Push(X);
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L96FAD4()
+	{
+		[0x140E + X] = 0;
+		[0x111E + X] = 0;
+		return this.L96FACF();
+	}
+
+	public void L96FADC()
+	{
+		A = [0x11DA + X];
+		temp = A - 0x0003;
+
+		if (C == 1)
+			return this.L96FAE9();
+
+		A <<= 1;
+		X = A;
+		return [(0xFAEB + X)]();
+	}
+
+	public void L96FAE9()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L96FB00()
+	{
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		[0x12] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xFB21 + X];
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L96FB3F()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xFB6B + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L96FB61();
+
+		[0x1296 + Y] = A;
+		A = [0x14D6];
+		A <<= 1;
+		X = A;
+		A = [0xFB8B + X];
+		[0x1352 + Y] = A;
+		A = 0xCFFF;
+		[0x12F4 + Y] = A;
+		return;
+	}
+
+	public void L96FB61()
+	{
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FBAD()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xFBCB + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96FBBE();
+
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FBBE()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FBE1()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xFBFF + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96FBF2();
+
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FBF2()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FC13()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xFC31 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96FC24();
+
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FC24()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FC53()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xFC71 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96FC64();
+
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FC64()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FC93()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xFCB1 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96FCA4();
+
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FCA4()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FCD7()
+	{
+		A = [0x11DA + Y];
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L96FCEE();
+
+		temp = A - 0x0003;
+
+		if (C == 1)
+			return this.L96FCF4();
+
+		this.L96FD05();
+		this.L96FD93();
+		return this.L96FCF4();
+	}
+
+	public void L96FCEE()
+	{
+		this.L96FF0D();
+		return this.L96FCF4();
+	}
+
+	public void L96FCF4()
+	{
+		this.L96FDE2();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L96FD05()
+	{
+		A = [0x1238 + Y];
+		A &= 0x2000;
+
+		if (Z == 1)
+			return this.L96FD10();
+
+		return this.L96FD92();
+	}
+
+	public void L96FD10()
+	{
+		C = 0;
+		A = [0x197C];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x12] = A;
+		A = [0x197E];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x14] = A;
+		A = [0x197E];
+
+		if (Z == 1)
+			return this.L96FD92();
+
+
+		if (N == 1)
+			return this.L96FD5C();
+
+		C = 1;
+		A = [0x0D14 + Y];
+		A -= 0x2800 - !C;
+		[0x0D14 + Y] = A;
+		A = [0x0D72 + Y];
+		A -= 0x0000 - !C;
+		[0x0D72 + Y] = A;
+		C = 1;
+		A = [0x0D14 + Y];
+		A -= [0x12] - !C;
+		[0x88] = A;
+		A = [0x0D72 + Y];
+		A -= [0x14] - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L96FD58();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L96FD58()
+	{
+
+		if (C == 1)
+			return this.L96FD92();
+
+		return this.L96FD88();
+	}
+
+	public void L96FD5C()
+	{
+		C = 0;
+		A = [0x0D14 + Y];
+		A += 0x2800 + C;
+		[0x0D14 + Y] = A;
+		A = [0x0D72 + Y];
+		A += 0x0000 + C;
+		[0x0D72 + Y] = A;
+		C = 1;
+		A = [0x0D14 + Y];
+		A -= [0x12] - !C;
+		[0x88] = A;
+		A = [0x0D72 + Y];
+		A -= [0x14] - !C;
+		[0x8A] = A;
+		A |= [0x88];
+
+		if (Z == 1)
+			return this.L96FD86();
+
+		A = [0x8A];
+		P &= ~0x02;
+	}
+
+	public void L96FD86()
+	{
+
+		if (C == 0)
+			return this.L96FD92();
+
+	}
+
+	public void L96FD88()
+	{
+		A = [0x12];
+		[0x0D14 + Y] = A;
+		A = [0x14];
+		[0x0D72 + Y] = A;
+	}
+
+	public void L96FD92()
+	{
+		return;
+	}
+
+	public void L96FD93()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x96FDA0 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L96FDE2()
+	{
+		A = [0x11DA + Y];
+		A <<= 1;
+		X = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		C = 0;
+		A += [0x96FE17 + X] + C;
+		X = A;
+		A = [0x96FE17 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96FE0A();
+
+		[0x1296 + Y] = A;
+		A = 0xF1FF;
+		[0x12F4 + Y] = A;
+		A = 0x0800;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L96FE0A()
+	{
+		A = 0xFFFF;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+		return;
+	}
+
+	public void L96FF0D()
+	{
+		A = [0x1504];
+		C = 0;
+		A += [0x1992] + C;
+		[0x0C58 + Y] = A;
+		return;
+	}
+
+	public void L96FF18()
+	{
+		A = [0x140E + Y];
+
+		if (Z == 1)
+			return this.L96FF4A();
+
+		A <<= 1;
+		X = A;
+		A = [0x11DA + Y];
+		[0x12] = A;
+		A = [0x96FF58 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L96FF40();
+
+		[0x14] = A;
+		Stack.Push(Y);
+		this.L9682FE();
+		Y = Stack.Pop();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L96FF40()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L96FF4A()
+	{
+		A = 0x0003;
+		[0x22] = A;
+	}
+
+	public void L96FF4F()
+	{
+		this.L9683DC();
+		[0x22]--;
+
+		if (Z == 0)
+			return this.L96FF4F();
+
+		return;
+	}
+
+	public void L978000()
+	{
+		this.L97E78D();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L9782E0();
+		A = [0x0E8C + Y];
+		[0x26] = A;
+		A = [0x0EEA + Y];
+		[0x28] = A;
+		this.L97825E();
+		this.L978135();
+		this.L97810F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97802B()
+	{
+		this.L978D30();
+		this.L978557();
+		this.L97908A();
+		this.L978394();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L978040()
+	{
+		this.L97934A();
+		this.L9786A3();
+		this.L97939D();
+		this.L978394();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L978055()
+	{
+		this.L80C88D();
+		this.L97A5FB();
+		this.L97A678();
+		this.L97A367();
+		this.L97A7FE();
+		this.L96DC5B();
+		this.L97A74D();
+		return;
+	}
+
+	public void L97806D()
+	{
+		this.L978D30();
+		this.L978889();
+		this.L979779();
+		this.L978394();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L978082()
+	{
+		this.L979BE9();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97808E()
+	{
+		this.L978D30();
+		this.L978A7C();
+		this.L979C25();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9780A0()
+	{
+		this.L97A14B();
+		this.L978CDF();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9780AF()
+	{
+		this.L97A1B9();
+		this.L978CE9();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9780BE()
+	{
+		this.L97A222();
+		this.L978CF3();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9780CD()
+	{
+		this.L97A28F();
+		this.L978CFD();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9780DC()
+	{
+		this.L978D30();
+		this.L97844B();
+		this.L978DBF();
+		this.L978394();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9780F1()
+	{
+		this.L97A864();
+		this.L97A877();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L978100()
+	{
+		this.L978BD7();
+		this.L979F3B();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97810F()
+	{
+		A = [0x1004 + Y];
+		C = 0;
+		A += 0x0020 + C;
+		temp = A - 0x0140;
+
+		if (C == 1)
+			return this.L978128();
+
+		A = [0x1062 + Y];
+		C = 0;
+		A += 0x0020 + C;
+		temp = A - 0x0110;
+
+		if (C == 1)
+			return this.L978128();
+
+		return;
+	}
+
+	public void L978128()
+	{
+		A = 0xFFFF;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L978135()
+	{
+		A = [0x1238 + Y];
+		A &= 0x2000;
+
+		if (Z == 0)
+			return this.L978192();
+
+		A = [0x0CB6 + Y];
+		temp = A - 0x0080;
+
+		if (N == 0)
+			return this.L978193();
+
+		A = [0x140E + Y];
+		C = 0;
+		A += [0x1B69 + Y] + C;
+		A &= 0x001F;
+		A <<= 1;
+		X = A;
+		A = [0x0EEA + Y];
+		C = 0;
+		A -= [0x28] - !C;
+
+		if (Z == 1)
+			return this.L978169();
+
+		A = [0x81DE + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L978166();
+
+		A &= 0x007F;
+		return this.L978169();
+	}
+
+	public void L978166()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L978169()
+	{
+		C = 0;
+		A += [0x0E8C + Y] + C;
+		[0x0E8C + Y] = A;
+		A = [0x0E8C + Y];
+		C = 0;
+		A -= [0x26] - !C;
+
+		if (Z == 1)
+			return this.L97818B();
+
+		A = [0x81DF + X];
+		A = [0x81DF + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L978188();
+
+		A &= 0x007F;
+		return this.L97818B();
+	}
+
+	public void L978188()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L97818B()
+	{
+		C = 0;
+		A += [0x0EEA + Y] + C;
+		[0x0EEA + Y] = A;
+	}
+
+	public void L978192()
+	{
+		return;
+	}
+
+	public void L978193()
+	{
+		A = [0x140E + Y];
+		C = 0;
+		A += [0x1B69 + Y] + C;
+		A &= 0x001F;
+		A <<= 1;
+		X = A;
+		A = [0x0EEA + Y];
+		C = 0;
+		A -= [0x28] - !C;
+
+		if (Z == 1)
+			return this.L9781B7();
+
+		A = [0x821E + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L9781B4();
+
+		A &= 0x007F;
+		return this.L9781B7();
+	}
+
+	public void L9781B4()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L9781B7()
+	{
+		C = 0;
+		A += [0x0E8C + Y] + C;
+		[0x0E8C + Y] = A;
+		A = [0x0E8C + Y];
+		C = 0;
+		A -= [0x26] - !C;
+
+		if (Z == 1)
+			return this.L9781D6();
+
+		A = [0x821F + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L9781D3();
+
+		A &= 0x007F;
+		return this.L9781D6();
+	}
+
+	public void L9781D3()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L9781D6()
+	{
+		C = 0;
+		A += [0x0EEA + Y] + C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L97825E()
+	{
+		A = [0x1238 + Y];
+		A &= 0x2000;
+
+		if (Z == 0)
+			return this.L9782DF();
+
+		X = [0x1B6F + Y];
+		A = [0x15A6 + X];
+		C = 0;
+		A += [0x1A] + C;
+		C = 1;
+		A -= [0x1004 + Y] - !C;
+
+		if (N == 0)
+			return this.L978279();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L978279()
+	{
+		temp = A - 0x0005;
+
+		if (C == 0)
+			return this.L978281();
+
+		A = 0x0004;
+	}
+
+	public void L978281()
+	{
+		[0x12] = A;
+		A = [0x15E6 + X];
+		C = 0;
+		A += [0x1C] + C;
+		C = 1;
+		A -= [0x1062 + Y] - !C;
+
+		if (N == 0)
+			return this.L978293();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L978293()
+	{
+		temp = A - 0x0005;
+
+		if (C == 0)
+			return this.L97829B();
+
+		A = 0x0004;
+	}
+
+	public void L97829B()
+	{
+		[0x14] = A;
+		A = [0x15A6 + X];
+		C = 0;
+		A += [0x1A] + C;
+		temp = A - [0x1004 + X];
+
+		if (N == 1)
+			return this.L9782B3();
+
+		A = [0x0E8C + Y];
+		C = 0;
+		A += [0x12] + C;
+		[0x0E8C + Y] = A;
+		return this.L9782BE();
+	}
+
+	public void L9782B3()
+	{
+		A = [0x0E8C + Y];
+		C = 1;
+		A -= [0x12] - !C;
+		[0x0E8C + Y] = A;
+		return this.L9782BE();
+	}
+
+	public void L9782BE()
+	{
+		A = [0x15E6 + X];
+		C = 0;
+		A += [0x1C] + C;
+		temp = A - [0x1062 + X];
+
+		if (N == 1)
+			return this.L9782D4();
+
+		A = [0x0EEA + Y];
+		C = 0;
+		A += [0x14] + C;
+		[0x0EEA + Y] = A;
+		return this.L9782DF();
+	}
+
+	public void L9782D4()
+	{
+		A = [0x0EEA + Y];
+		C = 1;
+		A -= [0x14] - !C;
+		[0x0EEA + Y] = A;
+		return this.L9782DF();
+	}
+
+	public void L9782DF()
+	{
+		return;
+	}
+
+	public void L9782E0()
+	{
+		X = [0x140E + Y];
+		A = [0x830E + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L978301();
+
+		A &= 0x00FF;
+		C = 0;
+		A += 0x004A + C;
+		[0x1296 + Y] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x833C + X];
+		[0x0CB6 + Y] = A;
+		return;
+	}
+
+	public void L978301()
+	{
+		A = 0xFFFF;
+		[0x1296 + Y] = A;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L978394()
+	{
+		A = [0x1B9D];
+
+		if (Z == 1)
+			return this.L9783CC();
+
+		X = 0x001E;
+	}
+
+	public void L97839C()
+	{
+		A = [0x11B2 + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L9783C8();
+
+		A = [0x1444 + X];
+
+		if (Z == 1)
+			return this.L9783C8();
+
+		A = [0x103A + X];
+		[0x1B35] = A;
+		A = [0x1098 + X];
+		[0x1B37] = A;
+		A = 0x0052;
+		[0x1B3B] = A;
+		A = 0xFFFF;
+		[0x11B2 + X] = A;
+		[0x1154 + X] = A;
+		this.L97E314();
+	}
+
+	public void L9783C8()
+	{
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L97839C();
+
+	}
+
+	public void L9783CC()
+	{
+		return;
+	}
+
+	public void L97844B()
+	{
+		A = [0x1B43];
+		temp = A & 0xFEC3;
+
+		if (Z == 0)
+			return this.L978496();
+
+		A = [0x140E + Y];
+		C = 1;
+		A -= 0x003C - !C;
+		temp = A - 0x0030;
+
+		if (C == 1)
+			return this.L978496();
+
+		A <<= 1;
+		X = A;
+		A = 0x0100;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		A = [0x0B9C + Y];
+		[0x12] = A;
+		A = [0x0C58 + Y];
+		[0x14] = A;
+		A = [0x8497 + X];
+
+		if (Z == 1)
+			return this.L978480();
+
+		[0x16] = A;
+		this.L9694CF();
+		this.L9683DC();
+	}
+
+	public void L978480()
+	{
+		P |= 0x20;
+		[0x012E] = 0;
+		A = [0x84F7 + X];
+		[0x012D] = A;
+		A = [0x84F8 + X];
+		[0x012C] = A;
+		this.L97903F();
+		P &= ~0x20;
+	}
+
+	public void L978496()
+	{
+		return;
+	}
+
+	public void L978557()
+	{
+		A = [0x1B43];
+		temp = A & 0xFEC3;
+
+		if (Z == 0)
+			return this.L9785A2();
+
+		A = [0x140E + Y];
+		C = 1;
+		A -= 0x003C - !C;
+		temp = A - 0x0040;
+
+		if (C == 1)
+			return this.L9785A2();
+
+		A <<= 1;
+		X = A;
+		A = 0x0100;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		A = [0x0B9C + Y];
+		[0x12] = A;
+		A = [0x0C58 + Y];
+		[0x14] = A;
+		A = [0x85A3 + X];
+
+		if (Z == 1)
+			return this.L97858C();
+
+		[0x16] = A;
+		this.L9694CF();
+		this.L9683DC();
+	}
+
+	public void L97858C()
+	{
+		P |= 0x20;
+		[0x012E] = 0;
+		A = [0x8623 + X];
+		[0x012D] = A;
+		A = [0x8624 + X];
+		[0x012C] = A;
+		this.L97903F();
+		P &= ~0x20;
+	}
+
+	public void L9785A2()
+	{
+		return;
+	}
+
+	public void L9786A3()
+	{
+		A = [0x1B43];
+		temp = A & 0xFEC3;
+
+		if (Z == 1)
+			return this.L9786AE();
+
+		return this.L978754();
+	}
+
+	public void L9786AE()
+	{
+		A = [0x140E + Y];
+		C = 1;
+		A -= 0x0020 - !C;
+		temp = A - 0x005A;
+
+		if (C == 0)
+			return this.L9786BD();
+
+		return this.L978754();
+	}
+
+	public void L9786BD()
+	{
+		A <<= 1;
+		X = A;
+		A = 0x0100;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		A = [0x1BC7];
+
+		if (Z == 0)
+			return this.L9786CF();
+
+		A = [0x1866];
+
+		if (N == 1)
+			return this.L978719();
+
+	}
+
+	public void L9786CF()
+	{
+		A = [0x140E + Y];
+		A &= 0x001F;
+		[0x12] = A;
+		A = [0x014C];
+		temp = A & 0x0001;
+
+		if (Z == 0)
+			return this.L9786EA();
+
+		A = [0x12];
+		C = 0;
+		A += 0x0010 + C;
+		A &= 0x001F;
+		[0x12] = A;
+	}
+
+	public void L9786EA()
+	{
+		A = [0x140E + Y];
+		A >>= 1;
+		A >>= 1;
+		[0x14] = A;
+		Stack.Push(X);
+		Stack.Push(Y);
+		this.L9682FE();
+		Y = Stack.Pop();
+		X = Stack.Pop();
+		A = [0x0B9C + Y];
+		C = 0;
+		A += [0x16] + C;
+		[0x12] = A;
+		A = [0x0C58 + Y];
+		C = 0;
+		A += [0x18] + C;
+		[0x14] = A;
+		A = [0x978755 + X];
+
+		if (Z == 1)
+			return this.L978719();
+
+		[0x16] = A;
+		this.L9694CF();
+		this.L9683DC();
+	}
+
+	public void L978719()
+	{
+		P |= 0x20;
+		[0x012E] = 0;
+		A = [0x87D5 + X];
+		[0x012D] = A;
+		A = [0x87D6 + X];
+		[0x012C] = A;
+		A = 0x02;
+		temp = A & [0x012A];[0x012A] &= ~A;
+		A = [0x011F];
+		A |= 0x20;
+		A &= 0x6F;
+		[0x011F] = A;
+		A = 0x37;
+		[0x012B] = A;
+		A = 0x00;
+		[0x0120] = A;
+		A = 0xFF;
+		[0x0121] = A;
+		A = 0x00;
+		[0x0122] = A;
+		A = 0xFF;
+		[0x0123] = A;
+		P &= ~0x20;
+	}
+
+	public void L978754()
+	{
+		return;
+	}
+
+	public void L978889()
+	{
+		A = [0x1B43];
+		temp = A & 0xFEC3;
+
+		if (Z == 0)
+			return this.L9788FB();
+
+		A = [0x140E + Y];
+		C = 1;
+		A -= 0x003C - !C;
+		temp = A - 0x0058;
+
+		if (C == 1)
+			return this.L9788FB();
+
+		A <<= 1;
+		X = A;
+		A = 0x0100;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		A = [0x0B9C + Y];
+		C = 1;
+		A -= 0x0060 - !C;
+		[0x12] = A;
+		A = [0x0C58 + Y];
+		[0x14] = A;
+		A = [0x9788FC + X];
+
+		if (Z == 1)
+			return this.L9788DB();
+
+		[0x16] = A;
+		this.L9694CF();
+		A = [0x0B9C + Y];
+		C = 0;
+		A += 0x0060 + C;
+		[0x12] = A;
+		A = [0x0C58 + Y];
+		[0x14] = A;
+		A = [0x9788FC + X];
+		[0x16] = A;
+		this.L9694EC();
+		this.L9683DC();
+	}
+
+	public void L9788DB()
+	{
+		P |= 0x20;
+		[0x012E] = 0;
+		A = [0x89CC + X];
+		[0x012D] = A;
+		A = [0x89CD + X];
+		[0x012C] = A;
+		this.L97906C();
+		A = [0x011F];
+		A |= 0xA0;
+		A &= 0xAF;
+		[0x011F] = A;
+		P &= ~0x20;
+	}
+
+	public void L9788FB()
+	{
+		return;
+	}
+
+	public void L978A7C()
+	{
+		A = [0x14D6];
+		temp = A - 0x000E;
+
+		if (Z == 0)
+			return this.L978AD6();
+
+		A = [0x1B43];
+		temp = A & 0xCE02;
+
+		if (Z == 0)
+			return this.L978AD6();
+
+		A = [0x140E + Y];
+		C = 1;
+		A -= 0x003C - !C;
+		temp = A - 0x0040;
+
+		if (C == 1)
+			return this.L978AD6();
+
+		A <<= 1;
+		X = A;
+		A = 0x0040;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		A = [0x0B9C + Y];
+		[0x12] = A;
+		A = [0x0C58 + Y];
+		[0x14] = A;
+		A = [0x8AD7 + X];
+
+		if (Z == 1)
+			return this.L978AB9();
+
+		[0x16] = A;
+		this.L9694CF();
+		this.L9683DC();
+	}
+
+	public void L978AB9()
+	{
+		P |= 0x20;
+		[0x012E] = 0;
+		A = [0x8B57 + X];
+		[0x012D] = A;
+		A = [0x8B58 + X];
+		[0x012C] = A;
+		A = [0x011F];
+		A |= 0x30;
+		A &= 0x7F;
+		[0x011F] = A;
+		P &= ~0x20;
+	}
+
+	public void L978AD6()
+	{
+		return;
+	}
+
+	public void L978BD7()
+	{
+		A = [0x1B43];
+		temp = A & 0xFEC3;
+
+		if (Z == 0)
+			return this.L978C1E();
+
+		A = [0x140E + Y];
+		temp = A - 0x0030;
+
+		if (C == 1)
+			return this.L978C1E();
+
+		A <<= 1;
+		X = A;
+		A = 0x0100;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		A = [0x0B9C + Y];
+		[0x12] = A;
+		A = [0x0C58 + Y];
+		[0x14] = A;
+		A = [0x8C1F + X];
+
+		if (Z == 1)
+			return this.L978C08();
+
+		[0x16] = A;
+		this.L9694CF();
+		this.L9683DC();
+	}
+
+	public void L978C08()
+	{
+		P |= 0x20;
+		[0x012E] = 0;
+		A = [0x8C7F + X];
+		[0x012D] = A;
+		A = [0x8C80 + X];
+		[0x012C] = A;
+		this.L97903F();
+		P &= ~0x20;
+	}
+
+	public void L978C1E()
+	{
+		return;
+	}
+
+	public void L978CDF()
+	{
+		A = [0x140E + Y];
+		C = 1;
+		temp = A - 0x0007;
+
+		if (C == 0)
+			return this.L978D07();
+
+		return;
+	}
+
+	public void L978CE9()
+	{
+		A = [0x140E + Y];
+		C = 1;
+		temp = A - 0x0007;
+
+		if (C == 0)
+			return this.L978D07();
+
+		return;
+	}
+
+	public void L978CF3()
+	{
+		A = [0x140E + Y];
+		C = 1;
+		temp = A - 0x0007;
+
+		if (C == 0)
+			return this.L978D07();
+
+		return;
+	}
+
+	public void L978CFD()
+	{
+		A = [0x140E + Y];
+		C = 1;
+		temp = A - 0x0007;
+
+		if (C == 0)
+			return this.L978D07();
+
+		return;
+	}
+
+	public void L978D07()
+	{
+		A <<= 1;
+		X = A;
+		P |= 0x20;
+		[0x012E] = 0;
+		A = [0x8D22 + X];
+		[0x012D] = A;
+		A = [0x8D23 + X];
+		[0x012C] = A;
+		A = 0x37;
+		[0x012B] = A;
+		P &= ~0x20;
+		return;
+	}
+
+	public void L978D30()
+	{
+		A = [0x0CB6 + Y];
+		temp = A - 0x00F0;
+
+		if (C == 1)
+			return this.L978D44();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x978D45 + X];
+		[0x0CB6 + Y] = A;
+	}
+
+	public void L978D44()
+	{
+		return;
+	}
+
+	public void L978DBF()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x8E8D + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L978E02();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L978DD3();
+
+
+		if (N == 1)
+			return this.L978E19();
+
+	}
+
+	public void L978DD3()
+	{
+		[0x1296 + Y] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x8F67 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L978DE8();
+
+		A &= 0x007F;
+		return this.L978DEB();
+	}
+
+	public void L978DE8()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L978DEB()
+	{
+		[0x0E8C + Y] = A;
+		A = [0x8F68 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L978DFB();
+
+		A &= 0x007F;
+		return this.L978DFE();
+	}
+
+	public void L978DFB()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L978DFE()
+	{
+		[0x0EEA + Y] = A;
+	}
+
+	public void L978E01()
+	{
+		return;
+	}
+
+	public void L978E02()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1B9D] = 0;
+		this.L9698CF();
+		A = 0x0100;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L978E19()
+	{
+		X = A;
+		A = [0x1238 + Y];
+		A &= 0x2000;
+
+		if (Z == 0)
+			return this.L978E01();
+
+		A = X;
+		A &= 0x7FFF;
+		A <<= 1;
+		X = A;
+		return [(0x8E2B + X)]();
+	}
+
+	public void L97903F()
+	{
+		Stack.Push(X);
+		P |= 0x20;
+		this.L97906C();
+		A = 0x02;
+		temp = A & [0x012A];[0x012A] &= ~A;
+		A = [0x011F];
+		A |= 0x20;
+		A &= 0x6F;
+		[0x011F] = A;
+		A = 0x00;
+		[0x0120] = A;
+		A = 0xFF;
+		[0x0121] = A;
+		A = 0x00;
+		[0x0122] = A;
+		A = 0xFF;
+		[0x0123] = A;
+		P &= ~0x20;
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L97906C()
+	{
+		Stack.Push(X);
+		X = [0x14D6];
+		A = [0x979079 + X];
+		[0x012B] = A;
+		X = Stack.Pop();
+		return;
+	}
+
+	public void L97908A()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9158 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L9790CD();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L97909E();
+
+
+		if (N == 1)
+			return this.L9790E4();
+
+	}
+
+	public void L97909E()
+	{
+		[0x1296 + Y] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9252 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L9790B3();
+
+		A &= 0x007F;
+		return this.L9790B6();
+	}
+
+	public void L9790B3()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L9790B6()
+	{
+		[0x0E8C + Y] = A;
+		A = [0x9253 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L9790C6();
+
+		A &= 0x007F;
+		return this.L9790C9();
+	}
+
+	public void L9790C6()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L9790C9()
+	{
+		[0x0EEA + Y] = A;
+	}
+
+	public void L9790CC()
+	{
+		return;
+	}
+
+	public void L9790CD()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1B9D] = 0;
+		this.L9698CF();
+		A = 0x0100;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L9790E4()
+	{
+		X = A;
+		A = [0x1238 + Y];
+		A &= 0x2000;
+
+		if (Z == 0)
+			return this.L9790CC();
+
+		A = X;
+		A &= 0x7FFF;
+		A <<= 1;
+		X = A;
+		return [(0x90F6 + X)]();
+	}
+
+	public void L97934A()
+	{
+		A = [0x0CB6 + Y];
+		temp = A - 0x00F0;
+
+		if (C == 1)
+			return this.L97935E();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x97935F + X];
+		[0x0CB6 + Y] = A;
+	}
+
+	public void L97935E()
+	{
+		return;
+	}
+
+	public void L97939D()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x94F7 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L9793E0();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L9793B1();
+
+
+		if (N == 1)
+			return this.L9793F3();
+
+	}
+
+	public void L9793B1()
+	{
+		[0x1296 + Y] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9639 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L9793C6();
+
+		A &= 0x007F;
+		return this.L9793C9();
+	}
+
+	public void L9793C6()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L9793C9()
+	{
+		[0x0E8C + Y] = A;
+		A = [0x963A + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L9793D9();
+
+		A &= 0x007F;
+		return this.L9793DC();
+	}
+
+	public void L9793D9()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L9793DC()
+	{
+		[0x0EEA + Y] = A;
+	}
+
+	public void L9793DF()
+	{
+		return;
+	}
+
+	public void L9793E0()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1B9D] = 0;
+		A = 0x0100;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L9793F3()
+	{
+		X = A;
+		A = [0x1238 + Y];
+		A &= 0x2000;
+
+		if (Z == 0)
+			return this.L9793DF();
+
+		A = X;
+		A &= 0x7FFF;
+		A <<= 1;
+		X = A;
+		return [(0x9405 + X)]();
+	}
+
+	public void L979779()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9875 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L9797A3();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L97978D();
+
+
+		if (N == 1)
+			return this.L9797C7();
+
+	}
+
+	public void L97978D()
+	{
+		[0x1296 + Y] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x999D + X];
+		[0x0E8C + Y] = A;
+		A = [0x999F + X];
+		[0x0EEA + Y] = A;
+	}
+
+	public void L9797A2()
+	{
+		return;
+	}
+
+	public void L9797A3()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1B9D] = 0;
+		A = [0x1B43];
+		temp = A & 0xFEC3;
+
+		if (Z == 0)
+			return this.L9797C0();
+
+		P |= 0x20;
+		A = 0x00;
+		[0x011F] = A;
+		P &= ~0x20;
+	}
+
+	public void L9797C0()
+	{
+		A = 0x0100;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L9797C7()
+	{
+		X = A;
+		A = [0x1238 + Y];
+		A &= 0x2000;
+
+		if (Z == 0)
+			return this.L9797A2();
+
+		A = X;
+		A &= 0x7FFF;
+		A <<= 1;
+		X = A;
+		return [(0x97D9 + X)]();
+	}
+
+	public void L979BE9()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x98ED + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L979C1B();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L979BFD();
+
+
+		if (N == 1)
+			return this.L979C1A();
+
+	}
+
+	public void L979BFD()
+	{
+		[0x1296 + Y] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x9A8D + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9A8F + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+	}
+
+	public void L979C1A()
+	{
+		return;
+	}
+
+	public void L979C1B()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L979C25()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9D3D + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L979C68();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L979C39();
+
+
+		if (N == 1)
+			return this.L979C7F();
+
+	}
+
+	public void L979C39()
+	{
+		[0x1296 + Y] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9E37 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L979C4E();
+
+		A &= 0x007F;
+		return this.L979C51();
+	}
+
+	public void L979C4E()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L979C51()
+	{
+		[0x0E8C + Y] = A;
+		A = [0x9E38 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L979C61();
+
+		A &= 0x007F;
+		return this.L979C64();
+	}
+
+	public void L979C61()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L979C64()
+	{
+		[0x0EEA + Y] = A;
+	}
+
+	public void L979C67()
+	{
+		return;
+	}
+
+	public void L979C68()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1B9D] = 0;
+		this.L9698CF();
+		A = 0x0040;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L979C7F()
+	{
+		X = A;
+		A = [0x1238 + Y];
+		A &= 0x2000;
+
+		if (Z == 0)
+			return this.L979C67();
+
+		A = X;
+		A &= 0x7FFF;
+		A <<= 1;
+		X = A;
+		return [(0x9C91 + X)]();
+	}
+
+	public void L979F3B()
+	{
+		A = [0x11DA + Y];
+		A <<= 1;
+		X = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		C = 0;
+		A += [0x979FF9 + X] + C;
+		X = A;
+		A = [0x979FF9 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L979F97();
+
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L979F5A();
+
+
+		if (N == 1)
+			return this.L979FC1();
+
+	}
+
+	public void L979F5A()
+	{
+		[0x1296 + Y] = A;
+		A = [0x11DA + Y];
+		A <<= 1;
+		X = A;
+		A = [0x140E + Y];
+		A &= 0x000F;
+		A <<= 1;
+		C = 0;
+		A += [0x97A105 + X] + C;
+		X = A;
+		A = [0x97A105 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L979F7D();
+
+		A &= 0x007F;
+		return this.L979F80();
+	}
+
+	public void L979F7D()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L979F80()
+	{
+		[0x0E8C + Y] = A;
+		A = [0xA106 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L979F90();
+
+		A &= 0x007F;
+		return this.L979F93();
+	}
+
+	public void L979F90()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L979F93()
+	{
+		[0x0EEA + Y] = A;
+	}
+
+	public void L979F96()
+	{
+		return;
+	}
+
+	public void L979F97()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1B9D] = 0;
+		A = [0x1B43];
+		temp = A & 0xFEC3;
+
+		if (Z == 0)
+			return this.L979FBA();
+
+		P |= 0x20;
+		A = 0xE0;
+		[0x012C] = A;
+		[0x012D] = A;
+		[0x012E] = A;
+		P &= ~0x20;
+	}
+
+	public void L979FBA()
+	{
+		A = 0x0100;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L979FC1()
+	{
+		X = A;
+		A = [0x1238 + Y];
+		A &= 0x2000;
+
+		if (Z == 0)
+			return this.L979F96();
+
+		A = X;
+		A &= 0x7FFF;
+		A <<= 1;
+		X = A;
+		return [(0x9FD3 + X)]();
+	}
+
+	public void L97A14B()
+	{
+		A = [0x140E + Y];
+		X = A;
+		A >>= 1;
+
+		if (C == 1)
+			return this.L97A15D();
+
+		A = [0xA16B + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97A15E();
+
+		[0x1296 + Y] = A;
+	}
+
+	public void L97A15D()
+	{
+		return;
+	}
+
+	public void L97A15E()
+	{
+		[0x1B3F] = 0;
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L97A1B9()
+	{
+		A = [0x140E + Y];
+		X = A;
+		A >>= 1;
+
+		if (C == 1)
+			return this.L97A1CB();
+
+		A = [0xA1D6 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97A1CC();
+
+		[0x1296 + Y] = A;
+	}
+
+	public void L97A1CB()
+	{
+		return;
+	}
+
+	public void L97A1CC()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L97A222()
+	{
+		A = [0x140E + Y];
+		X = A;
+		A >>= 1;
+
+		if (C == 1)
+			return this.L97A234();
+
+		A = [0xA245 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97A235();
+
+		[0x1296 + Y] = A;
+	}
+
+	public void L97A234()
+	{
+		return;
+	}
+
+	public void L97A235()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		A = 0x0000;
+		[0x1B3F] = A;
+		return;
+	}
+
+	public void L97A28F()
+	{
+		A = [0x140E + Y];
+		X = A;
+		A >>= 1;
+
+		if (C == 1)
+			return this.L97A2A1();
+
+		A = [0xA2AC + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97A2A2();
+
+		[0x1296 + Y] = A;
+	}
+
+	public void L97A2A1()
+	{
+		return;
+	}
+
+	public void L97A2A2()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L97A2EE()
+	{
+		A = [0x1B3F];
+
+		if (Z == 1)
+			return this.L97A346();
+
+		P &= ~0x30;
+		A = [0x1B3F];
+		A--;
+		A &= 0x000F;
+		A <<= 1;
+		X = A;
+		A = [0x97A347 + X];
+		X = A;
+		A = [0x7F0761 + X];
+		[0x7F06D7] = A;
+		A = [0x7F0763 + X];
+		[0x7F06D9] = A;
+		A = [0x7F0765 + X];
+		[0x7F06DB] = A;
+		A = [0x7F0767 + X];
+		[0x7F06DD] = A;
+		A = [0x7F1261 + X];
+		[0x7F11D7] = A;
+		A = [0x7F1263 + X];
+		[0x7F11D9] = A;
+		A = [0x7F1265 + X];
+		[0x7F11DB] = A;
+		A = [0x7F1267 + X];
+		[0x7F11DD] = A;
+		[0x1B3F]++;
+	}
+
+	public void L97A346()
+	{
+		return;
+	}
+
+	public void L97A367()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		[0x12] = A;
+		A = [0x97A3C3 + X];
+
+		if (N == 1)
+			return this.L97A38C();
+
+		[0x1296 + Y] = A;
+		A = [0x11DA + Y];
+		A <<= 1;
+		X = A;
+		A = [0x97A433 + X];
+		C = 0;
+		A += [0x12] + C;
+		X = A;
+		A = [0x97A433 + X];
+		[0x0CB6 + Y] = A;
+		return;
+	}
+
+	public void L97A38C()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		this.L9698CF();
+		A = [0x1B43];
+		temp = A & 0xFFC3;
+
+		if (Z == 0)
+			return this.L97A3BC();
+
+		P |= 0x20;
+		A = 0x00;
+		[0x012B] = A;
+		[0x011F] = A;
+		A = 0x20;
+		[0x012E] = A;
+		A = 0x40;
+		[0x012D] = A;
+		A = 0x80;
+		[0x012C] = A;
+		P &= ~0x20;
+	}
+
+	public void L97A3BC()
+	{
+		A = 0x0020;
+		temp = A & [0x1B43];[0x1B43] &= ~A;
+		return;
+	}
+
+	public void L97A5FB()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x97A608 + X];
+		[0x146C + Y] = A;
+		return;
+	}
+
+	public void L97A678()
+	{
+		A = [0x1B43];
+		temp = A & 0xFFC3;
+
+		if (Z == 0)
+			return this.L97A6DC();
+
+		A = 0x0020;
+		temp = A & [0x1B43];[0x1B43] |= A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x1004 + Y];
+		[0x12] = A;
+		A = [0x1062 + Y];
+		[0x14] = A;
+		A = [0x97A6DD + X];
+		[0x16] = A;
+		Stack.Push(Y);
+		this.L9694CF();
+		Y = Stack.Pop();
+		P |= 0x20;
+		A = [0x011F];
+		A |= 0x20;
+		A &= 0x6F;
+		[0x011F] = A;
+		A = 0x02;
+		temp = A & [0x012A];[0x012A] &= ~A;
+		A = 0xB3;
+		[0x012B] = A;
+		A = 0x3F;
+		[0x012E] = A;
+		A = 0x5F;
+		[0x012D] = A;
+		A = 0x98;
+		[0x012C] = A;
+		A = 0x00;
+		[0x0120] = A;
+		A = 0xFF;
+		[0x0121] = A;
+		A = 0x00;
+		[0x0122] = A;
+		A = 0xFF;
+		[0x0123] = A;
+		P &= ~0x20;
+	}
+
+	public void L97A6DC()
+	{
+		return;
+	}
+
+	public void L97A74D()
+	{
+		A = [0x140E + Y];
+		A &= 0x001F;
+		[0x12] = A;
+		A = [0x146C + Y];
+		[0x14] = A;
+		Stack.Push(Y);
+		this.L9682FE();
+		Y = Stack.Pop();
+		A = [0x1004 + Y];
+		C = 0;
+		A += [0x16] + C;
+		[0xB0] = A;
+		A = [0x1062 + Y];
+		C = 0;
+		A += [0x18] + C;
+		[0xB2] = A;
+		A = [0x1296 + Y];
+		[0xB4] = A;
+		A = 0xFFFF;
+		[0xA8] = A;
+		A = 0x0000;
+		[0xAA] = A;
+		Stack.Push(Y);
+		this.L8280C2();
+		Y = Stack.Pop();
+		A = [0x140E + Y];
+		C = 0;
+		A += 0x000A + C;
+		A &= 0x001F;
+		[0x12] = A;
+		A = [0x146C + Y];
+		[0x14] = A;
+		Stack.Push(Y);
+		this.L9682FE();
+		Y = Stack.Pop();
+		A = [0x1004 + Y];
+		C = 0;
+		A += [0x16] + C;
+		[0xB0] = A;
+		A = [0x1062 + Y];
+		C = 0;
+		A += [0x18] + C;
+		[0xB2] = A;
+		A = [0x1296 + Y];
+		[0xB4] = A;
+		A = 0xFFFF;
+		[0xA8] = A;
+		A = 0x0000;
+		[0xAA] = A;
+		Stack.Push(Y);
+		this.L8280C2();
+		Y = Stack.Pop();
+		A = [0x140E + Y];
+		C = 0;
+		A += 0x0015 + C;
+		A &= 0x001F;
+		[0x12] = A;
+		A = [0x146C + Y];
+		[0x14] = A;
+		Stack.Push(Y);
+		this.L9682FE();
+		Y = Stack.Pop();
+		A = [0x1004 + Y];
+		C = 0;
+		A += [0x16] + C;
+		[0xB0] = A;
+		A = [0x1062 + Y];
+		C = 0;
+		A += [0x18] + C;
+		[0xB2] = A;
+		A = [0x1296 + Y];
+		[0xB4] = A;
+		A = 0xFFFF;
+		[0xA8] = A;
+		A = 0x0000;
+		[0xAA] = A;
+		Stack.Push(Y);
+		this.L8280C2();
+		Y = Stack.Pop();
+		return;
+	}
+
+	public void L97A7FE()
+	{
+		A = [0x140E + Y];
+		temp = A - 0x0028;
+
+		if (C == 1)
+			return this.L97A813();
+
+		A <<= 1;
+		X = A;
+		A = [0x97A814 + X];
+		[0x0117] = A;
+		[0x7F0002] = A;
+	}
+
+	public void L97A813()
+	{
+		return;
+	}
+
+	public void L97A864()
+	{
+		A = 0x004E;
+		[0x1296 + Y] = A;
+		A = 0xFFFF;
+		[0x12F4 + Y] = A;
+		A = 0x0000;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L97A877()
+	{
+		A = [0x11DA + Y];
+		A &= 0x001F;
+		[0x12] = A;
+		A = [0x146C + Y];
+		A &= 0x007F;
+		[0x14] = A;
+		Stack.Push(Y);
+		this.L9682FE();
+		Y = Stack.Pop();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		A = [0x11DA + Y];
+		A = (A >> 4) | (A << 4);
+		A &= 0x00FF;
+		C = 0;
+		A += [0x146C + Y] + C;
+		[0x146C + Y] = A;
+		temp = A - 0x0080;
+
+		if (C == 1)
+			return this.L97A8AB();
+
+		return;
+	}
+
+	public void L97A8AB()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		return;
+	}
+
+	public void L97A8B5()
+	{
+		this.L80C88D();
+		A = 0x9700;
+		[0x01] = A;
+		A = 0xA8C8;
+		[0x00] = A;
+		this.L96FA29();
+		return;
+	}
+
+	public void L97AA48()
+	{
+		A = [0x1B41];
+
+		if (Z == 1)
+			return this.L97AA72();
+
+		A = [0x1866];
+
+		if (N == 0)
+			return this.L97AA55();
+
+		return this.L97AAE1();
+	}
+
+	public void L97AA55()
+	{
+		A = [0x1B41];
+		temp = A & 0x1000;
+
+		if (Z == 0)
+			return this.L97AA73();
+
+		temp = A & 0x2000;
+
+		if (Z == 0)
+			return this.L97AAA2();
+
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L97AACB();
+
+		temp = A & 0x0800;
+
+		if (Z == 0)
+			return this.L97AAE1();
+
+	}
+
+	public void L97AA6C()
+	{
+		A = 0x0000;
+		[0x1B41] = A;
+	}
+
+	public void L97AA72()
+	{
+		return;
+	}
+
+	public void L97AA73()
+	{
+		A = [0x14D6];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x968AE3 + X];
+
+		if (Z == 1)
+			return this.L97AA6C();
+
+		A = 0x0003;
+		[0x150E] = A;
+		A = 0x4000;
+		[0x1510] = A;
+		A = [0x1976];
+		A |= 0x0300;
+		[0x1976] = A;
+		A = 0x00DE;
+		this.L8094BA();
+		A = 0x2000;
+		[0x1B41] = A;
+		return;
+	}
+
+	public void L97AAA2()
+	{
+		this.L97AB04();
+		this.L97AB76();
+		A = [0x1B41];
+		temp = A & 0x4000;
+
+		if (Z == 0)
+			return this.L97AAB1();
+
+		return;
+	}
+
+	public void L97AAB1()
+	{
+		A = [0x14D6];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x968AE3 + X];
+		A |= 0x8000;
+		[0x1B41] = A;
+		A = [0x19EB];
+		A |= 0x4000;
+		[0x19EB] = A;
+		return;
+	}
+
+	public void L97AACB()
+	{
+		A = [0x1B41];
+		A--;
+		[0x1B41] = A;
+		temp = A - 0x8000;
+
+		if (Z == 1)
+			return this.L97AAE1();
+
+		this.L97AB04();
+		this.L97AB76();
+		this.L97AB57();
+		return;
+	}
+
+	public void L97AAE1()
+	{
+		this.L838316();
+		A = [0x19EB];
+		A &= 0xBFFF;
+		[0x19EB] = A;
+		A = 0x0000;
+		[0x1B41] = A;
+		[0x14FA] = A;
+		A = [0x1976];
+		A &= 0xFCFF;
+		[0x1976] = A;
+		this.L97AC03();
+		return;
+	}
+
+	public void L97AB04()
+	{
+		A = [0x14D6];
+		A <<= 1;
+		A <<= 1;
+		X = A;
+		A = [0x1B41];
+		A &= 0x7FFF;
+		temp = A - [0x968AE5 + X];
+
+		if (C == 1)
+			return this.L97AB27();
+
+		A = [0x014C];
+		A &= 0x0003;
+		A <<= 1;
+		X = A;
+		A = [0x97AB37 + X];
+		return this.L97AB33();
+	}
+
+	public void L97AB27()
+	{
+		A = [0x014C];
+		A &= 0x0007;
+		A <<= 1;
+		X = A;
+		A = [0x97AB47 + X];
+	}
+
+	public void L97AB33()
+	{
+		[0x14FA] = A;
+		return;
+	}
+
+	public void L97AB57()
+	{
+		A = [0x014C];
+		temp = A & 0x007F;
+
+		if (Z == 0)
+			return this.L97AB75();
+
+		A = [0x15A6];
+		[0x1B35] = A;
+		A = [0x15E6];
+		[0x1B37] = A;
+		this.L97E4DE();
+		A = 0x0001;
+		[0x1B3F] = A;
+	}
+
+	public void L97AB75()
+	{
+		return;
+	}
+
+	public void L97AB76()
+	{
+		A = [0x014C];
+		A &= 0x0006;
+		X = A;
+		A = [0x97ABFB + X];
+		X = A;
+		A = [0x7F0FC1 + X];
+		[0x7F0721] = A;
+		A = [0x7F0FC3 + X];
+		[0x7F0723] = A;
+		A = [0x7F0FC5 + X];
+		[0x7F0725] = A;
+		A = [0x7F0FC7 + X];
+		[0x7F0727] = A;
+		A = [0x7F0FC9 + X];
+		[0x7F0729] = A;
+		A = [0x7F0FCB + X];
+		[0x7F072B] = A;
+		A = [0x7F0FCD + X];
+		[0x7F072D] = A;
+		A = [0x7F0FCF + X];
+		[0x7F072F] = A;
+		A = [0x7F0FD1 + X];
+		[0x7F0731] = A;
+		A = [0x7F0FD3 + X];
+		[0x7F0733] = A;
+		A = [0x7F0FD5 + X];
+		[0x7F0735] = A;
+		A = [0x7F0FD9 + X];
+		[0x7F0739] = A;
+		A = [0x7F0FDB + X];
+		[0x7F073B] = A;
+		A = [0x7F0FDD + X];
+		[0x7F073D] = A;
+		A = [0x7F0FDF + X];
+		[0x7F073F] = A;
+		return;
+	}
+
+	public void L97AC03()
+	{
+		X = 0x001E;
+	}
+
+	public void L97AC06()
+	{
+		temp = X - 0x0016;
+
+		if (Z == 1)
+			return this.L97AC13();
+
+		A = [0x7F1221 + X];
+		[0x7F0721 + X] = A;
+	}
+
+	public void L97AC13()
+	{
+		X--;
+		X--;
+
+		if (N == 0)
+			return this.L97AC06();
+
+		return;
+	}
+
+	public void L97AC18()
+	{
+		this.L97AC31();
+		this.L97AC6C();
+		this.L97ADD2();
+		this.L97BC88();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97AC31()
+	{
+		A = [0x140E + Y];
+		A &= 0x000F;
+		A <<= 1;
+		X = A;
+		A = [0xAC4C + X];
+		[0x1296 + Y] = A;
+		A = 0xCFFF;
+		[0x12F4 + Y] = A;
+		A = 0x2E00;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L97AC6C()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xAC90 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97AC83();
+
+		[0x0E8C + Y] = A;
+		A = [0xAD32 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L97AC83()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L97ADD2()
+	{
+		A = [0x117C + Y];
+
+		if (N == 0)
+			return this.L97AE01();
+
+		A = [0x1004 + Y];
+		[0x1B35] = A;
+		A = [0x1062 + Y];
+		[0x1B37] = A;
+		A = 0x004A;
+		[0x1B3B] = A;
+		this.L97E380();
+		A = 0x004B;
+		[0x1B3B] = A;
+		this.L97E380();
+		A = 0x004C;
+		[0x1B3B] = A;
+		this.L97E380();
+	}
+
+	public void L97AE01()
+	{
+		return;
+	}
+
+	public void L97AE02()
+	{
+		this.L97AC31();
+		this.L97AE1B();
+		this.L97ADD2();
+		this.L97BC88();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97AE1B()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xAE3F + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97AE32();
+
+		[0x0E8C + Y] = A;
+		A = [0xAED1 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L97AE32()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L97AF61()
+	{
+		this.L97AC31();
+		this.L97AF7A();
+		this.L97ADD2();
+		this.L97BC88();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97AF7A()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xAF9E + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97AF91();
+
+		[0x0E8C + Y] = A;
+		A = [0xB018 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L97AF91()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L97B090()
+	{
+		this.L97B0A6();
+		this.L97B0E1();
+		this.L97BC88();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97B0A6()
+	{
+		A = [0x140E + Y];
+		A &= 0x000F;
+		A <<= 1;
+		X = A;
+		A = [0xB0C1 + X];
+		[0x1296 + Y] = A;
+		A = 0xCFFF;
+		[0x12F4 + Y] = A;
+		A = 0x2E00;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L97B0E1()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xB120 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97B0F8();
+
+		[0x0E8C + Y] = A;
+		A = [0xB1A2 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L97B0F8()
+	{
+		A = 0xFFFF;
+		[0x1296 + Y] = A;
+		A = 0x0000;
+		[0x111E + Y] = A;
+		[0x140E + Y] = A;
+		[0x0E8C + Y] = A;
+		[0x0EEA + Y] = A;
+		A = 0x0052;
+		[0x117C + Y] = A;
+		A = [0x1004 + Y];
+		[0x0B9C + Y] = A;
+		A = [0x1062 + Y];
+		[0x0C58 + Y] = A;
+		return;
+	}
+
+	public void L97B222()
+	{
+		this.L97B0A6();
+		this.L97B238();
+		this.L97BC88();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97B238()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xB277 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97B24F();
+
+		[0x0E8C + Y] = A;
+		A = [0xB2F9 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L97B24F()
+	{
+		A = 0xFFFF;
+		[0x1296 + Y] = A;
+		A = 0x0000;
+		[0x111E + Y] = A;
+		[0x140E + Y] = A;
+		[0x0E8C + Y] = A;
+		[0x0EEA + Y] = A;
+		A = 0x0052;
+		[0x117C + Y] = A;
+		A = [0x1004 + Y];
+		[0x0B9C + Y] = A;
+		A = [0x1062 + Y];
+		[0x0C58 + Y] = A;
+		return;
+	}
+
+	public void L97B379()
+	{
+		this.L97B0A6();
+		this.L97B38F();
+		this.L97BC88();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97B38F()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xB3CE + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97B3A6();
+
+		[0x0E8C + Y] = A;
+		A = [0xB450 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L97B3A6()
+	{
+		A = 0xFFFF;
+		[0x1296 + Y] = A;
+		A = 0x0000;
+		[0x111E + Y] = A;
+		[0x140E + Y] = A;
+		[0x0E8C + Y] = A;
+		[0x0EEA + Y] = A;
+		A = 0x0052;
+		[0x117C + Y] = A;
+		A = [0x1004 + Y];
+		[0x0B9C + Y] = A;
+		A = [0x1062 + Y];
+		[0x0C58 + Y] = A;
+		return;
+	}
+
+	public void L97B4D0()
+	{
+		this.L97B4E9();
+		this.L97B4FC();
+		this.L97B55F();
+		this.L97BC88();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97B4E9()
+	{
+		A = 0x80A2;
+		[0x1296 + Y] = A;
+		A = 0xCFFF;
+		[0x12F4 + Y] = A;
+		A = 0x2E00;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L97B4FC()
+	{
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		[0x12] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xB52F + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97B522();
+
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L97B522()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L97B55F()
+	{
+		A = [0x117C + Y];
+
+		if (N == 0)
+			return this.L97B5C0();
+
+		A = [0x11DA + Y];
+		[0x1B3D] = A;
+		A = [0x1004 + Y];
+		[0x1B35] = A;
+		A = [0x1062 + Y];
+		[0x1B37] = A;
+		A = 0x004E;
+		[0x1B3B] = A;
+		this.L97E380();
+
+		if (C == 1)
+			return this.L97B5C0();
+
+		A = [0x1B3D];
+		C = 0;
+		A += 0x000A + C;
+		A &= 0x001F;
+		[0x1B3D] = A;
+		[0x11DA + Y] = A;
+		A = 0x004F;
+		[0x1B3B] = A;
+		this.L97E380();
+		A = [0x1B3D];
+		C = 0;
+		A += 0x000A + C;
+		A &= 0x001F;
+		[0x1B3D] = A;
+		[0x11DA + Y] = A;
+		this.L97E380();
+		A = [0x1B3D];
+		C = 0;
+		A += 0x000A + C;
+		A &= 0x001F;
+		[0x1B3D] = A;
+		[0x11DA + Y] = A;
+	}
+
+	public void L97B5C0()
+	{
+		return;
+	}
+
+	public void L97B5C1()
+	{
+		this.L97B5D7();
+		this.L97B612();
+		this.L97BC88();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97B5D7()
+	{
+		A = [0x140E + Y];
+		A &= 0x000F;
+		A <<= 1;
+		X = A;
+		A = [0xB5F2 + X];
+		[0x1296 + Y] = A;
+		A = 0xCFFF;
+		[0x12F4 + Y] = A;
+		A = 0x2E00;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L97B612()
+	{
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		[0x12] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xB660 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L97B638();
+
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L97B638()
+	{
+		A = 0xFFFF;
+		[0x1296 + Y] = A;
+		A = 0x0000;
+		[0x111E + Y] = A;
+		[0x140E + Y] = A;
+		[0x0E8C + Y] = A;
+		[0x0EEA + Y] = A;
+		A = 0x0051;
+		[0x117C + Y] = A;
+		A = [0x1004 + Y];
+		[0x0B9C + Y] = A;
+		A = [0x1062 + Y];
+		[0x0C58 + Y] = A;
+		return;
+	}
+
+	public void L97B684()
+	{
+		this.L97B69A();
+		this.L97B612();
+		this.L97BC88();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L97B69A()
+	{
+		A = [0x140E + Y];
+		A &= 0x000F;
+		A <<= 1;
+		X = A;
+		A = [0xB6B5 + X];
+		[0x1296 + Y] = A;
+		A = 0xCFFF;
+		[0x12F4 + Y] = A;
+		A = 0x2E00;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L97B6D5()
+	{
+		this.L97BC88();
+		this.L80CE5F();
+		this.L80C88D();
+		A = 0x9700;
+		[0x01] = A;
+		A = 0xB6EF;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L97B7AD()
+	{
+		this.L97BC88();
+		this.L80CE5F();
+		this.L80C88D();
+		A = 0x9700;
+		[0x01] = A;
+		A = 0xB7C7;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L97B7D1()
+	{
+		this.L97BC88();
+		this.L80CE5F();
+		this.L80C88D();
+		A = 0x9700;
+		[0x01] = A;
+		A = 0xB7EB;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L97B7FF()
+	{
+		this.L97BC88();
+		this.L80CE5F();
+		this.L80C88D();
+		A = 0x9700;
+		[0x01] = A;
+		A = 0xB819;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L97B913()
+	{
+		this.L97BC88();
+		this.L80CE5F();
+		this.L80C88D();
+		A = 0x9700;
+		[0x01] = A;
+		A = 0xB92D;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L97B9EB()
+	{
+		this.L80C88D();
+		A = 0x9700;
+		[0x01] = A;
+		A = 0xB9FE;
+		[0x00] = A;
+		this.L96FA29();
+		return;
+	}
+
+	public void L97BAE2()
+	{
+		this.L80C88D();
+		A = 0x9700;
+		[0x01] = A;
+		A = 0xBAF5;
+		[0x00] = A;
+		this.L96FA29();
+		return;
+	}
+
+	public void L97BB79()
+	{
+		this.L80C88D();
+		A = 0x9700;
+		[0x01] = A;
+		A = 0xBB8C;
+		[0x00] = A;
+		this.L96FA29();
+		return;
+	}
+
+	public void L97BC88()
+	{
+		C = 0;
+		A = [0x197C];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x0D14 + Y] = A;
+		A = [0x197E];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x0D72 + Y] = A;
+		C = 0;
+		A = [0x1988];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x0DD0 + Y] = A;
+		A = [0x198A];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x0E2E + Y] = A;
+		return;
+	}
+
+	public void L97D6DE()
+	{
+		this.L80C90B();
+
+		if (C == 0)
+			return this.L97D6E5();
+
+		return;
+	}
+
+	public void L97D6E5()
+	{
+		A = [0x1B1D];
+		A <<= 1;
+		X = A;
+		A = [0x968B73 + X];
+		X = A;
+		A = [0x0267];
+		temp = A & 0x4000;
+
+		if (Z == 0)
+			return this.L97D724();
+
+	}
+
+	public void L97D6F7()
+	{
+		A = [0x1B79];
+
+		if (Z == 0)
+			return this.L97D706();
+
+		A = [0x968B73 + X];
+
+		if (N == 1)
+			return this.L97D718();
+
+		[0x12] = A;
+		return this.L97D70E();
+	}
+
+	public void L97D706()
+	{
+		A = [0x968B75 + X];
+
+		if (N == 1)
+			return this.L97D717();
+
+		[0x12] = A;
+	}
+
+	public void L97D70E()
+	{
+		A = [0x968B81 + X];
+		[0x14] = A;
+		this.L97D779();
+	}
+
+	public void L97D717()
+	{
+		return;
+	}
+
+	public void L97D718()
+	{
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L97D717();
+
+		A &= 0x7FFF;
+		this.L97D847();
+		return;
+	}
+
+	public void L97D724()
+	{
+		A = [0x1B79];
+
+		if (Z == 0)
+			return this.L97D756();
+
+		A = [0x0381];
+		temp = A - 0x0001;
+
+		if (Z == 0)
+			return this.L97D6F7();
+
+		A = [0x1B17];
+
+		if (Z == 1)
+			return this.L97D74E();
+
+		A = [0x1BC7];
+
+		if (Z == 1)
+			return this.L97D741();
+
+		A = [0x968B77 + X];
+
+		if (N == 1)
+			return this.L97D6F7();
+
+	}
+
+	public void L97D741()
+	{
+		A = 0x0280;
+		[0x12] = A;
+		A = 0x000A;
+		[0x14] = A;
+		this.L97D779();
+	}
+
+	public void L97D74E()
+	{
+		this.L97D801();
+		this.L9688B6();
+		return;
+	}
+
+	public void L97D756()
+	{
+		A = [0x0381];
+		temp = A - 0x0001;
+
+		if (Z == 0)
+			return this.L97D706();
+
+		A = [0x1B17];
+
+		if (Z == 1)
+			return this.L97D74E();
+
+		A = 0x0320;
+		[0x12] = A;
+		A = 0x000A;
+		[0x14] = A;
+		this.L97D779();
+		this.L97D801();
+		this.L9688B6();
+		return this.L97D717();
+	}
+
+	public void L97D779()
+	{
+		this.L97DA1B();
+		A = [0x968B73 + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L97D7A1();
+
+		temp = A - 0x0002;
+
+		if (Z == 1)
+			return this.L97D79D();
+
+		temp = A - 0x0003;
+
+		if (Z == 1)
+			return this.L97D79D();
+
+		temp = A - 0x0004;
+
+		if (Z == 1)
+			return this.L97D79D();
+
+		A = [0x1B9D];
+
+		if (Z == 0)
+			return this.L97D7A1();
+
+		A = [0x968B73 + X];
+	}
+
+	public void L97D79D()
+	{
+		this.L97DAE3();
+	}
+
+	public void L97D7A1()
+	{
+		A = [0x968B75 + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L97D7F5();
+
+		this.L97D827();
+		A = [0x1238 + Y];
+		temp = A & 0x0800;
+
+		if (Z == 1)
+			return this.L97D7BB();
+
+		A = 0x0000;
+		[0x1B9D] = A;
+	}
+
+	public void L97D7BB()
+	{
+		A = [0x968B77 + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L97D7DA();
+
+		Stack.Push(Y);
+		Stack.Push(X);
+		A = [0x0261];
+		this.L809977();
+		A |= [0x968B77 + X];
+		this.L809492();
+		X = Stack.Pop();
+		Y = Stack.Pop();
+		[0x1B1B] = 0;
+	}
+
+	public void L97D7DA()
+	{
+		A = [0x968B79 + X];
+		[0x1B21] = A;
+		A = [0x1B17];
+
+		if (Z == 1)
+			return this.L97D7F3();
+
+		C = 1;
+		A -= [0x968B7B + X] - !C;
+
+		if (N == 0)
+			return this.L97D7F0();
+
+		A = 0x0000;
+	}
+
+	public void L97D7F0()
+	{
+		[0x1B17] = A;
+	}
+
+	public void L97D7F3()
+	{
+		C = 0;
+		return;
+	}
+
+	public void L97D7F5()
+	{
+		this.L97D801();
+		A = 0x00E3;
+		this.L8094BA();
+		C = 1;
+		return;
+	}
+
+	public void L97D801()
+	{
+		A = [0x03FC];
+
+		if (Z == 1)
+			return this.L97D826();
+
+		this.L9095E0();
+		A = 0x0001;
+		A &= 0x00FF;
+		A = (A >> 4) | (A << 4);
+		A |= 0x00F8;
+		this.L8094E2();
+		A = 0x0004;
+		A &= 0x00FF;
+		A = (A >> 4) | (A << 4);
+		A |= 0x00F8;
+		this.L8094E2();
+	}
+
+	public void L97D826()
+	{
+		return;
+	}
+
+	public void L97D827()
+	{
+		this.L80CAE9();
+		[0x1B2D] = Y;
+		A = [0x1B35];
+		[0x0B9C + Y] = A;
+		[0x1B31] = A;
+		A = [0x1B37];
+		[0x0C58 + Y] = A;
+		[0x1B33] = A;
+		A = [0x1238 + Y];
+		[0x1B2F] = A;
+		return;
+	}
+
+	public void L97D847()
+	{
+		A <<= 1;
+		X = A;
+		return [(0xD84C + X)]();
+	}
+
+	public void L97DA1B()
+	{
+		A = [0x0265];
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L97DA2D();
+
+		A = [0x1B13];
+
+		if (Z == 0)
+			return this.L97DA2D();
+
+		A = [0x1B17];
+
+		if (Z == 1)
+			return this.L97DA61();
+
+	}
+
+	public void L97DA2D()
+	{
+		[0x2E] = 0;
+		A = [0x1B17];
+		temp = A - [0x14];
+
+		if (C == 1)
+			return this.L97DA40();
+
+		A = [0x1B13];
+		temp = A - 0x0060;
+
+		if (Z == 0)
+			return this.L97DA40();
+
+		[0x2E]++;
+	}
+
+	public void L97DA40()
+	{
+		A = [0x14];
+
+		if (Z == 1)
+			return this.L97DA64();
+
+		A = [0x1B17];
+
+		if (Z == 1)
+			return this.L97DA64();
+
+		C = 0;
+		A += [0x2E] + C;
+		A++;
+		C = 0;
+		A += 0x0004 + C;
+		Stack.Push(A);
+		A <<= 1;
+		A <<= 1;
+		A <<= 1;
+		[0x16] = A;
+		A = Stack.Pop();
+		A <<= 1;
+		C = 0;
+		A += [0x16] + C;
+		C = 0;
+		A += [0x12] + C;
+		X = A;
+		return;
+	}
+
+	public void L97DA61()
+	{
+		X = [0x12];
+		return;
+	}
+
+	public void L97DA64()
+	{
+		X = [0x1B13];
+
+		if (N == 0)
+			return this.L97DA6E();
+
+		X = 0x0001;
+		return this.L97DA76();
+	}
+
+	public void L97DA6E()
+	{
+		temp = X - 0x0061;
+
+		if (C == 0)
+			return this.L97DA76();
+
+		X = 0x0060;
+	}
+
+	public void L97DA76()
+	{
+		A = [0x97DA82 + X];
+		A &= 0x00FF;
+		C = 0;
+		A += [0x12] + C;
+		X = A;
+		return;
+	}
+
+	public void L97DAE3()
+	{
+		Stack.Push(X);
+		A <<= 1;
+		X = A;
+		return [(0xDAEB + X)]();
+	}
+
+	public void L97DEDA()
+	{
+		A = [0x1004 + X];
+		[0x1B35] = A;
+		A = [0x1062 + X];
+		[0x1B37] = A;
+		A = [0x0CB6 + X];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x97DEF7 + X];
+		[0x1B3B] = A;
+		return this.L97E314();
+	}
+
+	public void L97DF19()
+	{
+		A = [0x1004 + X];
+		[0x1B35] = A;
+		A = [0x1062 + X];
+		[0x1B37] = A;
+		A = [0x0CB6 + X];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x97DF36 + X];
+		[0x1B3B] = A;
+		return this.L97E314();
+	}
+
+	public void L97DF5C()
+	{
+		A = [0x1238 + X];
+		temp = A & 0x0080;
+
+		if (Z == 1)
+			return this.L97DF67();
+
+		return this.L97DF95();
+	}
+
+	public void L97DF67()
+	{
+		A = [0x1726 + Y];
+		temp = A & 0x2000;
+
+		if (Z == 1)
+			return this.L97DFC3();
+
+		A = [0x1B35];
+		this.L809977();
+		A |= 0x0066;
+		this.L8094BA();
+		A = [0x15A6 + Y];
+		temp = A - [0x1B35];
+
+		if (C == 0)
+			return this.L97DF8A();
+
+		A = 0x0055;
+		return this.L97DF8D();
+	}
+
+	public void L97DF8A()
+	{
+		A = 0x0054;
+	}
+
+	public void L97DF8D()
+	{
+		[0x1B3B] = A;
+		this.L97E314();
+		return;
+	}
+
+	public void L97DF95()
+	{
+		A = [0x11DA + X];
+		[0x22] = A;
+		A++;
+		[0x11DA + X] = A;
+		A = [0x22];
+		A &= 0x000F;
+
+		if (Z == 1)
+			return this.L97DFA8();
+
+		return this.L97E02C();
+	}
+
+	public void L97DFA8()
+	{
+		A = 0x005E;
+		[0x1B3B] = A;
+		Stack.Push(Y);
+		this.L97E314();
+		A = [0x1B35];
+		this.L809977();
+		A |= 0x00D2;
+		this.L8094BA();
+		Y = Stack.Pop();
+		return;
+	}
+
+	public void L97DFC3()
+	{
+		A = [0x117C + X];
+
+		if (Z == 0)
+			return this.L97DFD3();
+
+		A = 0x005B;
+		[0x1B3B] = A;
+		this.L97E314();
+		return;
+	}
+
+	public void L97DFD3()
+	{
+		A = [0x1238 + X];
+		A &= 0x0007;
+		temp = A - 0x0004;
+
+		if (C == 0)
+			return this.L97E000();
+
+		A = [0x117C + X];
+		temp = A - 0x0000;
+
+		if (Z == 1)
+			return this.L97E000();
+
+		A = 0x0042;
+		[0x1B3B] = A;
+		Stack.Push(Y);
+		this.L97E314();
+		A = [0x1B35];
+		this.L809977();
+		A |= 0x00D2;
+		this.L8094BA();
+		Y = Stack.Pop();
+	}
+
+	public void L97E000()
+	{
+		Stack.Push(X);
+		A = [0x14D6];
+		A <<= 1;
+		C = 0;
+		A += [0x14D6] + C;
+		X = A;
+		A = [0x97E02E + X];
+		[0x00] = A;
+		A = [0x97E02F + X];
+		[0x01] = A;
+		X = Stack.Pop();
+		this.L97E061();
+		A = [[0x00] + Y];
+		A &= 0x00FF;
+		temp = A - 0x00FF;
+
+		if (Z == 1)
+			return this.L97E02C();
+
+		[0x1B3B] = A;
+		this.L97E314();
+		return;
+	}
+
+	public void L97E02C()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L97E061()
+	{
+		[0x22] = Y;
+		A = Y;
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += [0x22] + C;
+		A >>= 1;
+		[0x22] = A;
+		A = [0x1238 + X];
+		A &= 0x0007;
+		C = 0;
+		A += [0x22] + C;
+		Y = A;
+		return;
+	}
+
+	public void L97E1F3()
+	{
+		A = [0x1238 + X];
+		A &= 0x0007;
+		A <<= 1;
+		X = A;
+		A = [0x97E238 + X];
+		[0x1B3B] = A;
+		A = [0x1BA3];
+		temp = A - 0x0100;
+
+		if (C == 0)
+			return this.L97E225();
+
+		A = [0x1504];
+		temp = A - [0x1B37];
+
+		if (C == 0)
+			return this.L97E225();
+
+		this.L97E3E0();
+		A = [0x1B35];
+		this.L809977();
+		A |= 0x0062;
+		this.L8094BA();
+		return;
+	}
+
+	public void L97E225()
+	{
+		this.L97E380();
+		A = [0x1B35];
+		this.L809977();
+		A |= 0x0062;
+		this.L8094BA();
+		return;
+	}
+
+	public void L97E248()
+	{
+		this.L80C92B();
+
+		if (C == 0)
+			return this.L97E24F();
+
+		return;
+	}
+
+	public void L97E24F()
+	{
+		A = [0x1B35];
+		this.L809977();
+		A |= 0x0062;
+		this.L8094BA();
+		A = [0x1B3B];
+		A <<= 1;
+		X = A;
+		A = [0x0387];
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += [0x97E2C2 + X] + C;
+		X = A;
+		A = [0x97E2C2 + X];
+		this.L80CB73();
+		A = [0x1B35];
+		[0x0B9C + Y] = A;
+		[0x1004 + Y] = A;
+		A = [0x1B37];
+		[0x0C58 + Y] = A;
+		[0x1062 + Y] = A;
+		A = [0x97E2C4 + X];
+		[0x11DA + Y] = A;
+		C = 0;
+		A = [0x197C];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x0D14 + Y] = A;
+		A = [0x197E];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x0D72 + Y] = A;
+		C = 0;
+		A = [0x1988];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x0DD0 + Y] = A;
+		A = [0x198A];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x0E2E + Y] = A;
+		C = 0;
+		return;
+	}
+
+	public void L97E314()
+	{
+		this.L80C92B();
+
+		if (C == 0)
+			return this.L97E31B();
+
+		return;
+	}
+
+	public void L97E31B()
+	{
+		A = [0x1B3B];
+		this.L80CB73();
+		A = [0x1B3D];
+		[0x11DA + Y] = A;
+		A = [0x12F4 + Y];
+		A &= 0xF1FF;
+		[0x12F4 + Y] = A;
+		A = [0x1352 + Y];
+		A &= 0xF1FF;
+		[0x1352 + Y] = A;
+		A = [0x1B35];
+		[0x0B9C + Y] = A;
+		A = [0x1B37];
+		[0x0C58 + Y] = A;
+		A = 0x0000;
+		[0x0D14 + Y] = A;
+		A = 0x0000;
+		[0x0D72 + Y] = A;
+		A = [0x1976];
+		temp = A & 0x1000;
+
+		if (Z == 0)
+			return this.L97E375();
+
+		C = 0;
+		A = [0x1988];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x0DD0 + Y] = A;
+		A = [0x198A];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x0E2E + Y] = A;
+		return this.L97E37E();
+	}
+
+	public void L97E375()
+	{
+		A = 0x0000;
+		[0x0DD0 + Y] = A;
+		[0x0E2E + Y] = A;
+	}
+
+	public void L97E37E()
+	{
+		C = 0;
+		return;
+	}
+
+	public void L97E380()
+	{
+		this.L80C92B();
+
+		if (C == 0)
+			return this.L97E387();
+
+		return;
+	}
+
+	public void L97E387()
+	{
+		A = [0x1B3B];
+		this.L80CB73();
+		A = [0x12F4 + Y];
+		A &= 0xF1FF;
+		[0x12F4 + Y] = A;
+		A = [0x1352 + Y];
+		A &= 0xF1FF;
+		[0x1352 + Y] = A;
+		A = [0x1B35];
+		[0x0B9C + Y] = A;
+		A = [0x1B37];
+		[0x0C58 + Y] = A;
+		C = 0;
+		A = [0x197C];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x0D14 + Y] = A;
+		A = [0x197E];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x0D72 + Y] = A;
+		C = 0;
+		A = [0x1988];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x0DD0 + Y] = A;
+		A = [0x198A];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x0E2E + Y] = A;
+		C = 0;
+		return;
+	}
+
+	public void L97E3E0()
+	{
+		this.L80CABF();
+
+		if (C == 0)
+			return this.L97E3E7();
+
+		return;
+	}
+
+	public void L97E3E7()
+	{
+		A = [0x1B3B];
+		this.L80CB73();
+		A = [0x12F4 + Y];
+		A &= 0xF1FF;
+		[0x12F4 + Y] = A;
+		A = [0x1352 + Y];
+		A &= 0xF1FF;
+		[0x1352 + Y] = A;
+		A = [0x1B35];
+		[0x0B9C + Y] = A;
+		A = [0x1B37];
+		[0x0C58 + Y] = A;
+		C = 0;
+		A = [0x197C];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x0D14 + Y] = A;
+		A = [0x197E];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x0D72 + Y] = A;
+		C = 0;
+		A = [0x1988];
+		A ^= 0xFFFF;
+		A += 0x0001 + C;
+		[0x0DD0 + Y] = A;
+		A = [0x198A];
+		A ^= 0xFFFF;
+		A += 0x0000 + C;
+		[0x0E2E + Y] = A;
+		C = 0;
+		return;
+	}
+
+	public void L97E440()
+	{
+		X = [0x14];
+		A = [0x117C + X];
+		temp = A - 0x0082;
+
+		if (Z == 0)
+			return this.L97E44D();
+
+		return this.L97E4DD();
+	}
+
+	public void L97E44D()
+	{
+		temp = A - 0x0083;
+
+		if (Z == 0)
+			return this.L97E455();
+
+		return this.L97E4DD();
+	}
+
+	public void L97E455()
+	{
+		temp = A - 0x0084;
+
+		if (Z == 0)
+			return this.L97E45D();
+
+		return this.L97E4DD();
+	}
+
+	public void L97E45D()
+	{
+		temp = A - 0x0085;
+
+		if (Z == 1)
+			return this.L97E4DD();
+
+		A = [0x1004 + X];
+		[0x1B35] = A;
+		A = [0x1062 + X];
+		[0x1B37] = A;
+		A = [0x1B35];
+		temp = A - 0x0080;
+
+		if (Z == 1)
+			return this.L97E491();
+
+
+		if (C == 1)
+			return this.L97E4A3();
+
+		A = [0x1B37];
+		temp = A - 0x0054;
+
+		if (Z == 1)
+			return this.L97E487();
+
+
+		if (C == 1)
+			return this.L97E48C();
+
+		A = 0x001C;
+		return this.L97E4BA();
+	}
+
+	public void L97E487()
+	{
+		A = 0x0018;
+		return this.L97E4BA();
+	}
+
+	public void L97E48C()
+	{
+		A = 0x0014;
+		return this.L97E4BA();
+	}
+
+	public void L97E491()
+	{
+		A = [0x1B37];
+		temp = A - 0x0054;
+
+		if (C == 1)
+			return this.L97E49E();
+
+		A = 0x0000;
+		return this.L97E4BA();
+	}
+
+	public void L97E49E()
+	{
+		A = 0x0010;
+		return this.L97E4BA();
+	}
+
+	public void L97E4A3()
+	{
+		A = [0x1B37];
+		temp = A - 0x0054;
+
+		if (Z == 1)
+			return this.L97E4B2();
+
+
+		if (C == 1)
+			return this.L97E4B7();
+
+		A = 0x0004;
+		return this.L97E4BA();
+	}
+
+	public void L97E4B2()
+	{
+		A = 0x0008;
+		return this.L97E4BA();
+	}
+
+	public void L97E4B7()
+	{
+		A = 0x000C;
+	}
+
+	public void L97E4BA()
+	{
+		[0x1B3D] = A;
+		A = 0x0045;
+		[0x1B3B] = A;
+		this.L97E314();
+
+		if (C == 1)
+			return this.L97E4DD();
+
+		X = [0x14];
+		A = [0x1296 + X];
+		[0x1296 + Y] = A;
+		A = [0x12F4 + X];
+		[0x12F4 + Y] = A;
+		A = [0x1352 + X];
+		[0x1352 + Y] = A;
+	}
+
+	public void L97E4DD()
+	{
+		return;
+	}
+
+	public void L97E4DE()
+	{
+		Stack.Push(P);
+		P &= ~0x30;
+		A = [0x1866];
+
+		if (N == 1)
+			return this.L97E511();
+
+		A = [0x1968];
+
+		if (N == 1)
+			return this.L97E511();
+
+		this.L80C92B();
+
+		if (C == 1)
+			return this.L97E4F4();
+
+		this.L97E516();
+	}
+
+	public void L97E4F4()
+	{
+		this.L80C92B();
+
+		if (C == 1)
+			return this.L97E4FD();
+
+		this.L97E51B();
+	}
+
+	public void L97E4FD()
+	{
+		this.L80C92B();
+
+		if (C == 1)
+			return this.L97E506();
+
+		this.L97E520();
+	}
+
+	public void L97E506()
+	{
+		this.L80C92B();
+
+		if (C == 1)
+			return this.L97E50F();
+
+		this.L97E525();
+	}
+
+	public void L97E50F()
+	{
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L97E511()
+	{
+		[0x1B13] = 0;
+		return this.L97E50F();
+	}
+
+	public void L97E516()
+	{
+		A = 0x0009;
+		return this.L97E52A();
+	}
+
+	public void L97E51B()
+	{
+		A = 0x000A;
+		return this.L97E52A();
+	}
+
+	public void L97E520()
+	{
+		A = 0x000B;
+		return this.L97E52A();
+	}
+
+	public void L97E525()
+	{
+		A = 0x000C;
+		return this.L97E52A();
+	}
+
+	public void L97E52A()
+	{
+		this.L80CB73();
+		A = [0x1B35];
+		[0x0B9C + Y] = A;
+		A = [0x1B37];
+		[0x0C58 + Y] = A;
+		A = 0xFFFF;
+		[0x12F4 + Y] = A;
+		A = 0x0000;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L97E57E()
+	{
+		A = [0x1866];
+
+		if (N == 0)
+			return this.L97E587();
+
+		this.L97E5F7();
+		return;
+	}
+
+	public void L97E587()
+	{
+		Stack.Push(B);
+		Stack.Push(X);
+		Stack.Push(K);
+		B = Stack.Pop();
+		A = [0x1B65];
+
+		if (Z == 1)
+			return this.L97E596();
+
+		A--;
+		A <<= 1;
+		X = A;
+		return [(0xE599 + X)]();
+	}
+
+	public void L97E596()
+	{
+		X = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L97E5F7()
+	{
+		this.L9095E0();
+		[0x1B65] = 0;
+		[0x1B75] = 0;
+		return;
+	}
+
+	public void L97E78D()
+	{
+		[0x1A] = 0;
+		[0x1C] = 0;
+		A = [0x14D6];
+		A <<= 1;
+		X = A;
+		return [(0xE799 + X)]();
+	}
+
+	public void L97F92E()
+	{
+		Stack.Push(P);
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x1B99] = 0;
+		A = 0xFFFF;
+		[0x1B97] = A;
+		[0x1B91] = A;
+		[0x1B8F] = A;
+		[0x1B93] = A;
+		[0x1B95] = A;
+		A = [0x117C];
+
+		if (N == 1)
+			return this.L97F965();
+
+		A = 0x0000;
+		[0x12] = A;
+		this.L97F9A4();
+
+		if (C == 1)
+			return this.L97F965();
+
+		this.L97FB87();
+
+		if (C == 1)
+			return this.L97F965();
+
+		this.L97FCC0();
+		this.L97FDCF();
+	}
+
+	public void L97F965()
+	{
+		A = [0x117E];
+
+		if (N == 1)
+			return this.L97F983();
+
+		A = 0x0002;
+		[0x12] = A;
+		this.L97F9A4();
+
+		if (C == 1)
+			return this.L97F983();
+
+		this.L97FB87();
+
+		if (C == 1)
+			return this.L97F983();
+
+		this.L97FCC0();
+		this.L97FDCF();
+	}
+
+	public void L97F983()
+	{
+		A = [0x1180];
+
+		if (N == 1)
+			return this.L97F9A1();
+
+		A = 0x0004;
+		[0x12] = A;
+		this.L97F9A4();
+
+		if (C == 1)
+			return this.L97F9A1();
+
+		this.L97FB87();
+
+		if (C == 1)
+			return this.L97F9A1();
+
+		this.L97FCC0();
+		this.L97FDCF();
+	}
+
+	public void L97F9A1()
+	{
+		B = Stack.Pop();
+		P = Stack.Pop();
+		return;
+	}
+
+	public void L97F9A4()
+	{
+		X = [0x12];
+		A = [0x1238 + X];
+		A &= 0x0800;
+
+		if (Z == 1)
+			return this.L97F9B0();
+
+		C = 0;
+		return;
+	}
+
+	public void L97F9B0()
+	{
+		A = [0x014C];
+		A &= 0x0001;
+
+		if (Z == 1)
+			return this.L97F9BB();
+
+		return this.L97FA3D();
+	}
+
+	public void L97F9BB()
+	{
+		A = [0x11B2];
+
+		if (N == 1)
+			return this.L97F9CB();
+
+		A = 0x0036;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97F9CB();
+
+		return;
+	}
+
+	public void L97F9CB()
+	{
+		A = [0x11C4];
+
+		if (N == 1)
+			return this.L97F9DB();
+
+		A = 0x0048;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97F9DB();
+
+		return;
+	}
+
+	public void L97F9DB()
+	{
+		A = [0x11B6];
+
+		if (N == 1)
+			return this.L97F9EB();
+
+		A = 0x003A;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97F9EB();
+
+		return;
+	}
+
+	public void L97F9EB()
+	{
+		A = [0x11C8];
+
+		if (N == 1)
+			return this.L97F9FB();
+
+		A = 0x004C;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97F9FB();
+
+		return;
+	}
+
+	public void L97F9FB()
+	{
+		A = [0x11BA];
+
+		if (N == 1)
+			return this.L97FA0B();
+
+		A = 0x003E;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FA0B();
+
+		return;
+	}
+
+	public void L97FA0B()
+	{
+		A = [0x11CC];
+
+		if (N == 1)
+			return this.L97FA1B();
+
+		A = 0x0050;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FA1B();
+
+		return;
+	}
+
+	public void L97FA1B()
+	{
+		A = [0x11BE];
+
+		if (N == 1)
+			return this.L97FA2B();
+
+		A = 0x0042;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FA2B();
+
+		return;
+	}
+
+	public void L97FA2B()
+	{
+		A = [0x11D0];
+
+		if (N == 1)
+			return this.L97FA3B();
+
+		A = 0x0054;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FA3B();
+
+		return;
+	}
+
+	public void L97FA3B()
+	{
+		C = 0;
+		return;
+	}
+
+	public void L97FA3D()
+	{
+		A = [0x11C2];
+
+		if (N == 1)
+			return this.L97FA4D();
+
+		A = 0x0046;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FA4D();
+
+		return;
+	}
+
+	public void L97FA4D()
+	{
+		A = [0x11B4];
+
+		if (N == 1)
+			return this.L97FA5D();
+
+		A = 0x0038;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FA5D();
+
+		return;
+	}
+
+	public void L97FA5D()
+	{
+		A = [0x11C6];
+
+		if (N == 1)
+			return this.L97FA6D();
+
+		A = 0x004A;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FA6D();
+
+		return;
+	}
+
+	public void L97FA6D()
+	{
+		A = [0x11B8];
+
+		if (N == 1)
+			return this.L97FA7D();
+
+		A = 0x003C;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FA7D();
+
+		return;
+	}
+
+	public void L97FA7D()
+	{
+		A = [0x11CA];
+
+		if (N == 1)
+			return this.L97FA8D();
+
+		A = 0x004E;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FA8D();
+
+		return;
+	}
+
+	public void L97FA8D()
+	{
+		A = [0x11BC];
+
+		if (N == 1)
+			return this.L97FA9D();
+
+		A = 0x0040;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FA9D();
+
+		return;
+	}
+
+	public void L97FA9D()
+	{
+		A = [0x11CE];
+
+		if (N == 1)
+			return this.L97FAAD();
+
+		A = 0x0052;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FAAD();
+
+		return;
+	}
+
+	public void L97FAAD()
+	{
+		A = [0x11C0];
+
+		if (N == 1)
+			return this.L97FABD();
+
+		A = 0x0044;
+		[0x14] = A;
+		this.L97FABF();
+
+		if (C == 0)
+			return this.L97FABD();
+
+		return;
+	}
+
+	public void L97FABD()
+	{
+		C = 0;
+		return;
+	}
+
+	public void L97FABF()
+	{
+		X = [0x14];
+		A = [0x0CB6 + X];
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0xF27A + X];
+		[0x26] = A;
+		[0x28] = A;
+		Y = [0x12];
+		A = [0x117C + Y];
+		A <<= 1;
+		X = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		A <<= 1;
+		C = 0;
+		A += [0xF29C + X] + C;
+		X = A;
+		A = [0xF29C + X];
+
+		if (Z == 1)
+			return this.L97FB26();
+
+		A += [0x26] + C;
+		[0x26] = A;
+		A = [0xF29E + X];
+		A += [0x28] + C;
+		[0x28] = A;
+		X = [0x14];
+		A = [0x0CB6 + Y];
+		C = 1;
+		A -= [0x0CB6 + X] - !C;
+		C = 0;
+		A += 0x0040 + C;
+		temp = A - 0x0080;
+
+		if (C == 1)
+			return this.L97FB26();
+
+		A = [0x1004 + Y];
+		C = 1;
+		A -= [0x1004 + X] - !C;
+
+		if (N == 0)
+			return this.L97FB0F();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L97FB0F()
+	{
+		temp = A - [0x26];
+
+		if (C == 1)
+			return this.L97FB26();
+
+		A = [0x1062 + Y];
+		C = 1;
+		A -= [0x1062 + X] - !C;
+
+		if (N == 0)
+			return this.L97FB20();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L97FB20()
+	{
+		temp = A - [0x28];
+
+		if (C == 1)
+			return this.L97FB26();
+
+		return this.L97FB2A();
+	}
+
+	public void L97FB26()
+	{
+		C = 0;
+		return;
+	}
+
+	public void L97FB2A()
+	{
+		[0x30] = 0;
+		this.L80D279();
+		X = [0x14];
+		A = [0x111E + X];
+
+		if (N == 0)
+			return this.L97FB57();
+
+		[0x1B99]++;
+		A = 0xFFFF;
+		[0x117C + X] = A;
+		[0x1296 + X] = A;
+		this.L97DEDA();
+		A = [0x1B35];
+		this.L809977();
+		A |= 0x0065;
+		this.L8094BA();
+		[0x30]++;
+	}
+
+	public void L97FB57()
+	{
+		X = [0x12];
+		A = [0x111E + X];
+
+		if (N == 0)
+			return this.L97FB85();
+
+		A = 0xFFFF;
+		[0x117C + X] = A;
+		[0x1296 + X] = A;
+		A = [0x30];
+
+		if (Z == 0)
+			return this.L97FB75();
+
+		this.L97DF19();
+		return this.L97FB75();
+	}
+
+	public void L97FB75()
+	{
+		A = [0x1B35];
+		this.L809977();
+		A |= 0x0062;
+		this.L8094BA();
+		C = 1;
+		return;
+	}
+
+	public void L97FB85()
+	{
+		C = 0;
+		return;
+	}
+
+	public void L97FB87()
+	{
+		X = [0x12];
+		A = [0x0CB6 + X];
+		temp = A - 0x0100;
+
+		if (Z == 1)
+			return this.L97FB93();
+
+		C = 0;
+		return;
+	}
+
+	public void L97FB93()
+	{
+		A = [0x1522];
+		[0x24] = A;
+		Y = 0x0000;
+	}
+
+	public void L97FB9B()
+	{
+		X = [0x17E6 + Y];
+		A = [0x1726 + X];
+
+		if (N == 1)
+			return this.L97FBB7();
+
+		temp = A & 0x0200;
+
+		if (Z == 0)
+			return this.L97FBAD();
+
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L97FBB7();
+
+	}
+
+	public void L97FBAD()
+	{
+		[0x14] = X;
+		Stack.Push(Y);
+		this.L97FBBE();
+		Y = Stack.Pop();
+
+		if (C == 0)
+			return this.L97FBB7();
+
+		return;
+	}
+
+	public void L97FBB7()
+	{
+		Y++;
+		Y++;
+		[0x24]--;
+
+		if (Z == 0)
+			return this.L97FB9B();
+
+		return;
+	}
+
+	public void L97FBBE()
+	{
+		X = [0x14];
+		A = [0x1666 + X];
+		A <<= 1;
+		Y = A;
+		A = [0x14D3];
+		[0x00] = A;
+		A = [0x14D4];
+		[0x01] = A;
+		A = [[0x00] + Y];
+		C = 0;
+		A += [0x00] + C;
+		[0x00] = A;
+		Y = 0x0000;
+		A = [[0x00] + Y];
+		Y++;
+		A &= 0x00FF;
+		[0x22] = A;
+		X = [0x12];
+		A = [0x1004 + X];
+		[0x26] = A;
+		A = [0x1062 + X];
+		[0x28] = A;
+		X = [0x14];
+	}
+
+	public void L97FBEF()
+	{
+		A = [[0x00] + Y];
+		Y++;
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L97FBFC();
+
+		A &= 0x007F;
+		return this.L97FBFF();
+	}
+
+	public void L97FBFC()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L97FBFF()
+	{
+		C = 0;
+		A += [0x15A6 + X] + C;
+		temp = A - [0x26];
+
+		if (N == 0)
+			return this.L97FC51();
+
+		A = [[0x00] + Y];
+		Y++;
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L97FC14();
+
+		A &= 0x007F;
+		return this.L97FC17();
+	}
+
+	public void L97FC14()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L97FC17()
+	{
+		C = 0;
+		A += [0x15E6 + X] + C;
+		temp = A - [0x28];
+
+		if (N == 0)
+			return this.L97FC52();
+
+		A = [[0x00] + Y];
+		Y++;
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L97FC2C();
+
+		A &= 0x007F;
+		return this.L97FC2F();
+	}
+
+	public void L97FC2C()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L97FC2F()
+	{
+		C = 0;
+		A += [0x15A6 + X] + C;
+		temp = A - [0x26];
+
+		if (N == 1)
+			return this.L97FC53();
+
+		A = [[0x00] + Y];
+		Y++;
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L97FC44();
+
+		A &= 0x007F;
+		return this.L97FC47();
+	}
+
+	public void L97FC44()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L97FC47()
+	{
+		C = 0;
+		A += [0x15E6 + X] + C;
+		temp = A - [0x28];
+
+		if (N == 1)
+			return this.L97FC54();
+
+		return this.L97FC5A();
+	}
+
+	public void L97FC51()
+	{
+		Y++;
+	}
+
+	public void L97FC52()
+	{
+		Y++;
+	}
+
+	public void L97FC53()
+	{
+		Y++;
+	}
+
+	public void L97FC54()
+	{
+		[0x22]--;
+
+		if (Z == 0)
+			return this.L97FBEF();
+
+		C = 0;
+		return;
+	}
+
+	public void L97FC5A()
+	{
+		A = [0x14];
+		[0x18] = A;
+		this.L80D3AC();
+		this.L80D567();
+		this.L80D52A();
+		X = [0x12];
+		Y = [0x14];
+		[0x1B97] = Y;
+		[0x1B8F] = X;
+		A = [0x1238 + X];
+		[0x1B91] = A;
+		A = [0x1004 + X];
+		[0x1B93] = A;
+		A = [0x1062 + X];
+		[0x1B95] = A;
+		A = [0x1004 + X];
+		[0x1B35] = A;
+		A = [0x1062 + X];
+		[0x1B37] = A;
+		this.L97DF5C();
+		X = [0x12];
+		A = [0x117C + X];
+		temp = A - 0x002D;
+
+		if (Z == 1)
+			return this.L97FCBE();
+
+		temp = A - 0x002E;
+
+		if (Z == 1)
+			return this.L97FCBE();
+
+		temp = A - 0x002F;
+
+		if (Z == 1)
+			return this.L97FCBE();
+
+		A = [0x1238 + X];
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L97FCBE();
+
+		A = 0xFFFF;
+		[0x111E + X] = A;
+		[0x117C + X] = A;
+		[0x1296 + X] = A;
+	}
+
+	public void L97FCBE()
+	{
+		C = 1;
+		return;
+	}
+
+	public void L97FCC0()
+	{
+		X = [0x12];
+		A = [0x1238 + X];
+		temp = A & 0x0800;
+
+		if (Z == 0)
+			return this.L97FCCB();
+
+		return;
+	}
+
+	public void L97FCCB()
+	{
+		A = [0x1B9D];
+
+		if (Z == 0)
+			return this.L97FCD1();
+
+		return;
+	}
+
+	public void L97FCD1()
+	{
+		A = [0x1522];
+		[0x24] = A;
+		Y = 0x0000;
+	}
+
+	public void L97FCD9()
+	{
+		A = [0x24];
+		X = [0x17E6 + Y];
+		A = [0x1726 + X];
+
+		if (N == 1)
+			return this.L97FCF4();
+
+		temp = A & 0x0200;
+
+		if (Z == 0)
+			return this.L97FCED();
+
+		temp = A & 0x8000;
+
+		if (Z == 0)
+			return this.L97FCF4();
+
+	}
+
+	public void L97FCED()
+	{
+		[0x14] = X;
+		Stack.Push(Y);
+		this.L97FCFB();
+		Y = Stack.Pop();
+	}
+
+	public void L97FCF4()
+	{
+		Y++;
+		Y++;
+		[0x24]--;
+
+		if (Z == 0)
+			return this.L97FCD9();
+
+		return;
+	}
+
+	public void L97FCFB()
+	{
+		X = [0x14];
+		A = [0x1626 + X];
+		A <<= 1;
+		Y = A;
+		A = [0x14D3];
+		[0x00] = A;
+		A = [0x14D4];
+		[0x01] = A;
+		A = [[0x00] + Y];
+		C = 0;
+		A += [0x00] + C;
+		[0x00] = A;
+		Y = 0x0000;
+		A = [[0x00] + Y];
+		A &= 0x00FF;
+		Y++;
+		[0x22] = A;
+	}
+
+	public void L97FD1E()
+	{
+		X = [0x14];
+		A = [[0x00] + Y];
+		Y++;
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L97FD2D();
+
+		A &= 0x007F;
+		return this.L97FD30();
+	}
+
+	public void L97FD2D()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L97FD30()
+	{
+		C = 0;
+		A += [0x15A6 + X] + C;
+		C = 1;
+		A -= [0x1B9F] - !C;
+		[0x26] = A;
+		A = [[0x00] + Y];
+		Y++;
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L97FD47();
+
+		A &= 0x007F;
+		return this.L97FD4A();
+	}
+
+	public void L97FD47()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L97FD4A()
+	{
+		C = 0;
+		A += [0x15E6 + X] + C;
+		C = 1;
+		A -= [0x1BA1] - !C;
+		[0x28] = A;
+		A = [[0x00] + Y];
+		Y++;
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L97FD61();
+
+		A &= 0x007F;
+		return this.L97FD64();
+	}
+
+	public void L97FD61()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L97FD64()
+	{
+		C = 0;
+		A += [0x15A6 + X] + C;
+		C = 0;
+		A += [0x1B9F] + C;
+		[0x2A] = A;
+		A = [[0x00] + Y];
+		Y++;
+		temp = A & 0x0080;
+
+		if (Z == 0)
+			return this.L97FD7B();
+
+		A &= 0x007F;
+		return this.L97FD7E();
+	}
+
+	public void L97FD7B()
+	{
+		A |= 0xFF80;
+	}
+
+	public void L97FD7E()
+	{
+		C = 0;
+		A += [0x15E6 + X] + C;
+		C = 0;
+		A += [0x1BA1] + C;
+		[0x2C] = A;
+		X = [0x12];
+		A = [0x0B9C + X];
+		temp = A - [0x26];
+
+		if (N == 1)
+			return this.L97FDA2();
+
+		temp = A - [0x2A];
+
+		if (N == 0)
+			return this.L97FDA2();
+
+		A = [0x0C58 + X];
+		temp = A - [0x28];
+
+		if (N == 1)
+			return this.L97FDA2();
+
+		temp = A - [0x2C];
+
+		if (N == 0)
+			return this.L97FDA2();
+
+		return this.L97FDAA();
+	}
+
+	public void L97FDA2()
+	{
+		[0x22]--;
+
+		if (Z == 1)
+			return this.L97FDA9();
+
+		return this.L97FD1E();
+	}
+
+	public void L97FDA9()
+	{
+		return;
+	}
+
+	public void L97FDAA()
+	{
+		A = [0x22];
+		Stack.Push(A);
+		A = [0x24];
+		Stack.Push(A);
+		A = [0x14];
+		[0x18] = A;
+		A = [0x11DA + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 0)
+			return this.L97FDC0();
+
+		this.L80D567();
+	}
+
+	public void L97FDC0()
+	{
+		this.L80D3AC();
+		this.L80D52A();
+		A = Stack.Pop();
+		[0x24] = A;
+		A = Stack.Pop();
+		[0x22] = A;
+		return;
+	}
+
+	public void L97FDCF()
+	{
+		X = [0x12];
+		A = [0x0CB6 + X];
+		temp = A - [0x1BA3];
+
+		if (Z == 1)
+			return this.L97FDDA();
+
+		return;
+	}
+
+	public void L97FDDA()
+	{
+		A = [0x1004 + X];
+		[0x26] = A;
+		A = [0x1062 + X];
+		[0x28] = A;
+		Stack.Push(X);
+		this.L94BC35();
+		X = Stack.Pop();
+		A = [0x2A];
+
+		if (N == 1)
+			return this.L97FE13();
+
+		temp = A - 0x0200;
+
+		if (C == 1)
+			return this.L97FDF4();
+
+		return;
+	}
+
+	public void L97FDF4()
+	{
+		temp = A - 0x0300;
+
+		if (C == 0)
+			return this.L97FE13();
+
+		A = [0x0387];
+
+		if (N == 1)
+			return this.L97FE13();
+
+		A = [0x1C];
+		[0x1B35] = A;
+		A = [0x1E];
+		[0x1B37] = A;
+		A = [0x14D6];
+		[0x1B3B] = A;
+		this.L97E248();
+		return;
+	}
+
+	public void L97FE13()
+	{
+		A = [0x1238 + X];
+		temp = A & 0x0800;
+
+		if (Z == 0)
+			return this.L97FE34();
+
+		A = [0x1004 + X];
+		[0x1B35] = A;
+		A = [0x1062 + X];
+		[0x1B37] = A;
+		A = 0xFFFF;
+		[0x117C + X] = A;
+		[0x1296 + X] = A;
+		this.L97E1F3();
+	}
+
+	public void L97FE34()
+	{
+		return;
+	}
+
+	public void L97FE35()
+	{
+		Stack.Push(B);
+		Stack.Push(K);
+		B = Stack.Pop();
+		[0x1B9B] = 0;
+		A = [0x11B2];
+
+		if (N == 1)
+			return this.L97FE48();
+
+		A = 0x0036;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FE48()
+	{
+		A = [0x11B4];
+
+		if (N == 1)
+			return this.L97FE55();
+
+		A = 0x0038;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FE55()
+	{
+		A = [0x11B6];
+
+		if (N == 1)
+			return this.L97FE62();
+
+		A = 0x003A;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FE62()
+	{
+		A = [0x11B8];
+
+		if (N == 1)
+			return this.L97FE6F();
+
+		A = 0x003C;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FE6F()
+	{
+		A = [0x11BA];
+
+		if (N == 1)
+			return this.L97FE7C();
+
+		A = 0x003E;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FE7C()
+	{
+		A = [0x11BC];
+
+		if (N == 1)
+			return this.L97FE89();
+
+		A = 0x0040;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FE89()
+	{
+		A = [0x11BE];
+
+		if (N == 1)
+			return this.L97FE96();
+
+		A = 0x0042;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FE96()
+	{
+		A = [0x11C0];
+
+		if (N == 1)
+			return this.L97FEA3();
+
+		A = 0x0044;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FEA3()
+	{
+		A = [0x11C2];
+
+		if (N == 1)
+			return this.L97FEB0();
+
+		A = 0x0046;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FEB0()
+	{
+		A = [0x11C4];
+
+		if (N == 1)
+			return this.L97FEBD();
+
+		A = 0x0048;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FEBD()
+	{
+		A = [0x11C6];
+
+		if (N == 1)
+			return this.L97FECA();
+
+		A = 0x004A;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FECA()
+	{
+		A = [0x11C8];
+
+		if (N == 1)
+			return this.L97FED7();
+
+		A = 0x004C;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FED7()
+	{
+		A = [0x11CA];
+
+		if (N == 1)
+			return this.L97FEE4();
+
+		A = 0x004E;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FEE4()
+	{
+		A = [0x11CC];
+
+		if (N == 1)
+			return this.L97FEF1();
+
+		A = 0x0050;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FEF1()
+	{
+		A = [0x11CE];
+
+		if (N == 1)
+			return this.L97FEFE();
+
+		A = 0x0052;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FEFE()
+	{
+		A = [0x11D0];
+
+		if (N == 1)
+			return this.L97FF0B();
+
+		A = 0x0054;
+		[0x14] = A;
+		this.L97FF0D();
+	}
+
+	public void L97FF0B()
+	{
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L97FF0D()
+	{
+		X = [0x14];
+		A = [0x0CB6 + X];
+
+		if (Z == 1)
+			return this.L97FF15();
+
+		return;
+	}
+
+	public void L97FF15()
+	{
+		A = [0x1004 + X];
+		temp = A - 0x0018;
+
+		if (C == 0)
+			return this.L97FF33();
+
+		temp = A - 0x00E8;
+
+		if (C == 1)
+			return this.L97FF33();
+
+		A = [0x1062 + X];
+		temp = A - 0x0018;
+
+		if (C == 0)
+			return this.L97FF33();
+
+		temp = A - 0x00B0;
+
+		if (C == 1)
+			return this.L97FF33();
+
+		this.L97FF34();
+		return;
+	}
+
+	public void L97FF33()
+	{
+		return;
+	}
+
+	public void L97FF34()
+	{
+		[0x1B9B]++;
+		A = [0x1B81];
+
+		if (Z == 0)
+			return this.L97FF79();
+
+		A = [0x1B2B];
+
+		if (Z == 0)
+			return this.L97FF79();
+
+		A = [0x1B79];
+
+		if (Z == 0)
+			return this.L97FF79();
+
+		A = [0x1B7B];
+
+		if (Z == 0)
+			return this.L97FFB6();
+
+		this.L80D6CA();
+		X = [0x14];
+		A = [0x1238 + X];
+		A &= 0x0006;
+
+		if (Z == 0)
+			return this.L97FF68();
+
+		A = 0x0000;
+		[0x038F] = A;
+		A = 0x00B4;
+		this.L809492();
+		return this.L97FF75();
+	}
+
+	public void L97FF68()
+	{
+		A = 0x0001;
+		[0x038F] = A;
+		A = 0x00CA;
+		this.L809492();
+	}
+
+	public void L97FF75()
+	{
+		[0x038D] = 0;
+		return;
+	}
+
+	public void L97FF79()
+	{
+		this.L97E440();
+		A = 0x0066;
+		this.L8094BA();
+		Y = [0x14];
+		A = [0x1238 + Y];
+		A &= 0x0007;
+		temp = A - 0x0003;
+
+		if (C == 1)
+			return this.L97FF92();
+
+		return;
+	}
+
+	public void L97FF92()
+	{
+		A = 0x0000;
+		[0x1B2B] = A;
+		P |= 0x20;
+		A = [0x4A];
+		A &= 0xFD;
+		[0x4A] = A;
+		A = 0x20;
+		[0x012E] = A;
+		A = 0x40;
+		[0x012D] = A;
+		A = 0x80;
+		[0x012C] = A;
+		P &= ~0x20;
+		this.L9095E0();
+		return;
+	}
+
+	public void L97FFB6()
+	{
+		temp = A & 0xC000;
+
+		if (Z == 0)
+			return this.L97FFE8();
+
+		Y = [0x14];
+		A = [0x117C + Y];
+		A <<= 1;
+		X = A;
+		C = 1;
+		A = [0x1B7D];
+		A -= [0x7E3DC3 + X] - !C;
+		[0x1B7D] = A;
+		A = [0x1B7F];
+		A -= [0x7E40C3 + X] - !C;
+		[0x1B7F] = A;
+		A = 0x0066;
+		this.L8094BA();
+		A = 0x0011;
+		[0x1B7B] = A;
+		this.L97E440();
+	}
+
+	public void L97FFE8()
+	{
+		return;
+	}
+
+	public void L999519()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L96E7DE();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L99953A()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L96E804();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L99955B()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L9995CF();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L999578()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L9995E7();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L999595()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L999603();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9995B2()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L999617();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9995CF()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x99962F + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9996B1 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9995E7()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x99962F + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9996B1 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L999603()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x99962F + X];
+		[0x0E8C + Y] = A;
+		A = [0x9996B1 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L999617()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x99962F + X];
+		[0x0E8C + Y] = A;
+		A = [0x9996B1 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L999733()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L9997A7();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L999750()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L9997BF();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L99976D()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L9997DB();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L99978A()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L9997EF();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9997A7()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x999807 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9998A7 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9997BF()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x999807 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9998A7 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9997DB()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x999807 + X];
+		[0x0E8C + Y] = A;
+		A = [0x9998A7 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9997EF()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x999807 + X];
+		[0x0E8C + Y] = A;
+		A = [0x9998A7 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L999947()
+	{
+		this.L96E907();
+		this.L96E69A();
+		this.L999963();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L999963()
+	{
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		[0x12] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9984 + X];
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9999C6()
+	{
+		this.L96E9FF();
+		this.L96E6FC();
+		A = [0x140E + Y];
+		temp = A - 0x0030;
+
+		if (C == 1)
+			return this.L9999E0();
+
+		this.L96E804();
+		this.L96E8E8();
+		return this.L9999EC();
+	}
+
+	public void L9999E0()
+	{
+		this.L96E8C2();
+		this.L96E8E8();
+		this.L9999FD();
+	}
+
+	public void L9999EC()
+	{
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9999FD()
+	{
+		A = [0x140E + Y];
+		A >>= 1;
+		A >>= 1;
+		A &= 0x001F;
+		A <<= 1;
+		X = A;
+		A = [0x0E8C + Y];
+		C = 0;
+		A += [0x999A13 + X] + C;
+		[0x0E8C + Y] = A;
+		return;
+	}
+
+	public void L9AA9C7()
+	{
+		this.L96E964();
+		this.L96E669();
+		this.L9AA9E4();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AA9E4()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AAA2D + X];
+		[0x0E8C + Y] = A;
+		A = [0x9AAAAF + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AA9F8()
+	{
+		this.L96E964();
+		this.L96E669();
+		this.L9AAA15();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AAA15()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AAA2D + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9AAAAF + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AAB33()
+	{
+		this.L96E907();
+		this.L96E669();
+		this.L9AAB50();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AAB50()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AAB99 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9AABD9 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AAB68()
+	{
+		this.L96E907();
+		this.L96E669();
+		this.L9AAB85();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AAB85()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AAB99 + X];
+		[0x0E8C + Y] = A;
+		A = [0x9AABD9 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AAC19()
+	{
+		this.L96E907();
+		this.L96E669();
+		this.L9AAC36();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AAC36()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AAC7F + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9AACBF + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AAC4E()
+	{
+		this.L96E907();
+		this.L96E669();
+		this.L9AAC6B();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AAC6B()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AAC7F + X];
+		[0x0E8C + Y] = A;
+		A = [0x9AACBF + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AACFF()
+	{
+		this.L96E964();
+		A = [0x117C + Y];
+		temp = A - 0xFFFF;
+
+		if (Z == 0)
+			return this.L9AAD12();
+
+		this.L9B8FBC();
+		[0x1C4C] = 0;
+	}
+
+	public void L9AAD12()
+	{
+		this.L9AAD33();
+		this.L9AAE75();
+		this.L9AAEB1();
+		this.L9AB08F();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AAD33()
+	{
+		A = [0x140E + Y];
+		temp = A - 0x000B;
+
+		if (C == 1)
+			return this.L9AAD40();
+
+		A <<= 1;
+		X = A;
+		return [(0xAD41 + X)]();
+	}
+
+	public void L9AAD40()
+	{
+		return;
+	}
+
+	public void L9AAE75()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L9AAE86();
+
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x9AAE8D + X];
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L9AAE86()
+	{
+		A = 0x80E0;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L9AAEB1()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AAF3F + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		return;
+	}
+
+	public void L9AAEC2()
+	{
+		this.L96E964();
+		A = [0x117C + Y];
+		temp = A - 0xFFFF;
+
+		if (Z == 0)
+			return this.L9AAED5();
+
+		this.L9B8FBC();
+		[0x1C4C] = 0;
+	}
+
+	public void L9AAED5()
+	{
+		this.L9AAD33();
+		this.L9AAEF6();
+		this.L9AAF32();
+		this.L9AB08F();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AAEF6()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L9AAF07();
+
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x9AAF0E + X];
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L9AAF07()
+	{
+		A = 0x80E5;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L9AAF32()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AAF3F + X];
+		[0x0E8C + Y] = A;
+		return;
+	}
+
+	public void L9AB08F()
+	{
+		A = [0x0B9C + Y];
+		C = 1;
+		A -= 0x0080 - !C;
+
+		if (N == 0)
+			return this.L9AB09C();
+
+		A ^= 0xFFFF;
+		A++;
+	}
+
+	public void L9AB09C()
+	{
+		temp = A - 0x0010;
+
+		if (C == 0)
+			return this.L9AB0E0();
+
+		temp = A - 0x0020;
+
+		if (C == 0)
+			return this.L9AB0D4();
+
+		temp = A - 0x0040;
+
+		if (C == 0)
+			return this.L9AB0C8();
+
+		temp = A - 0x0080;
+
+		if (C == 0)
+			return this.L9AB0BC();
+
+		A = 0x0000;
+		[0x12] = A;
+		A = 0x0010;
+		[0x14] = A;
+		return this.L9AB0EC();
+	}
+
+	public void L9AB0BC()
+	{
+		A = 0x0000;
+		[0x12] = A;
+		A = 0x0008;
+		[0x14] = A;
+		return this.L9AB0EC();
+	}
+
+	public void L9AB0C8()
+	{
+		A = 0x0000;
+		[0x12] = A;
+		A = 0x0008;
+		[0x14] = A;
+		return this.L9AB0EC();
+	}
+
+	public void L9AB0D4()
+	{
+		A = 0x0000;
+		[0x12] = A;
+		A = 0x0004;
+		[0x14] = A;
+		return this.L9AB0EC();
+	}
+
+	public void L9AB0E0()
+	{
+		A = 0x0000;
+		[0x12] = A;
+		A = 0x0001;
+		[0x14] = A;
+		return this.L9AB0EC();
+	}
+
+	public void L9AB0EC()
+	{
+		A = [0x0B9C + Y];
+		temp = A - 0x0080;
+
+		if (N == 0)
+			return this.L9AB107();
+
+		C = 0;
+		A = [0x0B3E + Y];
+		A += [0x12] + C;
+		[0x0B3E + Y] = A;
+		A = [0x0B9C + Y];
+		A += [0x14] + C;
+		[0x0B9C + Y] = A;
+		return this.L9AB11A();
+	}
+
+	public void L9AB107()
+	{
+		C = 1;
+		A = [0x0B3E + Y];
+		A -= [0x12] - !C;
+		[0x0B3E + Y] = A;
+		A = [0x0B9C + Y];
+		A -= [0x14] - !C;
+		[0x0B9C + Y] = A;
+		return this.L9AB11A();
+	}
+
+	public void L9AB11A()
+	{
+		return;
+	}
+
+	public void L9AB11B()
+	{
+		this.L96E945();
+		this.L96E669();
+		this.L9AB138();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AB138()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AB181 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9AB1E1 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AB150()
+	{
+		this.L96E945();
+		this.L96E669();
+		this.L9AB16D();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AB16D()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AB181 + X];
+		[0x0E8C + Y] = A;
+		A = [0x9AB1E1 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AB243()
+	{
+		this.L96E907();
+		this.L96E669();
+		this.L9AB260();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AB260()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AB2A9 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9AB2E9 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AB278()
+	{
+		this.L96E907();
+		this.L96E669();
+		this.L9AB295();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AB295()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AB2A9 + X];
+		[0x0E8C + Y] = A;
+		A = [0x9AB2E9 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AB329()
+	{
+		this.L96E907();
+		A = [0x117C + Y];
+		temp = A - 0xFFFF;
+
+		if (Z == 0)
+			return this.L9AB33C();
+
+		this.L9B8FBC();
+		[0x1C4C] = 0;
+	}
+
+	public void L9AB33C()
+	{
+		this.L9AB35D();
+		this.L9AB4D7();
+		this.L96E7B7();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AB35D()
+	{
+		A = [0x140E + Y];
+		temp = A - 0x000D;
+
+		if (C == 1)
+			return this.L9AB36A();
+
+		A <<= 1;
+		X = A;
+		return [(0xB36B + X)]();
+	}
+
+	public void L9AB36A()
+	{
+		return;
+	}
+
+	public void L9AB4D7()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L9AB4E8();
+
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x9AB4EF + X];
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L9AB4E8()
+	{
+		A = 0x80E9;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L9AB520()
+	{
+		this.L96E907();
+		A = [0x117C + Y];
+		temp = A - 0xFFFF;
+
+		if (Z == 0)
+			return this.L9AB533();
+
+		this.L9B8FBC();
+		[0x1C4C] = 0;
+	}
+
+	public void L9AB533()
+	{
+		this.L9AB35D();
+		this.L9AB554();
+		this.L96E7B7();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AB554()
+	{
+		A = [0x0CB6 + Y];
+
+		if (Z == 1)
+			return this.L9AB565();
+
+		A >>= 1;
+		A >>= 1;
+		A >>= 1;
+		X = A;
+		A = [0x9AB56C + X];
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L9AB565()
+	{
+		A = 0x80ED;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L9AB61D()
+	{
+		A = [0x11DA + Y];
+
+		if (Z == 0)
+			return this.L9AB628();
+
+		this.L96E983();
+		return this.L9AB62C();
+	}
+
+	public void L9AB628()
+	{
+		this.L96E945();
+	}
+
+	public void L9AB62C()
+	{
+		this.L96E69A();
+		this.L9AB645();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AB645()
+	{
+		A = [0x11DA + Y];
+
+		if (Z == 0)
+			return this.L9AB65E();
+
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AB675 + X];
+		[0x0E8C + Y] = A;
+		A = [0x9AB717 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AB65E()
+	{
+		A = [0x140E + Y];
+		A &= 0x000F;
+		A <<= 1;
+		X = A;
+		A = [0x9AB7B9 + X];
+		[0x0E8C + Y] = A;
+		A = [0x9AB7D9 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AB7F9()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L9AB816();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AB816()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AB82A + X];
+		[0x0E8C + Y] = A;
+		A = [0x9AB8CC + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9AB96E()
+	{
+		this.L96E983();
+		this.L96E69A();
+		this.L9AB98B();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9AB98B()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AB99F + X];
+		[0x0E8C + Y] = A;
+		A = [0x9ABA41 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9ABAE3()
+	{
+		this.L96E964();
+		this.L96E669();
+		A = 0x0000;
+		[0x0EEA + Y] = A;
+		this.L9ABB06();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9ABB06()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x0EEA + Y];
+		C = 0;
+		A += [0x9ABB17 + X] + C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9ABB97()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L9ABBB8();
+		this.L9ABB06();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9ABBB8()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9ABBCC + X];
+		[0x0E8C + Y] = A;
+		A = [0x9ABC4C + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9ABCCC()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L9ABCED();
+		this.L9ABB06();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9ABCED()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9ABBCC + X];
+		[0x0EEA + Y] = A;
+		A = [0x9ABC4C + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		return;
+	}
+
+	public void L9ABD05()
+	{
+		this.L96E945();
+		this.L96E669();
+		this.L9ABD22();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9ABD22()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AB181 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9AB1E1 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9ABD3E()
+	{
+		this.L96E945();
+		this.L96E669();
+		this.L9ABD5B();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9ABD5B()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9AB181 + X];
+		[0x0E8C + Y] = A;
+		A = [0x9AB1E1 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9ABD73()
+	{
+		this.L96E9FF();
+		this.L96E6FC();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9ABD8C()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L96E804();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9ABDAD()
+	{
+		this.L96E945();
+		this.L96E6CB();
+		this.L96E7DE();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9B8FBC()
+	{
+		A = [0x7F06E1];
+		[0x7F05A1] = A;
+		A = [0x7F06E3];
+		[0x7F05A3] = A;
+		A = [0x7F06E5];
+		[0x7F05A5] = A;
+		A = [0x7F06E7];
+		[0x7F05A7] = A;
+		A = [0x7F06E9];
+		[0x7F05A9] = A;
+		A = [0x7F06EB];
+		[0x7F05AB] = A;
+		A = [0x7F06ED];
+		[0x7F05AD] = A;
+		A = [0x7F06EF];
+		[0x7F05AF] = A;
+		A = [0x7F06F1];
+		[0x7F05B1] = A;
+		A = [0x7F06F3];
+		[0x7F05B3] = A;
+		A = [0x7F06F5];
+		[0x7F05B5] = A;
+		A = [0x7F06F9];
+		[0x7F05B9] = A;
+		A = [0x7F06FB];
+		[0x7F05BB] = A;
+		A = [0x7F06FD];
+		[0x7F05BD] = A;
+		A = [0x7F06FF];
+		[0x7F05BF] = A;
+		return;
+	}
+
+	public void L9BA140()
+	{
+		this.L96E945();
+		this.L96E669();
+		this.L9BA15D();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BA15D()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9BA171 + X];
+		[0x0E8C + Y] = A;
+		A = [0x9BA1D1 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9BA231()
+	{
+		this.L96E983();
+		this.L96E6CB();
+		this.L96E82A();
+		this.L96E8E8();
+		this.L9BA256();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BA256()
+	{
+		A = [0x140E + Y];
+		temp = A & 0x0001;
+
+		if (Z == 0)
+			return this.L9BA26B();
+
+		P |= 0x20;
+		A = [0x11DA + Y];
+		A++;
+		A &= 0x1F;
+		[0x11DA + Y] = A;
+		P &= ~0x20;
+	}
+
+	public void L9BA26B()
+	{
+		return;
+	}
+
+	public void L9BA26C()
+	{
+		this.L96E983();
+		this.L96E6CB();
+		this.L96E82A();
+		this.L96E8E8();
+		this.L9BA291();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BA291()
+	{
+		A = [0x140E + Y];
+		temp = A & 0x0001;
+
+		if (Z == 0)
+			return this.L9BA2A6();
+
+		P |= 0x20;
+		A = [0x11DA + Y];
+		A--;
+		A &= 0x1F;
+		[0x11DA + Y] = A;
+		P &= ~0x20;
+	}
+
+	public void L9BA2A6()
+	{
+		return;
+	}
+
+	public void L9BA2A7()
+	{
+		this.L96E964();
+		this.L96E6CB();
+		this.L96E804();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BD1EC()
+	{
+		A = [0x197C];
+		[0x12] = A;
+		A = [0x197E];
+		[0x14] = A;
+		A = [0x14];
+		Cpu.ROL();
+		Cpu.ROR(0x14);
+		Cpu.ROR(0x12);
+		A = [0x14];
+		Cpu.ROL();
+		Cpu.ROR(0x14);
+		Cpu.ROR(0x12);
+		C = 1;
+		A = [0x7E5DDC];
+		A -= [0x12] - !C;
+		[0x7E5DDC] = A;
+		A = [0x7E5DE4];
+		A -= [0x14] - !C;
+		[0x7E5DE4] = A;
+		A = [0x14];
+		Cpu.ROL();
+		Cpu.ROR(0x14);
+		Cpu.ROR(0x12);
+		C = 1;
+		A = [0x7E5DDE];
+		A -= [0x12] - !C;
+		[0x7E5DDE] = A;
+		A = [0x7E5DE6];
+		A -= [0x14] - !C;
+		[0x7E5DE6] = A;
+		A = [0x1988];
+		[0x12] = A;
+		A = [0x198A];
+		[0x14] = A;
+		A = [0x14];
+		Cpu.ROL();
+		Cpu.ROR(0x14);
+		Cpu.ROR(0x12);
+		A = [0x14];
+		Cpu.ROL();
+		Cpu.ROR(0x14);
+		Cpu.ROR(0x12);
+		C = 1;
+		A = [0x7E5DEC];
+		A -= [0x12] - !C;
+		[0x7E5DEC] = A;
+		A = [0x7E5DF4];
+		A -= [0x14] - !C;
+		[0x7E5DF4] = A;
+		A = [0x14];
+		Cpu.ROL();
+		Cpu.ROR(0x14);
+		Cpu.ROR(0x12);
+		C = 1;
+		A = [0x7E5DEE];
+		A -= [0x12] - !C;
+		[0x7E5DEE] = A;
+		A = [0x7E5DF6];
+		A -= [0x14] - !C;
+		[0x7E5DF6] = A;
+		A = [0x7E5DE4];
+		C = 0;
+		A += 0x00A0 + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD2AE();
+
+		A = [0x7E5DF4];
+		C = 0;
+		A += 0x00E0 + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD2AE();
+
+		this.L9BD54D();
+	}
+
+	public void L9BD2AE()
+	{
+		A = [0x7E5DE4];
+		C = 0;
+		A += 0x0004 + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD2DE();
+
+		A = [0x7E5DF4];
+		C = 0;
+		A += 0x0040 + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD2DE();
+
+		this.L9BD54D();
+	}
+
+	public void L9BD2DE()
+	{
+		A = [0x7E5DE4];
+		C = 0;
+		A += 0x00FC + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD30E();
+
+		A = [0x7E5DF4];
+		C = 0;
+		A += 0x0003 + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD30E();
+
+		this.L9BD54D();
+	}
+
+	public void L9BD30E()
+	{
+		A = [0x7E5DE4];
+		C = 0;
+		A += 0x0000 + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD33E();
+
+		A = [0x7E5DF4];
+		C = 0;
+		A += 0x0060 + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD33E();
+
+		this.L9BD594();
+	}
+
+	public void L9BD33E()
+	{
+		A = [0x7E5DE4];
+		C = 0;
+		A += 0x0060 + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD36E();
+
+		A = [0x7E5DF4];
+		C = 0;
+		A += 0x0000 + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD36E();
+
+		this.L9BD594();
+	}
+
+	public void L9BD36E()
+	{
+		A = [0x7E5DE4];
+		C = 0;
+		A += 0x0080 + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD39E();
+
+		A = [0x7E5DF4];
+		C = 0;
+		A += 0x0080 + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD39E();
+
+		this.L9BD594();
+	}
+
+	public void L9BD39E()
+	{
+		A = [0x7E5DE6];
+		C = 0;
+		A += 0x00E4 + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD3CE();
+
+		A = [0x7E5DF6];
+		C = 0;
+		A += 0x0020 + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD3CE();
+
+		this.L9BD4BF();
+	}
+
+	public void L9BD3CE()
+	{
+		A = [0x7E5DE6];
+		C = 0;
+		A += 0x002E + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD3FE();
+
+		A = [0x7E5DF6];
+		C = 0;
+		A += 0x0005 + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD3FE();
+
+		this.L9BD4BF();
+	}
+
+	public void L9BD3FE()
+	{
+		A = [0x7E5DE6];
+		C = 0;
+		A += 0x00B8 + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD42E();
+
+		A = [0x7E5DF6];
+		C = 0;
+		A += 0x002E + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD42E();
+
+		this.L9BD4BF();
+	}
+
+	public void L9BD42E()
+	{
+		A = [0x7E5DE6];
+		C = 0;
+		A += 0x0066 + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD45E();
+
+		A = [0x7E5DF6];
+		C = 0;
+		A += 0x0066 + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD45E();
+
+		this.L9BD506();
+	}
+
+	public void L9BD45E()
+	{
+		A = [0x7E5DE6];
+		C = 0;
+		A += 0x0080 + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD48E();
+
+		A = [0x7E5DF6];
+		C = 0;
+		A += 0x009C + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD48E();
+
+		this.L9BD506();
+	}
+
+	public void L9BD48E()
+	{
+		A = [0x7E5DE6];
+		C = 0;
+		A += 0x0020 + C;
+		A &= 0x01FF;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x0128;
+
+		if (C == 1)
+			return this.L9BD4BE();
+
+		A = [0x7E5DF6];
+		C = 0;
+		A += 0x0040 + C;
+		A &= 0x00FF;
+		[0xB2] = A;
+		C = 0;
+		A += 0x0014 + C;
+		temp = A - 0x00D0;
+
+		if (C == 1)
+			return this.L9BD4BE();
+
+		this.L9BD506();
+	}
+
+	public void L9BD4BE()
+	{
+		return;
+	}
+
+	public void L9BD4BF()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		P &= ~0x30;
+		Y = [0xA6];
+		temp = Y - 0x01FD;
+
+		if (C == 0)
+			return this.L9BD4CD();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9BD4CD()
+	{
+		A = Y;
+		C = 0;
+		A += 0x0004 + C;
+		[0xA6] = A;
+		P |= 0x20;
+		A = 0x82;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		A = [0xB0];
+		C = 0;
+		A += 0x01FC + C;
+		[0x7800 + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L9BD4F4();
+
+		X = [0x82B6 + Y];
+		A = [0x00 + X];
+		A |= [0x82B8 + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L9BD4F4()
+	{
+		A = [0xB2];
+		C = 0;
+		A += 0x01FC + C;
+		[0x7801 + Y] = A;
+		A = 0x2E87;
+		[0x7802 + Y] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9BD506()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		P &= ~0x30;
+		Y = [0xA6];
+		temp = Y - 0x01FD;
+
+		if (C == 0)
+			return this.L9BD514();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9BD514()
+	{
+		A = Y;
+		C = 0;
+		A += 0x0004 + C;
+		[0xA6] = A;
+		P |= 0x20;
+		A = 0x82;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		A = [0xB0];
+		C = 0;
+		A += 0x01FB + C;
+		[0x7800 + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L9BD53B();
+
+		X = [0x82B6 + Y];
+		A = [0x00 + X];
+		A |= [0x82B8 + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L9BD53B()
+	{
+		A = [0xB2];
+		C = 0;
+		A += 0x01FB + C;
+		[0x7801 + Y] = A;
+		A = 0x2E9C;
+		[0x7802 + Y] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9BD54D()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		P &= ~0x30;
+		Y = [0xA6];
+		temp = Y - 0x01FD;
+
+		if (C == 0)
+			return this.L9BD55B();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9BD55B()
+	{
+		A = Y;
+		C = 0;
+		A += 0x0004 + C;
+		[0xA6] = A;
+		P |= 0x20;
+		A = 0x82;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		A = [0xB0];
+		C = 0;
+		A += 0x01FC + C;
+		[0x7800 + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L9BD582();
+
+		X = [0x82B6 + Y];
+		A = [0x00 + X];
+		A |= [0x82B8 + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L9BD582()
+	{
+		A = [0xB2];
+		C = 0;
+		A += 0x01FC + C;
+		[0x7801 + Y] = A;
+		A = 0x2ED5;
+		[0x7802 + Y] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9BD594()
+	{
+		Stack.Push(B);
+		Stack.Push(P);
+		P &= ~0x30;
+		Y = [0xA6];
+		temp = Y - 0x01FD;
+
+		if (C == 0)
+			return this.L9BD5A2();
+
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9BD5A2()
+	{
+		A = Y;
+		C = 0;
+		A += 0x0004 + C;
+		[0xA6] = A;
+		P |= 0x20;
+		A = 0x82;
+		Stack.Push(A);
+		B = Stack.Pop();
+		P &= ~0x20;
+		A = [0xB0];
+		C = 0;
+		A += 0x01FC + C;
+		[0x7800 + Y] = A;
+		temp = A & 0x0100;
+
+		if (Z == 1)
+			return this.L9BD5C9();
+
+		X = [0x82B6 + Y];
+		A = [0x00 + X];
+		A |= [0x82B8 + Y];
+		[0x00 + X] = A;
+	}
+
+	public void L9BD5C9()
+	{
+		A = [0xB2];
+		C = 0;
+		A += 0x01FC + C;
+		[0x7801 + Y] = A;
+		A = 0x2ED4;
+		[0x7802 + Y] = A;
+		P = Stack.Pop();
+		B = Stack.Pop();
+		return;
+	}
+
+	public void L9BDA71()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L9BDA96();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L9BDE0D();
+		this.L9BDE3B();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BDA96()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9BDAE7 + X];
+		[0x0E8C + Y] = A;
+		A = [0x9BDB77 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9BDAAA()
+	{
+		this.L96E945();
+		this.L96E69A();
+		this.L9BDACF();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L9BDE0D();
+		this.L9BDE3B();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BDACF()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9BDAE7 + X];
+		A ^= 0xFFFF;
+		A++;
+		[0x0E8C + Y] = A;
+		A = [0x9BDB77 + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9BDC07()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L96E804();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L9BDE0D();
+		this.L9BDE3B();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BDC30()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L96E804();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L9BDE0D();
+		this.L9BDE3B();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BDC59()
+	{
+		this.L96E964();
+		this.L96E69A();
+		this.L96E804();
+		this.L96E8E8();
+		this.L9BDC88();
+		this.L9BDC9E();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L9BDE0D();
+		this.L9BDE3B();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BDC88()
+	{
+		A = [0x140E + Y];
+		temp = A & 0x0001;
+
+		if (Z == 0)
+			return this.L9BDC9D();
+
+		P |= 0x20;
+		A = [0x11DA + Y];
+		A++;
+		A &= 0x1F;
+		[0x11DA + Y] = A;
+		P &= ~0x20;
+	}
+
+	public void L9BDC9D()
+	{
+		return;
+	}
+
+	public void L9BDC9E()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x0EEA + Y];
+		C = 0;
+		A += [0x9BDCAF + X] + C;
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9BDD2F()
+	{
+		this.L96E964();
+		this.L96E6CB();
+		this.L96E804();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L9BDE0D();
+		this.L9BDE3B();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BDD58()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L96E850();
+		this.L96E8E8();
+		this.L9BDDB2();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L9BDE0D();
+		this.L9BDE3B();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BDD85()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L96E850();
+		this.L96E8E8();
+		this.L9BDDCA();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L9BDE0D();
+		this.L9BDE3B();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BDDB2()
+	{
+		A = [0x014C];
+		A &= 0xFFFE;
+
+		if (Z == 1)
+			return this.L9BDDC9();
+
+		P |= 0x20;
+		A = [0x11DA + Y];
+		A--;
+
+		if (N == 0)
+			return this.L9BDDC4();
+
+		A = 0x1F;
+	}
+
+	public void L9BDDC4()
+	{
+		[0x11DA + Y] = A;
+		P &= ~0x20;
+	}
+
+	public void L9BDDC9()
+	{
+		return;
+	}
+
+	public void L9BDDCA()
+	{
+		A = [0x014C];
+		A &= 0xFFFE;
+
+		if (Z == 1)
+			return this.L9BDDE3();
+
+		P |= 0x20;
+		A = [0x11DA + Y];
+		A++;
+		temp = A - 0x20;
+
+		if (C == 0)
+			return this.L9BDDDE();
+
+		A = 0x00;
+	}
+
+	public void L9BDDDE()
+	{
+		[0x11DA + Y] = A;
+		P &= ~0x20;
+	}
+
+	public void L9BDDE3()
+	{
+		return;
+	}
+
+	public void L9BDDE4()
+	{
+		this.L96E945();
+		this.L96E6CB();
+		this.L96E7DE();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L9BDE0D();
+		this.L9BDE3B();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9BDE0D()
+	{
+		A = [0x0CB6 + Y];
+		temp = A - [0x1BA3];
+
+		if (C == 0)
+			return this.L9BDE28();
+
+		A = [0x1352 + Y];
+		A |= 0x2000;
+		[0x1352 + Y] = A;
+		A = [0x12F4 + Y];
+		A &= 0xCFFF;
+		[0x12F4 + Y] = A;
+		return;
+	}
+
+	public void L9BDE28()
+	{
+		A = [0x1352 + Y];
+		A |= 0x3000;
+		[0x1352 + Y] = A;
+		A = [0x12F4 + Y];
+		A &= 0xCFFF;
+		[0x12F4 + Y] = A;
+		return;
+	}
+
+	public void L9BDE3B()
+	{
+		A = [0x0CB6 + Y];
+		temp = A - [0x1BA3];
+
+		if (Z == 0)
+			return this.L9BDE78();
+
+		Stack.Push(Y);
+		A = [0x1004 + Y];
+		[0x26] = A;
+		A = [0x1062 + Y];
+		[0x28] = A;
+		A = 0x0200;
+		[0x038B] = A;
+		this.L94BC35();
+		A = [0x2A];
+
+		if (Z == 0)
+			return this.L9BDE5E();
+
+		Y = Stack.Pop();
+		return;
+	}
+
+	public void L9BDE5E()
+	{
+		A = [0x0387];
+
+		if (N == 1)
+			return this.L9BDE77();
+
+		A = [0x1C];
+		[0x1B35] = A;
+		A = [0x1E];
+		[0x1B37] = A;
+		A = [0x14D6];
+		[0x1B3B] = A;
+		this.L97E248();
+	}
+
+	public void L9BDE77()
+	{
+		Y = Stack.Pop();
+	}
+
+	public void L9BDE78()
+	{
+		return;
+	}
+
+	public void L9CAA8A()
+	{
+		this.L96E9A2();
+		this.L96E69A();
+		this.L96E850();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9CAAAB()
+	{
+		this.L96E964();
+		this.L96E6CB();
+		this.L96E804();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9CAACC()
+	{
+		this.L96E907();
+		this.L96E6CB();
+		this.L96E850();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9CAAED()
+	{
+		this.L96E907();
+		this.L96E669();
+		this.L9CAB0A();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9CAB0A()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x9CAB1E + X];
+		[0x0E8C + Y] = A;
+		A = [0x9CAB7E + X];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9CABDE()
+	{
+		this.L96E907();
+		this.L96E69A();
+		this.L9CABFB();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9CABFB()
+	{
+		A = [0x11DB + Y];
+		A &= 0x00FF;
+		A <<= 1;
+		X = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		C = 0;
+		A += [0x9CAC2A + X] + C;
+		X = A;
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		[0x12] = A;
+		A = [0x9CAC2A + X];
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9CACB2()
+	{
+		this.L96E907();
+		this.L96E69A();
+		this.L96E7DE();
+		this.L96E8E8();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9CAD45()
+	{
+		this.L96E907();
+		this.L96E69A();
+		this.L9CAD62();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L80C8A2();
+		this.L96DC5B();
+		return;
+	}
+
+	public void L9CAD62()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		[0x12] = A;
+		A = [0x9CAD84 + X];
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9CADC4()
+	{
+		this.L96E9E0();
+		this.L96E6FC();
+		this.L9CADE1();
+		this.L80CE38();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9CADE1()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		temp = A - 0x00A0;
+
+		if (C == 0)
+			return this.L9CADED();
+
+		A = 0x009E;
+	}
+
+	public void L9CADED()
+	{
+		X = A;
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		[0x12] = A;
+		A = [0x9CAE0F + X];
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9CB21A()
+	{
+		this.L9CB472();
+		A = 0x0000;
+		[0x11DA + Y] = A;
+		[0x0E8C + Y] = A;
+		[0x0EEA + Y] = A;
+		A = [0x15AE];
+		[0x0B9C + Y] = A;
+		A = [0x15EE];
+		[0x0C58 + Y] = A;
+		this.L80CE5F();
+		this.L80C88D();
+		A = 0x9C00;
+		[0x01] = A;
+		A = 0xB24C;
+		[0x00] = A;
+		this.L96F985();
+		return;
+	}
+
+	public void L9CB472()
+	{
+		A = [0x140E + Y];
+
+		if (Z == 1)
+			return this.L9CB478();
+
+		return;
+	}
+
+	public void L9CB478()
+	{
+		Stack.Push(Y);
+		temp = Y - 0x0034;
+
+		if (Z == 1)
+			return this.L9CB483();
+
+		Y = 0x0034;
+		return this.L9CB486();
+	}
+
+	public void L9CB483()
+	{
+		Y = 0x0032;
+	}
+
+	public void L9CB486()
+	{
+		A = 0x011B;
+		this.L80CB73();
+		A = [0x15AE];
+		[0x0B9C + Y] = A;
+		A = [0x15EE];
+		[0x0C58 + Y] = A;
+		A = 0x0001;
+		[0x1C50] = A;
+		A = 0x0002;
+		[0x1C52] = A;
+		Y = Stack.Pop();
+		return;
+	}
+
+	public void L9CB4A7()
+	{
+		this.L96F605();
+		this.L9CB4BE();
+		this.L9CB50B();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		return;
+	}
+
+	public void L9CB4BE()
+	{
+		A = [0x11DA + Y];
+		A &= 0x00FF;
+		[0x12] = A;
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xB4DF + X];
+		[0x14] = A;
+		this.L9682FE();
+		A = [0x16];
+		[0x0E8C + Y] = A;
+		A = [0x18];
+		[0x0EEA + Y] = A;
+		return;
+	}
+
+	public void L9CB50B()
+	{
+		A = [0x140E + Y];
+		A <<= 1;
+		X = A;
+		A = [0xB532 + X];
+		temp = A - 0xFFFF;
+
+		if (Z == 1)
+			return this.L9CB528();
+
+		[0x1296 + Y] = A;
+		A = 0xCFFF;
+		[0x12F4 + Y] = A;
+		A = 0x3000;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L9CB528()
+	{
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L9CB55C()
+	{
+		A = 0x0003;
+		[0x150E] = A;
+		this.L9CB578();
+		this.L9CB598();
+		this.L80CE5F();
+		this.L96DC5B();
+		this.L80C8A2();
+		this.L9CB758();
+		return;
+	}
+
+	public void L9CB578()
+	{
+		A = [0x140E + Y];
+		temp = A - 0x0040;
+
+		if (C == 0)
+			return this.L9CB585();
+
+		A = 0x809B;
+		return this.L9CB588();
+	}
+
+	public void L9CB585()
+	{
+		A = 0x801F;
+	}
+
+	public void L9CB588()
+	{
+		[0x1296 + Y] = A;
+		A = 0xFFFF;
+		[0x12F4 + Y] = A;
+		A = 0x0000;
+		[0x1352 + Y] = A;
+		return;
+	}
+
+	public void L9CB598()
+	{
+		A = [0x15AE];
+		[0x0B9C + Y] = A;
+		A = [0x15EE];
+		[0x0C58 + Y] = A;
+		A = [0x140E + Y];
+		C = 1;
+		A -= 0x0040 - !C;
+
+		if (C == 0)
+			return this.L9CB5C8();
+
+		A <<= 1;
+		X = A;
+		A = [0x9CB5D6 + X];
+		[0x0E8C + Y] = A;
+		A = [0x9CB696 + X];
+		temp = A - 0x6666;
+
+		if (Z == 1)
+			return this.L9CB5C9();
+
+		[0x0EEA + Y] = A;
+		A = 0x0000;
+		[0x1C50] = A;
+	}
+
+	public void L9CB5C8()
+	{
+		return;
+	}
+
+	public void L9CB5C9()
+	{
+		A = 0xFFFF;
+		[0x117C + Y] = A;
+		[0x111E + Y] = A;
+		[0x1296 + Y] = A;
+		return;
+	}
+
+	public void L9CB758()
+	{
+		A = [0x140E + Y];
+		temp = A - 0x0040;
+
+		if (C == 0)
+			return this.L9CB799();
+
+		A = [0x0B9C + Y];
+		C = 1;
+		A -= [0x0E8C + Y] - !C;
+		[0xB0] = A;
+		C = 0;
+		A += 0x0020 + C;
+		temp = A - 0x0140;
+
+		if (C == 0)
+			return this.L9CB775();
+
+		return this.L9CB799();
+	}
+
+	public void L9CB775()
+	{
+		A = [0x1062 + Y];
+		[0xB2] = A;
+		C = 0;
+		A += 0x0020 + C;
+		temp = A - 0x00E8;
+
+		if (C == 0)
+			return this.L9CB786();
+
+		return this.L9CB799();
+	}
+
+	public void L9CB786()
+	{
+		A = 0x009C;
+		[0xB4] = A;
+		A = [0x12F4 + Y];
+		[0xA8] = A;
+		A = [0x1352 + Y];
+		[0xAA] = A;
+		this.L8286B6();
+	}
+
+	public void L9CB799()
+	{
+		return;
+	}
 }

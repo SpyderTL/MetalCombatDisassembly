@@ -1,21 +1,42 @@
+Variables
+	02FF				// Fast Apu Block Count
+	0301				// Fast Apu Sync
+	0303				// Fast Apu Block Count?
+	030D				// Fast Apu Pointer?
+
 Tables
 	80833B (00033B)		// 16-bit Function Pointer Table
+	80875B				// Records
+	80877B				// Records
 	809105 (001105)		// 24-bit Function Pointer Table
 	80979A (00179A)		// 8-bit Value Table (Copied to 0x02F3)
-	809BC4				// 16-bit Function Table (Fill table)
+	809BC4 (001BC4)		// Function Table (Fills table)
+	809993 (001993)		// ??
+	80A053 (002053)		// Records
 	80B668 (003668)		// 16-bit Function Pointer Table
 	80B670 (003670)		// 16-bit Function Pointer Table
+	80B876 (003876)		// 16-bit Function Pointer Table
 	80CE86 (004E86)		// 24-bit Function Pointer Table
 	80D28F (00528F)		// 16-bit Function Pointer Table
+	80D2AC (0052AC)		// 16-bit Function Pointer Table
+	80D2C9 (0052C9)		// 16-bit Function Pointer Table
+	80D2E6 (0052E6)		// 16-bit Function Pointer Table
 	80EE5B (006E5B)		// 16-bit Function Pointer Table
 	80EE85 (006E85)		// 16-bit Function Pointer Table (9 entries)
-	81EF48				// 32-bit Record Table
+	81ABEE (00ABEE)		// 24-bit Function Pointer Table
+	81E76D (00E76D)		// 24-bit Function Pointer Table
+	81E7D4 (00E7D4)		// 24-bit Function Pointer Table
+	81E83D (00E83D)		// 24-bit Function Pointer Table
+	81E900 (00E900)		// 24-bit Function Pointer Table
+	81EF48 (00EF48)		// 32-bit Record Table
 	828A2A (010A2A)		// 16-bit Pointer Table (24-bit Function Pointers)
-	8381D6 (0181D6)		// 16-bit Function Pointer Table
+	8381D6 (0101D6)		// 16-bit Function Pointer Table
 	83B159 (01B159)		// 16-bit Function Pointer Table
+	83C5EA (01C5EA)		// ??
 	8CC1C2 (0641C2)		// DMA Transfer Record
 	8CC1CB (0641CB)		// DMA Transfer Record
 	8CC1D4 (0641D4)		// DMA Transfer Record
+	8CCA6F (064A6F)		// Function Table
 	8CC258				// 16-bit Function Pointer Table
 	8CC28A				// 16-bit Function Pointer Table
 	8CC95B				// 16-bit Function Pointer Table
@@ -74,5 +95,68 @@ Tables
 	9AB36B				// 16-bit Function Pointer Table
 	9AB36B				// 16-bit Function Pointer Table
 	18E000 (0C6000)
-	BA8010 (1D0010)
-	BA80C0 (1D00C0)
+
+	B90000				// APU Data Table??
+
+	B98000 (1C8000)		// APU Data
+
+	BA0000				// APU Data Table??
+
+	BA8010 (1D0010)		// APU Data Table
+	BA80C0 (1D00C0)		// Events
+	BA8200 (1D0200)		// APU Data Table
+		Source				3		// Base B90000
+		Length				2
+		Destination			2
+		Unknown				1
+
+APU Variables
+	0x00-0x03			// Input
+	0x00-0x04			// Output
+	0x0F				// Key Off 2
+	0x20-0x2f			// Channel Event Pointers
+	0x30				// Key On
+	0x31				// Key Off
+	0x34				// Flags
+	0x35				// Noise Enable
+	0x36				// Echo Enable
+	0x37				// Pitch Modulation
+	0x3A				// Echo Feedback
+	0x44				// Volume Fade
+	0x49				// ??  (Reset to 0 when new song loaded)
+	0x56-0x64			// ??
+	0x66-0x74			// Channel Call Repeat Counters
+	0xE9				// ?? (Ignores channel parameters if > 0x80)
+	0x97-0x9e
+	0x0190-0x019f		// Sound Effect Pointers
+	0x0200-0x020e		// Channel Note Length
+	0x0201-0x020f		// Channel Note Duration (0 = 1/8th, 7 = full note)
+	0x0210-0x021e		// Channel Note Velocity (0 = 1/16, 15 = full velocity)
+	0x0211-0x021f		// Channel Instruments
+	0x0220-0x022f
+	0x0230-0x023f		// Track Channel Pointers
+	0x0240-0x024f		// Stored Track Channel Pointers
+	0x0251-0x025f
+	0x0280-0x028e
+	0x0281-0x028f
+	0x02a1-0x02af
+	0x02b0-0x02bf		// Channel Notes
+	0x0300-0x030f		// Channel Pitch
+	0x0310-0x031e
+	0x0311-0x031f
+	0x0321-0x032f
+	0x0350-0x035f
+	0x0351-0x035f
+	0x03a0-0x03af		// Effect Pitch (Vibrato)
+
+APU Tables
+	0x0e80-0x0e87		// Note Lengths
+	0x0e88-0x0e98		// Note Velocities
+	0x10ff
+	0x0721				// Events 16-bit (starts at 0x08CD for 0xDE)
+	0x07C7				// Event Lengths 8-bit (starts at 0x089D for 0xDE)
+
+
+Missing level APU directory data
+	0x3efa99
+	0xbefa99
